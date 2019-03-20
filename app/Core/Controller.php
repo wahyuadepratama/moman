@@ -6,8 +6,14 @@ class Controller{
     if(file_exists('app/Views/'.$file.'.php')){
       require_once 'app/Views/'.$file.'.php';
     }else{
-      die("View tidak ditemukan!");
+      $error = ['error' => true, 'status' => 'View ' . $file .' not found'];
+      die(json_encode($error));
     }
+  }
+
+  public function include($file)
+  {
+    require_once 'app/Views/'. $file .'.php';
   }
 
 }
