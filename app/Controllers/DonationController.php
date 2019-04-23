@@ -2,10 +2,24 @@
 
 class DonationController extends Controller{
 
-  use Auth;
-
   public function donation(){
     return $this->view('guest/donation');
+  }
+
+  public function donationDetail(){
+    if(isset($_GET['project'])){
+      return $this->view('guest/donation-detail');
+    }
+  }
+
+  public function donationConfirmation(){
+    if(isset($_GET['donation'])){
+      return $this->view('guest/donation-confirmation');
+    }
+  }
+
+  public function donationOrphan(){
+    return $this->view('guest/donation-orphan');
   }
 
   // Caretaker - Donation Management

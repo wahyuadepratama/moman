@@ -3,9 +3,7 @@
 /**
  * class untuk inisialisasi database
  */
-class FacilityController extends Controller{
-
-  use Auth;
+class FacilityController extends Controller{  
 
   // Caretaker - Facility
 

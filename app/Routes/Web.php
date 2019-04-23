@@ -1,7 +1,7 @@
 <?php
 
 /**
- *  Route:web('url','controller_name','method_name');
+ *  Use function like this to make a route: Route:web('url','controller_name','method_name');
  */
 
 // ____________ Guest
@@ -11,7 +11,20 @@ Route::web('maps', 'MapsController', 'maps');
 Route::web('login', 'UserController', 'login');
 
 Route::web('donation', 'DonationController', 'donation');
-Route::web('donation@confirmation', 'DonationController', 'donationConfirmation');
+Route::web('donation/detail', 'DonationController', 'donationDetail');
+Route::web('donation/confirmation', 'DonationController', 'donationConfirmation');
+
+Route::web('donation/orphans', 'DonationController', 'donationOrphan');
+Route::web('donation/orphans/detail', 'DonationController', 'donationOrphanDetail');
+
+Route::web('donation/poor-people', 'DonationController', 'donationPoorPeople');
+Route::web('donation/poor-people/detail', 'DonationController', 'donationPoorPeopleDetail');
+
+Route::web('admin', 'UserController', 'loginAdmin');
+Route::web('admin/login', 'UserController', 'checkLoginAdmin');
+Route::web('admin/logout', 'UserController', 'checkLogoutAdmin');
+
+//---------------------------------------------------------------
 
 Route::web('qurban', 'QurbanController', 'qurban');
 Route::web('qurban@confirmation', 'QurbanController', 'qurbanConfirmation');
@@ -20,10 +33,10 @@ Route::web('qurban@confirmation', 'QurbanController', 'qurbanConfirmation');
 Route::web('jamaah-dashboard', 'UserController', 'dashboardJamaah');
 Route::web('jamaah-dashboard@update', 'UserController', 'updateDashboardJamaah');
 
-Route::web('jamaah-event', 'WorshipPlaceController', 'eventJamaah');
+Route::web('jamaah-event', 'EventController', 'eventJamaah');
 Route::web('jamaah-report', 'WorshipPlaceController', 'reportJamaah');
 
-//  ____________ Caretaker
+//  ____________ Stewardship
 Route::web('caretaker-dashboard', 'UserController', 'dashboardCaretaker');
 Route::web('caretaker-dashboard@update', 'UserController', 'updateDashboardCaretaker');
 Route::web('caretaker-dashboard-account@update', 'UserController', 'updateAccountDashboardCaretaker');
@@ -45,18 +58,9 @@ Route::web('caretaker-management-event-financial', 'EventController', 'eventFina
 Route::web('caretaker-management-facility', 'FacilityController', 'facilityCaretaker');
 
 // ____________ Admin
-Route::web('admin-dashboard', 'UserController', 'dashboardAdmin');
+Route::web('admin/dashboard', 'UserController', 'dashboardAdmin');
+Route::web('admin/mosque', 'WorshipPlaceController', 'listMosque');
+Route::web('admin/mosque/add', 'WorshipPlaceController', 'addMosque');
 
-Route::web('admin-management-mosque-new', 'WorshipPlaceController', 'mosqueNewAdmin');
-Route::web('admin-management-mosque-list', 'WorshipPlaceController', 'mosqueListAdmin');
-
-Route::web('admin-management-caretaker-new', 'UserController', 'caretakerNewAdmin');
-Route::web('admin-management-caretaker-list', 'UserController', 'caretakerListAdmin');
-
-Route::web('admin-management-transaction-donation', 'DonationController', 'transactionDonationAdmin');
-Route::web('admin-management-transaction-qurban', 'QurbanController', 'transactionQurbanAdmin');
-
-Route::web('admin-management-jamaah', 'UserController', 'jamaahAdmin');
-Route::web('admin-event', 'EventController', 'eventAdmin');
-Route::web('admin-facility', 'FacilityController', 'facilityAdmin');
-Route::web('admin-report', 'WorshipPlaceController', 'reportAdmin');
+// ____________ API
+Route::web('api/tes', 'ApiWorshipPlace', 'tes');

@@ -43,11 +43,11 @@
 
           <div class="row">
 
-            <div class="col-md-8 grid-margin">
+            <div class="col-md-6 grid-margin">
                 <div id="map" class="form-control" style="height: 43em;"></div>
             </div>
 
-            <div class="col-md-4 grid-margin">
+            <div class="col-md-6 grid-margin">
               <div class="card">
                 <div class="card-body">
                   <div class="row">

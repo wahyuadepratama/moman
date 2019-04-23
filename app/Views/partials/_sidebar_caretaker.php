@@ -1,21 +1,10 @@
-<?php
-function active($currect_page){
-  $url_array =  explode('/', $_SERVER['REQUEST_URI']) ;
-  $url = end($url_array);
-  clearstatcache();
-  if($currect_page == $url){
-      echo 'active'; //class name in css
-  }
-}
-?>
-
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
 
     <li class="nav-item nav-profile" style="margin-top: 5%">
       <a href="jamaah-dashboard" class="nav-link">
         <div class="nav-profile-image">
-          <img src="images/faces/face1.jpg" alt="profile">
+          <img src="<?php $this->url('images/faces/face1.jpg') ?>" alt="profile">
           <span class="login-status online"></span> <!--change to offline or busy as needed-->
         </div>
         <div class="nav-profile-text d-flex flex-column">
@@ -48,21 +37,21 @@ function active($currect_page){
             <ul class="nav flex-column sub-menu">
 
               <li class="nav-item <?php active('caretaker-management-donation-collection');?>">
-                <a class="nav-link" href="caretaker-management-donation-collection">
+                <a class="nav-link" href="<?php $this->url('caretaker-management-donation-collection') ?>">
                   <span class="menu-title">Dana Collection</span>
                   <i class="mdi mdi-cash-multiple menu-icon"></i>
                 </a>
               </li>
 
               <li class="nav-item <?php active('caretaker-management-donation-transaction');?>">
-                <a class="nav-link" href="caretaker-management-donation-transaction">
+                <a class="nav-link" href="<?php $this->url('caretaker-management-donation-transaction') ?>">
                   <span class="menu-title">Transaction</span>
                   <i class="mdi mdi-call-split menu-icon"></i>
                 </a>
               </li>
 
               <li class="nav-item <?php active('caretaker-management-donation-type');?>">
-                <a class="nav-link" href="caretaker-management-donation-type">
+                <a class="nav-link" href="<?php $this->url('caretaker-management-donation-type') ?>">
                   <span class="menu-title">Donation Type</span>
                   <i class="mdi mdi-format-list-bulleted menu-icon"></i>
                 </a>
@@ -81,21 +70,21 @@ function active($currect_page){
             <ul class="nav flex-column sub-menu">
 
               <li class="nav-item <?php active('caretaker-management-qurban-collection');?>">
-                <a class="nav-link" href="caretaker-management-qurban-collection">
+                <a class="nav-link" href="<?php $this->url('caretaker-management-qurban-collection') ?>">
                   <span class="menu-title">Dana Collection</span>
                   <i class="mdi mdi-cash-usd menu-icon"></i>
                 </a>
               </li>
 
               <li class="nav-item <?php active('caretaker-management-qurban-transaction');?>">
-                <a class="nav-link" href="caretaker-management-qurban-transaction">
+                <a class="nav-link" href="<?php $this->url('caretaker-management-qurban-transaction') ?>">
                   <span class="menu-title">Transaction</span>
                   <i class="mdi mdi-call-made menu-icon"></i>
                 </a>
               </li>
 
               <li class="nav-item <?php active('caretaker-management-qurban-type');?>">
-                <a class="nav-link" href="caretaker-management-qurban-type">
+                <a class="nav-link" href="<?php $this->url('caretaker-management-qurban-type') ?>">
                   <span class="menu-title">Qurban Type</span>
                   <i class="mdi mdi-format-list-bulleted-type menu-icon"></i>
                 </a>
@@ -114,14 +103,14 @@ function active($currect_page){
             <ul class="nav flex-column sub-menu">
 
               <li class="nav-item <?php active('caretaker-management-event-schedule');?>">
-                <a class="nav-link" href="caretaker-management-event-schedule">
+                <a class="nav-link" href="<?php $this->url('caretaker-management-event-schedule') ?>">
                   <span class="menu-title">Event Schedule</span>
                   <i class="mdi mdi-calendar-clock menu-icon"></i>
                 </a>
               </li>
 
               <li class="nav-item <?php active('caretaker-management-event-financial');?>">
-                <a class="nav-link" href="caretaker-management-event-financial">
+                <a class="nav-link" href="<?php $this->url('caretaker-management-event-financial') ?>">
                   <span class="menu-title">Event Financial</span>
                   <i class="mdi mdi-chart-line menu-icon"></i>
                 </a>
@@ -132,14 +121,14 @@ function active($currect_page){
         </li>
 
         <li class="nav-item <?php active('admin-management-jamaah');?> ">
-          <a class="nav-link" href="admin-management-jamaah">
+          <a class="nav-link" href="<?php $this->url('admin-management-jamaah') ?>">
             <span class="menu-title">Jamaah Management</span>
             <i class="mdi mdi-account-multiple menu-icon"></i>
           </a>
         </li>
 
         <li class="nav-item <?php active('caretaker-management-facility');?>">
-          <a class="nav-link" href="caretaker-management-facility">
+          <a class="nav-link" href="<?php $this->url('caretaker-management-facility') ?>">
             <span class="menu-title">Facility Management</span>
             <i class="mdi mdi-home-modern menu-icon"></i>
           </a>
@@ -154,14 +143,14 @@ function active($currect_page){
             <ul class="nav flex-column sub-menu">
 
               <li class="nav-item <?php active('caretaker-event');?>">
-                <a class="nav-link" href="caretaker-event">
+                <a class="nav-link" href="<?php $this->url('caretaker-event') ?>">
                   <span class="menu-title">Event</span>
                   <i class="mdi mdi-account-multiple menu-icon"></i>
                 </a>
               </li>
 
               <li class="nav-item <?php active('caretaker-report');?>">
-                <a class="nav-link" href="caretaker-report">
+                <a class="nav-link" href="<?php $this->url('caretaker-report') ?>">
                   <span class="menu-title">Report</span>
                   <i class="mdi mdi-chart-line menu-icon"></i>
                 </a>

@@ -1,8 +1,6 @@
 <?php
 
-class QurbanController extends Controller{
-
-  use Auth;
+class QurbanController extends Controller{  
 
   public function qurban(){
     return $this->view('guest/qurban');

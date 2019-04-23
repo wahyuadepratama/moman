@@ -1,30 +1,10 @@
-<?php
-function active($currect_page){
-  $url_array =  explode('/', $_SERVER['REQUEST_URI']) ;
-  $url = end($url_array);
-  if($currect_page == $url){
-      echo 'active'; //class name in css
-  }
-}
-
-function check($currect_page){
-  $url_array =  explode('/', $_SERVER['REQUEST_URI']) ;
-  $url = end($url_array);
-  if($currect_page == $url){
-      return true;
-  }else{
-    return false;
-  }
-}
-?>
-
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
 
     <li class="nav-item nav-profile" style="margin-top: 5%">
       <a href="#" class="nav-link">
         <div class="nav-profile-image">
-          <img src="images/faces/face1.jpg" alt="profile">
+          <img src="<?php $this->url('images/faces/face1.jpg') ?>" alt="profile">
           <span class="login-status online"></span> <!--change to offline or busy as needed-->
         </div>
         <div class="nav-profile-text d-flex flex-column">
@@ -35,7 +15,7 @@ function check($currect_page){
       </a>
     </li>
 
-    <?php if(check('maps') == true){ ?>
+    <?php if($this->check('maps') == true){ ?>
 
     <li class="nav-item sidebar-actions">
       <span class="nav-link">
@@ -127,31 +107,86 @@ function check($currect_page){
 
     <?php } ?>
 
+    <?php if ($this->check('donation') == true || $this->check('donation/detail') == true ||
+              $this->check('donation/orphans') == true || $this->check('donation/orphans/detail') == true): ?>
+
+      <li class="nav-item sidebar-actions">
+        <span class="nav-link">
+          <div class="border-bottom">
+            <h6 class="font-weight-normal mb-2"><b>Donation</b></h6>
+          </div>
+
+          <li class="nav-item <?php $this->active('donation'); $this->active('donation/detail') ?>">
+            <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('donation') ?>'">
+              <span class="menu-title">Mosque Development</span>
+              <i class="mdi mdi-home-modern menu-icon"></i>
+            </a>
+          </li>
+
+          <li class="nav-item <?php $this->active('donation/orphans');?>">
+            <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('donation/orphans') ?>'">
+              <span class="menu-title">Orphans</span>
+              <i class="mdi mdi-home-modern menu-icon"></i>
+            </a>
+          </li>
+
+          <li class="nav-item <?php $this->active('donation/poor-people');?>">
+            <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('donation/poor-people') ?>'">
+              <span class="menu-title">Poor People</span>
+              <i class="mdi mdi-home-modern menu-icon"></i>
+            </a>
+          </li>
+
+        </span>
+      </li>
+
+    <?php endif; ?>
+
+    <?php if ($this->check('qurban') == true || $this->check('qurban/detail') == true): ?>
+
+      <li class="nav-item sidebar-actions">
+        <span class="nav-link">
+          <div class="border-bottom">
+            <h6 class="font-weight-normal mb-2"><b>Qurban</b></h6>
+          </div>
+
+          <li class="nav-item <?php $this->active('qurban'); $this->active('qurban/detail') ?>">
+            <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('qurban') ?>'">
+              <span class="menu-title">Qurban at Mosque</span>
+              <i class="mdi mdi-home-modern menu-icon"></i>
+            </a>
+          </li>
+
+        </span>
+      </li>
+
+    <?php endif; ?>
+
     <li class="nav-item sidebar-actions">
       <span class="nav-link">
         <div class="border-bottom">
           <h6 class="font-weight-normal mb-2"><b>Main Menu</b></h6>
         </div>
         <li class="nav-item">
-          <a class="nav-link" href="./">
+          <a class="nav-link" href="<?php $this->url('') ?>">
             <span class="menu-title">Home</span>
             <i class="mdi mdi-home menu-icon"></i>
           </a>
         </li>
-        <li class="nav-item <?php active('maps');?>">
-          <a class="nav-link" href="maps">
+        <li class="nav-item <?php $this->active('maps');?>">
+          <a class="nav-link" href="<?php $this->url('maps') ?>">
             <span class="menu-title">Maps</span>
             <i class="mdi mdi-map-marker-radius menu-icon"></i>
           </a>
         </li>
-        <li class="nav-item <?php active('donation');?>">
-          <a class="nav-link" href="donation">
+        <li class="nav-item <?php $this->active('donation'); $this->active('donation/detail'); $this->active('donation/orphans'); $this->active('donation/orphans/detail');?>">
+          <a class="nav-link" href="<?php $this->url('donation') ?>">
             <span class="menu-title">Donation</span>
             <i class="mdi mdi-home-modern menu-icon"></i>
           </a>
         </li>
-        <li class="nav-item <?php active('qurban');?>">
-          <a class="nav-link" href="qurban">
+        <li class="nav-item <?php $this->active('qurban');?>">
+          <a class="nav-link" href="<?php $this->url('qurban') ?>">
             <span class="menu-title">Qurban</span>
             <i class="mdi mdi-home-modern menu-icon"></i>
           </a>

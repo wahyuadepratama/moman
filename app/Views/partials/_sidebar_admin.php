@@ -1,21 +1,10 @@
-<?php
-function active($currect_page){
-  $url_array =  explode('/', $_SERVER['REQUEST_URI']) ;
-  $url = end($url_array);
-  clearstatcache();
-  if($currect_page == $url){
-      echo 'active'; //class name in css
-  }
-}
-?>
-
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
 
     <li class="nav-item nav-profile" style="margin-top: 5%">
       <a href="jamaah-dashboard" class="nav-link">
         <div class="nav-profile-image">
-          <img src="images/faces/face1.jpg" alt="profile">
+          <img src="<?php $this->url('images/faces/face1.jpg') ?>" alt="profile">
           <span class="login-status online"></span> <!--change to offline or busy as needed-->
         </div>
         <div class="nav-profile-text d-flex flex-column">
@@ -29,35 +18,33 @@ function active($currect_page){
     <li class="nav-item sidebar-actions">
       <span class="nav-link">
         <div class="border-bottom">
-          <h6 class="font-weight-normal mb-3"><b>Dashboard Admin</b></h6>
+          <h6 class="font-weight-normal mb-2"><b>Dashboard</b></h6>
         </div>
 
-        <li class="nav-item <?php active('admin-dashboard');?> ">
-          <a class="nav-link" href="admin-dashboard">
+        <li class="nav-item <?php $this->active('admin/dashboard'); ?>">
+          <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('admin/dashboard') ?>'">
             <span class="menu-title">Dashboard</span>
-            <i class="mdi mdi-elevation-rise menu-icon"></i>
+            <i class="mdi mdi-home-modern menu-icon"></i>
           </a>
         </li>
 
-        <li class="nav-item <?php active('admin-management-mosque-new');?> <?php active('admin-management-mosque-list');?>">
-          <a class="nav-link" data-toggle="collapse" href="#filterMosque" aria-expanded="false" aria-controls="ui-basic">
-            <span class="menu-title">Mosque Management</span>
+        <li class="nav-item <?php $this->active('admin/mosque'); ?> <?php $this->active('admin/mosque/add'); ?>">
+          <a class="nav-link" data-toggle="collapse" href="#filter" aria-expanded="false" aria-controls="ui-basic">
+            <span class="menu-title">Mosque</span>
             <i class="menu-arrow"></i>
           </a>
-          <div class="collapse" id="filterMosque">
+          <div class="collapse" id="filter">
             <ul class="nav flex-column sub-menu">
 
-              <li class="nav-item <?php active('admin-management-mosque-new');?>">
-                <a class="nav-link" href="admin-management-mosque-new">
-                  <span class="menu-title">New Mosque</span>
-                  <i class="mdi mdi-plus-circle menu-icon"></i>
+              <li class="nav-item <?php $this->active('admin/mosque'); ?>">
+                <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('admin/mosque') ?>'">
+                  <span class="menu-title">List Mosque</span>
                 </a>
               </li>
 
-              <li class="nav-item <?php active('admin-management-mosque-list');?>">
-                <a class="nav-link" href="admin-management-mosque-list">
-                  <span class="menu-title">List All Mosque</span>
-                  <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+              <li class="nav-item <?php $this->active('admin/mosque/add'); ?>">
+                <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('admin/mosque/add') ?>'">
+                  <span class="menu-title">Add New Mosque</span>
                 </a>
               </li>
 
@@ -65,76 +52,17 @@ function active($currect_page){
           </div>
         </li>
 
-        <li class="nav-item <?php active('admin-management-caretaker-new');?> <?php active('admin-management-caretaker-list');?>">
-          <a class="nav-link" data-toggle="collapse" href="#filterCaretaker" aria-expanded="false" aria-controls="ui-basic">
-            <span class="menu-title">Caretaker Management</span>
-            <i class="menu-arrow"></i>
-          </a>
-          <div class="collapse" id="filterCaretaker">
-            <ul class="nav flex-column sub-menu">
-
-              <li class="nav-item <?php active('admin-management-caretaker-new');?>">
-                <a class="nav-link" href="admin-management-caretaker-new">
-                  <span class="menu-title">New Caretaker</span>
-                  <i class="mdi mdi-plus-circle menu-icon"></i>
-                </a>
-              </li>
-
-              <li class="nav-item <?php active('admin-management-caretaker-list');?>">
-                <a class="nav-link" href="admin-management-caretaker-list">
-                  <span class="menu-title">List All Mosque</span>
-                  <i class="mdi mdi-format-list-bulleted menu-icon"></i>
-                </a>
-              </li>
-
-            </ul>
-          </div>
-        </li>
-
-        <li class="nav-item <?php active('admin-management-transaction-donation');?> <?php active('admin-management-transaction-qurban');?>">
-          <a class="nav-link" data-toggle="collapse" href="#filterTransaction" aria-expanded="false" aria-controls="ui-basic">
-            <span class="menu-title">Transaction Management</span>
-            <i class="menu-arrow"></i>
-          </a>
-          <div class="collapse" id="filterTransaction">
-            <ul class="nav flex-column sub-menu">
-
-              <li class="nav-item <?php active('admin-management-transaction-donation');?>">
-                <a class="nav-link" href="admin-management-transaction-donation">
-                  <span class="menu-title">Donation Transaction</span>&nbsp;
-                  <i class="mdi mdi-plus-circle menu-icon"></i>
-                </a>
-              </li>
-
-              <li class="nav-item <?php active('admin-management-transaction-qurban');?>">
-                <a class="nav-link" href="admin-management-transaction-qurban">
-                  <span class="menu-title">Qurban Transaction</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <i class="mdi mdi-format-list-bulleted menu-icon"></i>
-                </a>
-              </li>
-
-            </ul>
-          </div>
-        </li>        
-
-        <li class="nav-item <?php active('admin-event');?> ">
-          <a class="nav-link" href="admin-event">
-            <span class="menu-title">Event Category</span>
-            <i class="mdi mdi-folder-upload menu-icon"></i>
+        <li class="nav-item <?php $this->active('admin/stewardship');?>">
+          <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('admin/stewardship') ?>'">
+            <span class="menu-title">Stewardship</span>
+            <i class="mdi mdi-home-modern menu-icon"></i>
           </a>
         </li>
 
-        <li class="nav-item <?php active('admin-facility');?> ">
-          <a class="nav-link" href="admin-facility">
-            <span class="menu-title">Facility Category</span>
-            <i class="mdi mdi-filter-variant menu-icon"></i>
-          </a>
-        </li>
-
-        <li class="nav-item <?php active('admin-report');?> ">
-          <a class="nav-link" href="admin-report">
-            <span class="menu-title">Report</span>
-            <i class="mdi mdi-note menu-icon"></i>
+        <li class="nav-item <?php $this->active('admin/facility-type');?>">
+          <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('admin/facility-type') ?>'">
+            <span class="menu-title">Facility Type</span>
+            <i class="mdi mdi-home-modern menu-icon"></i>
           </a>
         </li>
 
@@ -144,21 +72,33 @@ function active($currect_page){
     <li class="nav-item sidebar-actions">
       <span class="nav-link">
         <div class="border-bottom">
-          <h6 class="font-weight-normal mb-3"><b>Main Menu</b></h6>
+          <h6 class="font-weight-normal mb-2"><b>Main Menu</b></h6>
         </div>
         <li class="nav-item">
-          <a class="nav-link" href="./">
+          <a class="nav-link" href="<?php $this->url('') ?>">
             <span class="menu-title">Home</span>
             <i class="mdi mdi-home menu-icon"></i>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="maps">
+        <li class="nav-item <?php $this->active('maps');?>">
+          <a class="nav-link" href="<?php $this->url('maps') ?>">
             <span class="menu-title">Maps</span>
             <i class="mdi mdi-map-marker-radius menu-icon"></i>
           </a>
         </li>
-        <li class="nav-item active">
+        <li class="nav-item <?php $this->active('donation'); $this->active('donation/detail'); $this->active('donation/orphans'); $this->active('donation/orphans/detail');?>">
+          <a class="nav-link" href="<?php $this->url('donation') ?>">
+            <span class="menu-title">Donation</span>
+            <i class="mdi mdi-home-modern menu-icon"></i>
+          </a>
+        </li>
+        <li class="nav-item <?php $this->active('qurban');?>">
+          <a class="nav-link" href="<?php $this->url('qurban') ?>">
+            <span class="menu-title">Qurban</span>
+            <i class="mdi mdi-home-modern menu-icon"></i>
+          </a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="jamaah-dashboard">
             <span class="menu-title">Dashboard</span>
             <i class="mdi mdi-view-dashboard menu-icon"></i>

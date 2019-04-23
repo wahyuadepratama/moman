@@ -28,9 +28,6 @@
 
       <div class="main-panel">
         <div class="content-wrapper">
-
-
-
           <div class="page-header">
             <h3 class="page-title">
               <span class="page-title-icon bg-gradient-primary text-white mr-2">
@@ -98,7 +95,7 @@
   <?php $this->include('partials/_plugin'); ?>
 
   <!-- Custom js for this page-->
-  <script src="script/js/dashboard.js"></script>
+  <script src="<?php $this->url('script/js/dashboard.js') ?>"></script>
   <!-- End custom js for this page-->
 </body>
 

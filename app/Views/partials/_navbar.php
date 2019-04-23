@@ -1,7 +1,7 @@
 <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
   <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-    <a class="navbar-brand brand-logo" href="./"><img style="width: 60%;height: 60%;padding-top: 5px;" src="images/logo.svg" alt="logo"/></a>
-    <a class="navbar-brand brand-logo-mini" href="./"><img style="width: 100px;height: 55px;" src="images/logo-mini.svg" alt="logo"/></a>
+    <a class="navbar-brand brand-logo" href="<?php $this->url('') ?>"><img style="width: 60%;height: 60%;padding-top: 5px;" src="<?php $this->url('images/logo/logo.png') ?>" alt="logo"/></a>
+    <a class="navbar-brand brand-logo-mini" href="<?php $this->url('') ?>"><img style="width: 100px;height: 55px;" src="<?php $this->url('images/logo/logo-mini.svg') ?>" alt="logo"/></a>
   </div>
   <div class="navbar-menu-wrapper d-flex align-items-stretch">
 
@@ -51,20 +51,16 @@
       <li class="nav-item nav-profile dropdown">
         <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
           <div class="nav-profile-img">
-            <img src="images/faces-clipart/pic-1.png" alt="image">
+            <img src="<?php $this->url('images/faces-clipart/pic-1.png') ?>" alt="image">
             <span class="availability-status online"></span>
           </div>
           <div class="nav-profile-text">
             <p class="mb-1 text-black">Wahyu Ade Pratama</p>
           </div>
         </a>
-        <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-          <a class="dropdown-item" href="jamaah-dashboard">
-            <i class="mdi mdi-account mr-2 text-success"></i>
-            Profile
-          </a>
+        <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">          
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="logout" onclick="return confirm('Are you sure you want to logout?');">
+          <a class="dropdown-item" href="<?php $this->url('admin/logout') ?>">
             <i class="mdi mdi-logout mr-2 text-danger"></i>
             Signout
           </a>

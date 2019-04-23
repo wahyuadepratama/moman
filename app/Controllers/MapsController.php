@@ -1,8 +1,6 @@
 <?php
 
-class MapsController extends Controller{
-
-  use Auth;
+class MapsController extends Controller{  
 
   public function maps(){
 

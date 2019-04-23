@@ -5,8 +5,6 @@
  */
 class EventController extends Controller{
 
-  use Auth;
-
   // Jamaah - Event
 
   public function eventJamaah(){

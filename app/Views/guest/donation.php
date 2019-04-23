@@ -38,98 +38,43 @@
               <span class="page-title-icon bg-gradient-primary text-white mr-2">
                 <i class="mdi mdi-home"></i>
               </span>
-              Donation
+              Donation Mosque Development
             </h3>
           </div>
 
           <div class="row">
-
-            <div class="col-md-12 grid-margin">
+            <div class="col-md-4 grid-margin">
               <div class="card">
-                <div class="card-body">
-                  <div class="row">
-
-                    <div class="col-md-7">
-
-                      <div class="form-group">
-                        <label for="exampleInputConfirmPassword1">Total</label>
-                        <input type="number" name="" placeholder="Total Donation" class="form-control">
-                      </div>
-
-                      <div class="form-group">
-                        <label for="exampleInputConfirmPassword1">Donated Place</label>
-                        <input type="text" name="" placeholder="Find your donation place via maps below" disabled class="form-control">
-                      </div>
-
-                      <div class="form-group">
-                        <label for="exampleInputConfirmPassword1">Donation Type</label>
-                        <select class="form-control" style="color: black;">
-                          <option value="mosque construction">Infak Mosque Construction</option>
-                          <option value="yatim piatu">Infak Yatim Piatu</option>
-                        </select>
-                      </div>
-
-                      <div class="form-group">
-                        <label for="exampleInputConfirmPassword1">Caretaker Account Bank</label>
-                        <select class="form-control" style="color: black;">
-                          <option value="mosque construction">BNI a/n Ihsan Sanusi (xxx-xx-x-xxxx)</option>
-                          <option value="yatim piatu">BRI a/n Dayat Rifai (xxx-xxxxxx-xxxxx)</option>
-                        </select>
-                      </div>
-
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input type="radio" class="form-check-input" name="status" id="1" onclick="checkProfile()">Use your profile as a donor
-                        </label>
-                      </div>
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input type="radio" class="form-check-input" name="status" id="2" onclick="checkProfile()">Use another profile as a donor
-                        </label>
-                      </div>
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input type="radio" class="form-check-input" name="status" id="3" onclick="checkProfile()">Dont show donor's name to public (write as Hamba Allah)
-                        </label>
-                      </div>
-
-                      <input type="submit" name="" value="Donation" class="form-control btn btn-sm btn-gradient-success">
-
-                    </div>
-
-                    <script type="text/javascript">
-                    function checkProfile() {
-                      if (document.getElementById("1").checked){
-                        var x = document.getElementById("showProfile");
-                        x.style.display = "none";
-                      }else if (document.getElementById("2").checked){
-                        var x = document.getElementById("showProfile");
-                        x.style.display = "block";
-                      }else{
-                        var x = document.getElementById("showProfile");
-                        x.style.display = "none";
-                      }
-                    }
-                    </script>
-
-                    <div class="col-md-5" id="showProfile" style="display:none">
-                      <div class="form-group">
-                        <label for="exampleInputConfirmPassword1">Donor's Profile</label>
-                        <input type="text" name="" placeholder="Name" class="form-control"><br>
-                        <input type="text" name="" placeholder="Address" class="form-control"><br>
-                        <input type="text" name="" placeholder="Phone" class="form-control">
-                      </div>
-                    </div>
-
-                  </div>
+                <style media="screen">
+                .effect{
+                  transform-origin: 50% 65%;
+                  transition: transform 15s, filter 6s ease-in-out;
+                  filter: brightness(30%);
+                  height: 120px;
+                }
+                </style>
+                <div class="effect">
+                  <img class="d-block w-100" src="<?php $this->url('images/mosque/example.png') ?>" alt="First slide">
                 </div>
               </div>
+              <div class="card bg-gradient-dark card-img-holder text-white">
+                <div class="card-body" style="padding: 10% !important">
+                  <img src="<?php $this->url('images/dashboard/circle.svg') ?>" class="card-img-absolute" alt="circle-image">
+                  <h4 class="font-weight-bold mb-3">
+                    <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i> Pembangunan
+                  </h4><br>
+                  <h6 class="text-left">Fund Needed:</h6>
+                  <h6 class="text-right">Rp 123.000.000</h6>
+                  <h6 class="text-left">Fund Collected: </h6>
+                  <h6 class="text-right">Rp 23.000.000</h6>
+                  <h6 class="text-left">Mosque/Mushalla: </h6>
+                  <h6 class="text-right">Masjid Al-Amanah</h6>
+                </div>
+              </div>
+              <div class="card">
+                <a href="<?php $this->url('donation/detail?project=2') ?>" class="btn btn-sm btn-success">Detail</a>
+              </div>
             </div>
-
-            <div class="col-md-12 grid-margin">
-                <div id="map" class="form-control" style="height: 30em;"></div>
-            </div>
-
           </div>
         </div>
         <!-- content-wrapper ends -->
@@ -148,7 +93,16 @@
   <?php $this->include('partials/_plugin'); ?>
 
   <!-- Custom js for this page-->
-  <script src="script/js/dashboard.js"></script>
+  <script src="<?php $this->url('script/js/dashboard.js') ?>"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" charset="utf-8"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" charset="utf-8"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#data').DataTable({
+        dom: '<"clear"f><"clear">',
+      });
+    } );
+  </script>
   <!-- End custom js for this page-->
 </body>
 
