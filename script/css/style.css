@@ -10010,11 +10010,11 @@ pre code {
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: #f2edf3;
+  background-color: #f2f3f4;
 }
 
 .table-hover tbody tr:hover {
-  background-color: #f2edf3;
+  background-color: #f2f3f4;
 }
 
 .table-primary,
@@ -13642,7 +13642,7 @@ button.close {
   flex-direction: column;
   width: 100%;
   pointer-events: auto;
-  background-color: #f2edf3;
+  background-color: #f2f3f4;
   background-clip: padding-box;
   border: 1px solid #ebedf2;
   border-radius: 0.3rem;
@@ -18539,7 +18539,7 @@ html {
 }
 
 .content-wrapper {
-  background: #f2edf3;
+  background: #f2f3f4;
   padding: 2.75rem 2.25rem;
   width: 100%;
   -webkit-flex-grow: 1;
@@ -18595,7 +18595,7 @@ code {
 
 /* Footer */
 .footer {
-  background: #f2edf3;
+  background: #f2f3f4;
   padding: 30px 1rem;
   transition: all 0.25s ease;
   -moz-transition: all 0.25s ease;

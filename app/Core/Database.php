@@ -1,7 +1,7 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+error_reporting(E_ALL); // ubah jadi 0 utk off
+ini_set('display_errors', 1); // ubah jadi 0 utk off
 
 $GLOBALS['url']   = $_SERVER['HTTP_HOST'];
 

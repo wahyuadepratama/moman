@@ -16,7 +16,7 @@ class Route{
       }else{
         $_GET['url'] = '/';
         $get_url = $_GET['url'];
-      }    
+      }
 
       if($url == "lastpage" && self::$all_route - 1 == self::$not_match_route){
         $error = new Controller;
@@ -25,7 +25,12 @@ class Route{
 
       if ($url == $get_url) {
         $file = $controller .'.php';
-        require_once 'app/Controllers/'. $file;
+        if (file_exists('app/Controllers/'. $file)) {
+          require_once 'app/Controllers/'. $file;
+        }else{
+          $error = ['error' => true, 'status' => 'Controller not found'];
+          die(json_encode($error));
+        }
         $class_controller = new $controller;
         if(!method_exists($class_controller, $method)){
           $error = ['error' => true, 'status' => 'Method not found'];

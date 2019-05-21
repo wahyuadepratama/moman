@@ -1,66 +1,133 @@
 <?php
 
 /**
- *  Use function like this to make a route: Route:web('url','controller_name','method_name');
+ *  Use function like this to make a route => Route::web('url','controller_name','method_name');
  */
 
-// ____________ Guest
-Route::web('/', 'UserController', 'index');
-Route::web('maps', 'MapsController', 'maps');
+// __________________________________________ Auth __________________________________________
+Route::web('login', 'UserController', 'formLogin');
+Route::web('login/store', 'UserController', 'login');
+Route::web('logout', 'UserController', 'logout');
 
-Route::web('login', 'UserController', 'login');
-
-Route::web('donation', 'DonationController', 'donation');
-Route::web('donation/detail', 'DonationController', 'donationDetail');
-Route::web('donation/confirmation', 'DonationController', 'donationConfirmation');
-
-Route::web('donation/orphans', 'DonationController', 'donationOrphan');
-Route::web('donation/orphans/detail', 'DonationController', 'donationOrphanDetail');
-
-Route::web('donation/poor-people', 'DonationController', 'donationPoorPeople');
-Route::web('donation/poor-people/detail', 'DonationController', 'donationPoorPeopleDetail');
+Route::web('register', 'UserController', 'formRegister');
+Route::web('register/store', 'UserController', 'register');
 
 Route::web('admin', 'UserController', 'loginAdmin');
 Route::web('admin/login', 'UserController', 'checkLoginAdmin');
-Route::web('admin/logout', 'UserController', 'checkLogoutAdmin');
 
-//---------------------------------------------------------------
+// __________________________________________ Guest __________________________________________
+Route::web('/', 'UserController', 'index');
+Route::web('maps', 'MapsController', 'maps');
 
-Route::web('qurban', 'QurbanController', 'qurban');
-Route::web('qurban@confirmation', 'QurbanController', 'qurbanConfirmation');
+Route::web('donation', 'DonationController', 'donation');
+Route::web('donation/detail', 'DonationController', 'donationDetail');
 
-// ____________ Jamaah
-Route::web('jamaah-dashboard', 'UserController', 'dashboardJamaah');
-Route::web('jamaah-dashboard@update', 'UserController', 'updateDashboardJamaah');
+Route::web('donation/orphans', 'DonationController', 'orphans');
+Route::web('donation/orphans/detail', 'DonationController', 'orphanDetail');
 
-Route::web('jamaah-event', 'EventController', 'eventJamaah');
-Route::web('jamaah-report', 'WorshipPlaceController', 'reportJamaah');
+Route::web('donation/poor', 'DonationController', 'poor');
+Route::web('donation/poor/detail', 'DonationController', 'poorDetail');
 
-//  ____________ Stewardship
-Route::web('caretaker-dashboard', 'UserController', 'dashboardCaretaker');
-Route::web('caretaker-dashboard@update', 'UserController', 'updateDashboardCaretaker');
-Route::web('caretaker-dashboard-account@update', 'UserController', 'updateAccountDashboardCaretaker');
+Route::web('qurban', 'QurbanController', 'index');
+Route::web('qurban/detail', 'QurbanController', 'show');
 
-Route::web('caretaker-event', 'EventController', 'eventCaretaker');
-Route::web('caretaker-report', 'WorshipPlaceController', 'reportCaretaker');
+// __________________________________________ Jamaah __________________________________________
+Route::web('jamaah/dashboard', 'UserController', 'dashboardJamaah');
 
-Route::web('caretaker-management-donation-collection', 'DonationController', 'donationDanaCaretaker');
-Route::web('caretaker-management-donation-transaction', 'DonationController', 'donationTransactionCaretaker');
-Route::web('caretaker-management-donation-type', 'DonationController', 'donationTypeCaretaker');
+Route::web('jamaah/avatar/store', 'UserController', 'storeAvatarJamaah');
+Route::web('jamaah/password/update', 'UserController', 'updatePasswordJamaah');
+Route::web('jamaah/profile/update', 'UserController', 'updateProfileJamaah');
 
-Route::web('caretaker-management-qurban-collection', 'QurbanController', 'qurbanDanaCaretaker');
-Route::web('caretaker-management-qurban-transaction', 'QurbanController', 'qurbanTransactionCaretaker');
-Route::web('caretaker-management-qurban-type', 'QurbanController', 'qurbanTypeCaretaker');
+Route::web('donation/detail/store', 'DonationController', 'storeDonation');
+Route::web('orphan/detail/store', 'DonationController', 'storeOrphan');
+Route::web('poor/detail/store', 'DonationController', 'storePoor');
 
-Route::web('caretaker-management-event-schedule', 'EventController', 'eventScheduleCaretaker');
-Route::web('caretaker-management-event-financial', 'EventController', 'eventFinancialCaretaker');
+Route::web('qurban/store', 'QurbanController', 'store');
 
-Route::web('caretaker-management-facility', 'FacilityController', 'facilityCaretaker');
+Route::web('jamaah/history', 'UserController', 'history');
+Route::web('jamaah/checking', 'DonationController', 'checkDonation');
 
-// ____________ Admin
+Route::web('jamaah/qurban', 'UserController', 'historyQurban');
+Route::web('jamaah/qurban/checking', 'QurbanController', 'checkQurban');
+
+//  __________________________________________ Stewardship __________________________________________
+Route::web('stewardship/dashboard', 'UserController', 'dashboardStewardship');
+Route::web('stewardship/account/update', 'UserController', 'updateAccountStewardship');
+Route::web('stewardship/account/store', 'UserController', 'storeAccountStewardship');
+Route::web('stewardship/account/destroy', 'UserController', 'destroyAccountStewardship');
+
+Route::web('stewardship/donation/project', 'DonationController', 'projectStewardship');
+Route::web('stewardship/donation/project/store', 'DonationController', 'storeProjectStewardship');
+Route::web('stewardship/donation/project/progress', 'DonationController', 'updateProjectStewardship');
+
+Route::web('stewardship/donation/transaction', 'DonationController', 'transactionStewardship');
+Route::web('stewardship/donation/transaction/confirm', 'DonationController', 'confirmTransactionStewardship');
+
+Route::web('stewardship/qurban', 'QurbanController', 'animalStewardship');
+Route::web('stewardship/qurban/store', 'QurbanController', 'storeAnimalStewardship');
+Route::web('stewardship/qur/detail', 'QurbanController', 'transactionStewardship');
+Route::web('stewardship/qur/confirm', 'QurbanController', 'confirmTransactionStewardship');
+Route::web('stewardship/qurban/destroy', 'QurbanController', 'destroyAnimalStewardship');
+
+Route::web('stewardship/mosque/event', 'EventController', 'index');
+Route::web('stewardship/mosque/event/store', 'EventController', 'store');
+Route::web('stewardship/mosque/event/update', 'EventController', 'update');
+
+Route::web('stewardship/mosque/schedule', 'EventController', 'indexSchedule');
+Route::web('stewardship/mosque/schedule/store', 'EventController', 'storeSchedule');
+Route::web('stewardship/mosque/schedule/destroy', 'EventController', 'destroySchedule');
+
+Route::web('stewardship/mosque/jamaah', 'UserController', 'jamaahStewardship');
+
+Route::web('stewardship/mosque/facility', 'FacilityController', 'facilityStewardship');
+Route::web('stewardship/mosque/facility/store', 'FacilityController', 'storeFacilityStewardship');
+Route::web('stewardship/mosque/facility/update', 'FacilityController', 'updateFacilityStewardship');
+Route::web('stewardship/mosque/facility/destroy', 'FacilityController', 'destroyFacilityStewardship');
+
+Route::web('stewardship/recipient/poor', 'RecipientController', 'indexPoor');
+Route::web('stewardship/recipient/poor/store', 'RecipientController', 'storePoor');
+Route::web('stewardship/recipient/poor/update', 'RecipientController', 'updatePoor');
+
+Route::web('stewardship/recipient/tpa', 'RecipientController', 'indexTpa');
+Route::web('stewardship/recipient/tpa/store', 'RecipientController', 'storeTpa');
+Route::web('stewardship/recipient/tpa/update', 'RecipientController', 'updateTpa');
+
+Route::web('stewardship/recipient/store', 'RecipientController', 'indexStore');
+Route::web('stewardship/recipient/store/store', 'RecipientController', 'storeStore');
+Route::web('stewardship/recipient/store/update', 'RecipientController', 'updateStore');
+
+Route::web('stewardship/recipient/builder', 'RecipientController', 'indexBuilder');
+Route::web('stewardship/recipient/builder/store', 'RecipientController', 'storeBuilder');
+Route::web('stewardship/recipient/builder/update', 'RecipientController', 'updateBuilder');
+
+Route::web('stewardship/recipient/ustad', 'RecipientController', 'indexUstad');
+Route::web('stewardship/recipient/ustad/store', 'RecipientController', 'storeUstad');
+Route::web('stewardship/recipient/ustad/update', 'RecipientController', 'updateUstad');
+
+// __________________________________________ Admin __________________________________________
 Route::web('admin/dashboard', 'UserController', 'dashboardAdmin');
+
 Route::web('admin/mosque', 'WorshipPlaceController', 'listMosque');
 Route::web('admin/mosque/add', 'WorshipPlaceController', 'addMosque');
+Route::web('admin/mosque/store', 'WorshipPlaceController', 'storeMosque');
+Route::web('admin/mosque/destroy', 'WorshipPlaceController', 'destroyMosque');
+Route::web('admin/mosque/gallery', 'WorshipPlaceController', 'galleryMosque');
+Route::web('admin/mosque/gallery/store', 'WorshipPlaceController', 'storeGalleryMosque');
+Route::web('admin/mosque/gallery/destroy', 'WorshipPlaceController', 'destroyGalleryMosque');
 
-// ____________ API
-Route::web('api/tes', 'ApiWorshipPlace', 'tes');
+Route::web('admin/facility-type', 'FacilityController', 'indexFacility');
+Route::web('admin/facility-type/store', 'FacilityController', 'storeFacility');
+Route::web('admin/facility-type/destroy', 'FacilityController', 'destroyFacility');
+
+Route::web('admin/stewardship', 'UserController', 'indexStewardship');
+Route::web('admin/stewardship/store', 'UserController', 'storeStewardship');
+
+// __________________________________________ API __________________________________________
+Route::web('api/login', 'ApiUserController', 'login');
+Route::web('api/_users', 'ApiUserController', 'getDataLogin');
+
+Route::web('api/facility', 'ApiFacilityController', 'index');
+
+Route::web('api/donation', 'ApiDonationController', 'index');
+Route::web('api/donation/detail', 'ApiDonationController', 'show');
+Route::web('api/donation/store', 'ApiDonationController', 'store');

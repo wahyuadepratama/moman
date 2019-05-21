@@ -22,7 +22,7 @@
     <div class="container-fluid page-body-wrapper">
 
       <!-- partial:partials/_sidebar.html -->
-      <?php $this->include('partials/_sidebar_caretaker'); ?>
+      <?php $this->include('partials/_sidebar_stewardship'); ?>
       <!-- partial -->
 
       <div class="main-panel">
