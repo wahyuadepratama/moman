@@ -183,14 +183,15 @@ class DonationController extends Controller{
       }
 
       $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, project_id, jamaah_id, fund,
-                                        status_in, status_out, datetime, confirmation, public)
-                                        VALUES(:worship, :project, :jamaah, :fund, :_in, :_out, now(), 'false', :public)");
+                                        status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:worship, :project, :jamaah, :fund, :_in, :_out, now(),:dsc, 'false', :public)");
       $stmt->execute(['worship' => $result->worship_id,
                       'project' => $id,
                       'jamaah' => $_SESSION['user']->jamaah_id,
                       'fund' => $_POST['fund'],
                       '_in' => 'transfer jamaah',
                       '_out' => 'project',
+                      'dsc' => $_POST['account'],
                       'public' => $_POST['public']
                     ]);
 

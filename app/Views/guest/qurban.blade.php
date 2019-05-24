@@ -61,13 +61,13 @@
               <div class="col-md-3 grid-margin">
                 <div class="card">
                   <style media="screen">
-                    .effect{transform-origin: 50% 65%;transition: transform 15s, filter 6s ease-in-out;filter: brightness(30%);height: 150px;}
+                    .effect{transform-origin: 50% 65%;transition: transform 15s, filter 6s ease-in-out;filter: brightness(80%);height: 150px;}
                   </style>
                   <div class="effect">
                     <?php
                       $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM gallery WHERE worship_place_id=:id"); $stmt->execute(['id' => $d->id]); $data = $stmt->fetch(PDO::FETCH_OBJ);
                     ?>
-                    <img class="load-delay<?= $d->id ?> d-block w-100" src="<?php $this->url('images/load.gif') ?>" data-original="<?php $this->url('images/mosque/'. $data->image) ?>" alt="First slide">
+                    <img class="load-delay<?= $d->id ?> d-block w-100" src="<?php $this->url('images/load.gif') ?>" data-original="<?php $this->url('images/mosque/'. $data->image) ?>" height="200px">
                     <script type="text/javascript">
           						$(document).ready(function () {
           						setTimeout(function () {
@@ -79,9 +79,9 @@
                 <div class="card bg-gradient-white card-img-holder text-grey">
                   <div class="card-body" style="padding: 5% !important">
                     <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image">
-                    <h4 class="font-weight-bold mb-3">
+                    <h6 class="font-weight-bold mb-3">
                       <i class="mdi mdi-check-circle text-success mdi-24px float-right"></i> <?= $d->name ?>
-                    </h4>
+                    </h6>
                   </div>
                 </div>
                 <div class="card">
@@ -100,7 +100,7 @@
               </div>
               <?php $t = $t + 1000; ?>
             <?php endforeach; ?>
-          </div>          
+          </div>
         <!-- content-wrapper ends -->
 
         <!-- partial:partials/_footer.php -->

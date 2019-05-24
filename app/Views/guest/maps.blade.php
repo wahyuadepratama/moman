@@ -48,97 +48,119 @@
                 </div>
                 </div>
               </div>
+            </div>
 
+            <div class="col-md-8 grid-margin">
+                <div id="map" class="form-control" style="height: 30em;positon:absolute"></div>
             </div>
-            <div class="col-md-9 grid-margin">
-                <div id="map" class="form-control" style="height: 35em;"></div>
-            </div>
-            <div class="col-md-3 grid-margin stretch-card">
+
+            <div class="col-md-4">
               <div class="card">
                 <div class="card-body" style="padding: 5%">
-                  <h6 style="text-align:center">Result</h6>
+                  <h6 class="btn btn-sm btn-success form-control">Result</h6><br>
 
-                  <div class="box-body" style="max-height:400px;overflow:auto;">
+                  <div style="max-height:330px;overflow:auto;">
                     <div class="form-group" id="hasilcari1" style="display:none;">
                       <table class="table table-bordered" id='hasilcari'>
-                        tes
                       </table>
                     </div>
                  </div>
-
-                 <div class="col-sm-4" style="display:none;" id="resultaround">
-                  <section class="panel">
-                    <div class="panel-body">
-                      <a class="btn btn-compose">Attraction Around</a>
-                      <div class="box-body" style="max-height:400px;overflow:auto;">
-                        <div class="form-group" id="hasilcari2" style="display:none;">
-                          <table class="table table-bordered" id='hasilcariaround'>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-                 </div>
-
-                 <div class="col-sm-8" style="display:none;" id="infoo">
-                   <section class="panel">
-                    <div class="panel-body">
-                      <a class="btn btn-compose">Information</a>
-                      <div class="box-body" style="max-height:350px;overflow:auto;">
-                        <div class="form-group">
-                          <table class="table" id='info'>
-                          <tbody  style='vertical-align:top;'>
-                          </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                    </section>
-                 </div>
-
-                 <div class="col-sm-8" style="display:none;" id="att1">
-                   <section class="panel">
-                    <div class="panel-body" >
-                      <a class="btn btn-compose">Attraction Around Mosque</a>
-                      <div class="box-body" style="max-height:350px;overflow:auto;">
-                        <div class="form-group">
-                          <table class="table table-bordered" id='info1'>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                    </section>
-					       </div>
-
-                 <div class="col-sm-4" style="display:none;" id="att2">
-                  <section class="panel">
-          					<div class="panel-body">
-                      <a class="btn btn-compose">Route</a>
-                    </div>
-                    <div id="rute" class='box-body'></div>
-                  </section>
-                 </div>
-
-                 <div class="col-sm-8" style="display:none;" id="infoev">
-                  <section class="panel">
-                    <div class="panel-body">
-                      <a class="btn btn-compose">Information of Event</a>
-                      <div class="box-body" style="max-height:350px;overflow:auto;">
-
-                        <div class="form-group">
-                          <table class="table" id='infoevent'>
-                          <tbody  style='vertical-align:top;'>
-                          </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-                 </div>
-
                 </div>
               </div>
             </div>
+
+            <div class="col-sm-4" style="display:none;" id="resultaround">
+             <section class="panel">
+               <div class="panel-body">
+                 <a class="btn btn-compose">Attraction Around</a>
+                 <div class="box-body" style="max-height:400px;overflow:auto;">
+                   <div class="form-group" id="hasilcari2" style="display:none;">
+                     <table class="table table-bordered" id='hasilcariaround'>
+                     </table>
+                   </div>
+                 </div>
+               </div>
+             </section>
+            </div>
+
+            <div class="col-sm-8" style="display:none;" id="infoo">
+              <div class="card">
+                <div class="card-body">
+                  <section class="panel">
+                   <div class="panel-body">
+
+                     <h4 class="btn btn-sm btn-success form-control">Information</h4><br>
+                     <div class="box-body" style="max-height:500px;overflow:auto;">
+                       <div class="form-group">
+                         <table class="table" id='info'>
+                         </table>
+                       </div>
+                     </div>
+                     <h4 class="btn btn-sm btn-success form-control">Facility</h4><br>
+                     <div class="box-body" style="max-height:500px;overflow:auto;">
+                       <div class="form-group">
+                         <table class="table" id='infoFacility'>
+                         </table>
+                       </div>
+                     </div>
+                     <h4 class="btn btn-sm btn-success form-control">Event</h4><br>
+                     <div class="box-body" style="max-height:500px;overflow:auto;">
+                       <div class="form-group">
+                         <table class="table" id='infoEvent'>
+                         </table>
+                       </div>
+                     </div>
+
+                   </div>
+                   </section>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-8" style="display:none;" id="att1">
+              <section class="panel">
+               <div class="panel-body" >
+                 <a class="btn btn-compose">Attraction Around Mosque</a>
+                 <div class="box-body" style="max-height:350px;overflow:auto;">
+                   <div class="form-group">
+                     <table class="table table-bordered" id='info1'>
+                     </table>
+                   </div>
+                 </div>
+               </div>
+               </section>
+            </div>
+
+            <div class="col-sm-4" style="display:none;" id="att2">
+             <div class="card">
+               <div class="card-body">
+                 <section class="panel">
+                   <div class="panel-body">
+                     <h4 class="btn btn-sm btn-success form-control">Route</h4><br>
+                   </div>
+                   <div id="rute" class='box-body' style="max-height:500px !important; overflow:auto;"></div>
+                 </section>
+               </div>
+             </div>
+            </div>
+
+            <div class="col-sm-8" style="display:none;" id="infoev">
+             <section class="panel">
+               <div class="panel-body">
+                 <a class="btn btn-compose">Information of Event</a>
+                 <div class="box-body" style="max-height:350px;overflow:auto;">
+
+                   <div class="form-group">
+                     <table class="table" id='infoevent'>
+                     <tbody  style='vertical-align:top;'>
+                     </tbody>
+                     </table>
+                   </div>
+                 </div>
+               </div>
+             </section>
+            </div>
+
           </div>
 
         </div>

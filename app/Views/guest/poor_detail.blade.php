@@ -38,7 +38,7 @@
               <span class="page-title-icon bg-gradient-primary text-white mr-2">
                 <i class="mdi mdi-home"></i>
               </span>
-              Donation Orphans
+              Poor Donation to <?= $mosque->name ?>
             </h3>
           </div>
 

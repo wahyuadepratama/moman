@@ -190,6 +190,7 @@
   <script type="text/javascript">
     $(document).ready(function() {
       $('#data').DataTable({
+        "pageLength" : "100",
         "dom": '<"clear"f><"clear">',
         "language": {
             "lengthMenu": '_MENU_ ',

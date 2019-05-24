@@ -15,9 +15,22 @@ Route::web('register/store', 'UserController', 'register');
 Route::web('admin', 'UserController', 'loginAdmin');
 Route::web('admin/login', 'UserController', 'checkLoginAdmin');
 
+// __________________________________________ MAPS __________________________________________
+
+Route::web('maps', 'MapsController', 'maps');
+Route::web('maps/kecamatan', 'MapsController', 'showKecamatan');
+
+Route::web('maps/mosque', 'MapsController', 'showMosque');
+Route::web('maps/mosque/marker', 'MapsController', 'indexMosqueMarker');
+Route::web('maps/mosque/radius', 'MapsController', 'radius');
+
+Route::web('maps/gallery', 'MapsController', 'gallery');
+
+Route::web('maps/filter', 'MapsController', 'filter');
+Route::web('maps/filter/event', 'MapsController', 'filterEvent');
+
 // __________________________________________ Guest __________________________________________
 Route::web('/', 'UserController', 'index');
-Route::web('maps', 'MapsController', 'maps');
 
 Route::web('donation', 'DonationController', 'donation');
 Route::web('donation/detail', 'DonationController', 'donationDetail');

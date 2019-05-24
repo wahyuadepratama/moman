@@ -44,54 +44,41 @@
             <span class="menu-title">Filter</span>
             <i class="menu-arrow"></i>
           </a>
-          <div class="collapse" id="filter">
-            <ul class="nav flex-column sub-menu">
-              <li class="nav-item" style="margin: 3%;">
-                <input type="text" class="form-control" placeholder="Name">
-              </li>
-              <li class="nav-item" style="margin: 3%;">
-                <select class="form-control">
-                  <option value="semua">All Worship Place</option>
-                  <option value="masjid">Masjid</option>
-                  <option value="mushalla">Mushalla</option>
-                </select>
-              </li>
-              <li class="nav-item" style="margin: 3%">
-                <select class="form-control">
-                  <option value="semua">All Facility</option>
-                  <option value="mukenah">Mukenah</option>
-                  <option value="tempat whudu">Whudu Place</option>
-                </select>
-              </li>
-              <li class="nav-item" style="margin: 3%">
-                <select class="form-control">
-                  <option value="semua">All District</option>
-                  <option value="">Air Manis</option>
-                  <option value="">Mata Air</option>
-                  <option value="">Alang Laweh</option>
-                  <option value="">Batang Arau</option>
-                  <option value="">Belakang Pondok</option>
-                  <option value="">Bukit Gado-gado</option>
-                  <option value="">Pasar Gadang</option>
-                  <option value="">Ranah Parak Rumbio</option>
-                  <option value="">Rawang</option>
-                  <option value="">Seberang Padang</option>
-                  <option value="">Seberang Palinggam</option>
-                  <option value="">Teluk Bayur</option>
-                </select>
-              </li>
-              <li class="nav-item" style="margin: 3%">
-                <select class="form-control">
-                  <option value="semua">All Parking Area</option>
-                  <option value="1">0 - 50</option>
-                  <option value="2">50 - 100</option>
-                </select>
-              </li>
-              <li class="nav-item" style="margin: 3%">
-                <input type="submit" class="form-control btn btn-gradient-success btn-sm" value="Filter">
-              </li>
-            </ul>
-          </div>
+            <div class="collapse" id="filter">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item" style="margin: 3%;">
+                  <input type="text" class="form-control" placeholder="Name" id="names">
+                </li>
+                <li class="nav-item" style="margin: 3%;">
+                  <select class="form-control" style=" color:grey" id="types">
+                    <option value="">All Worship Place</option>
+                    <option value="1">Masjid</option>
+                    <option value="2">Mushalla</option>
+                  </select>
+                </li>
+                <li class="nav-item" style="margin: 3%">
+                  <select class="form-control" style=" color:grey" id="park_area">
+                    <option value="0">All Parking Area</option>
+                    <option value="50">0 - 50</option>
+                    <option value="100">50 - 100</option>
+                    <option value="200">100 - 200</option>
+                    <option value="more"> > 200</option>
+                  </select>
+                </li>
+                <li class="nav-item" style="margin: 3%">
+                  <select class="form-control" style=" color:grey" id="capacity">
+                    <option value="0">All Capacity</option>
+                    <option value="100">0 - 100</option>
+                    <option value="300">100 - 300</option>
+                    <option value="500">300 - 500</option>
+                    <option value="more"> > 500</option>
+                  </select>
+                </li>
+                <li class="nav-item" style="margin: 3%">
+                  <button type="submit" class="form-control btn btn-gradient-success btn-sm" onclick="filterMasjid()">Filter</button>
+                </li>
+              </ul>
+            </div>
         </li>
 
         <li class="nav-item">
@@ -113,15 +100,15 @@
                 </script>
               </li>
               <li class="nav-item" style="margin: 3%">
-                <input type="submit" class="form-control btn btn-gradient-success btn-sm" value="Search">
+                <input type="submit" class="form-control btn btn-gradient-success btn-sm" value="Search" onclick="filterEventMasjid()">
               </li>
             </ul>
           </div>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="pages/icons/mdi.html">
-            <span class="menu-title">List Mosque</span>
+          <a class="nav-link" href="#" onclick="tampilkanSemuaMasjid()">
+            <span class="menu-title">All Mosque</span>
             <i class="mdi mdi-home-modern menu-icon"></i>
           </a>
         </li>
