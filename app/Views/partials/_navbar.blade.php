@@ -46,10 +46,15 @@ function activeNav($currect_page){
             <i class="mdi mdi-human-child mr-2 text-success"></i>
              Orphans
           </a>
+          <a class="dropdown-item" href="<?php $this->url('donation/tpa') ?>">
+            <i class="mdi mdi-account-multiple-outline mr-2 text-success"></i>
+            TPA / MDA
+          </a>
           <a class="dropdown-item" href="<?php $this->url('donation/poor') ?>">
             <i class="mdi mdi-heart-outline mr-2 text-success"></i>
             Poor
           </a>
+
         </div>
       </li>
     </ul>
@@ -75,7 +80,16 @@ function activeNav($currect_page){
             <h5>Maps</h5>
           </a>
           <a class="nav-link" href="<?php $this->url('donation') ?>">
-            <h5>Donation</h5>
+            <h5>Mosque</h5>
+          </a>
+          <a class="nav-link" href="<?php $this->url('donation/orphans') ?>">
+            <h5>Orphans</h5>
+          </a>
+          <a class="nav-link" href="<?php $this->url('donation/poor') ?>">
+            <h5>Poor</h5>
+          </a>
+          <a class="nav-link" href="<?php $this->url('donation/tpa') ?>">
+            <h5>TPA/MDA</h5>
           </a>
           <a class="nav-link" href="<?php $this->url('qurban') ?>">
             <h5>Qurban</h5>

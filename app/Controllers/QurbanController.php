@@ -5,7 +5,7 @@ class QurbanController extends Controller{
   // __________________________________________ GUEST __________________________________________
   public function index()
   {
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place ORDER BY name DESC");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
     return $this->view('guest/qurban', ['qurban' => $r]);

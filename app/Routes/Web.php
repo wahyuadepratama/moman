@@ -27,6 +27,7 @@ Route::web('maps/mosque/radius', 'MapsController', 'radius');
 Route::web('maps/gallery', 'MapsController', 'gallery');
 
 Route::web('maps/filter', 'MapsController', 'filter');
+Route::web('maps/filter/facility', 'MapsController', 'filterFacility');
 Route::web('maps/filter/event', 'MapsController', 'filterEvent');
 
 // __________________________________________ Guest __________________________________________
@@ -41,6 +42,9 @@ Route::web('donation/orphans/detail', 'DonationController', 'orphanDetail');
 Route::web('donation/poor', 'DonationController', 'poor');
 Route::web('donation/poor/detail', 'DonationController', 'poorDetail');
 
+Route::web('donation/tpa', 'DonationController', 'tpa');
+Route::web('donation/tpa/detail', 'DonationController', 'tpaDetail');
+
 Route::web('qurban', 'QurbanController', 'index');
 Route::web('qurban/detail', 'QurbanController', 'show');
 
@@ -54,6 +58,7 @@ Route::web('jamaah/profile/update', 'UserController', 'updateProfileJamaah');
 Route::web('donation/detail/store', 'DonationController', 'storeDonation');
 Route::web('orphan/detail/store', 'DonationController', 'storeOrphan');
 Route::web('poor/detail/store', 'DonationController', 'storePoor');
+Route::web('tpa/detail/store', 'DonationController', 'storeTpa');
 
 Route::web('qurban/store', 'QurbanController', 'store');
 
@@ -62,6 +67,8 @@ Route::web('jamaah/checking', 'DonationController', 'checkDonation');
 
 Route::web('jamaah/qurban', 'UserController', 'historyQurban');
 Route::web('jamaah/qurban/checking', 'QurbanController', 'checkQurban');
+
+Route::web('jamaah/about', 'WorshipPlaceController', 'about');
 
 //  __________________________________________ Stewardship __________________________________________
 Route::web('stewardship/dashboard', 'UserController', 'dashboardStewardship');
@@ -75,6 +82,15 @@ Route::web('stewardship/donation/project/progress', 'DonationController', 'updat
 
 Route::web('stewardship/donation/transaction', 'DonationController', 'transactionStewardship');
 Route::web('stewardship/donation/transaction/confirm', 'DonationController', 'confirmTransactionStewardship');
+Route::web('stewardship/donation/transaction/store', 'DonationController', 'storeAllInfaq');
+
+Route::web('stewardship/donation/payment', 'FinancialController', 'indexPayment');
+Route::web('stewardship/donation/payment/project/store', 'FinancialController', 'storeProject');
+Route::web('stewardship/donation/payment/orphans/store', 'FinancialController', 'storeOrphans');
+Route::web('stewardship/donation/payment/poor/store', 'FinancialController', 'storePoor');
+Route::web('stewardship/donation/payment/tpa/store', 'FinancialController', 'storeTpa');
+Route::web('stewardship/donation/payment/event/store', 'FinancialController', 'storeEvent');
+Route::web('stewardship/donation/payment/cash/store', 'FinancialController', 'storeCashMosque');
 
 Route::web('stewardship/qurban', 'QurbanController', 'animalStewardship');
 Route::web('stewardship/qurban/store', 'QurbanController', 'storeAnimalStewardship');
@@ -105,6 +121,10 @@ Route::web('stewardship/recipient/tpa', 'RecipientController', 'indexTpa');
 Route::web('stewardship/recipient/tpa/store', 'RecipientController', 'storeTpa');
 Route::web('stewardship/recipient/tpa/update', 'RecipientController', 'updateTpa');
 
+Route::web('stewardship/recipient/orphanage', 'RecipientController', 'indexOrphanage');
+Route::web('stewardship/recipient/orphanage/store', 'RecipientController', 'storeOrphanage');
+Route::web('stewardship/recipient/orphanage/update', 'RecipientController', 'updateOrphanage');
+
 Route::web('stewardship/recipient/store', 'RecipientController', 'indexStore');
 Route::web('stewardship/recipient/store/store', 'RecipientController', 'storeStore');
 Route::web('stewardship/recipient/store/update', 'RecipientController', 'updateStore');
@@ -116,6 +136,8 @@ Route::web('stewardship/recipient/builder/update', 'RecipientController', 'updat
 Route::web('stewardship/recipient/ustad', 'RecipientController', 'indexUstad');
 Route::web('stewardship/recipient/ustad/store', 'RecipientController', 'storeUstad');
 Route::web('stewardship/recipient/ustad/update', 'RecipientController', 'updateUstad');
+
+Route::web('stewardship/report', 'FinancialController', 'report');
 
 // __________________________________________ Admin __________________________________________
 Route::web('admin/dashboard', 'UserController', 'dashboardAdmin');

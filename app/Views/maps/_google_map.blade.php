@@ -624,6 +624,28 @@
 
   }
 
+  function filterFacility(){
+    hapusRadius();
+    hapusMarkerTerdekat();
+
+    var lay = [];
+    $("input:checkbox[name=facility]:checked").each(function(){
+        lay.push($(this).val());
+    });
+
+    if (lay==''){
+      Swal.fire({
+        text: 'Please choose facility!'
+      });
+    }else{
+      console.log(server+'maps/filter/facility?name='+lay);
+      $.ajax({ url: server+'maps/filter/facility?name='+lay, data: "", dataType: 'json', success: function (rows){
+        pushData(rows);
+      }});
+    }
+
+  }
+
   function filterEventMasjid(){
     hapusRadius();
     hapusMarkerTerdekat();

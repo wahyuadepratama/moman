@@ -72,7 +72,7 @@
                       $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM project_gallery WHERE project_id=:id ORDER BY RANDOM()"); $stmt->execute(['id' => $d->id]); $data = $stmt->fetch(PDO::FETCH_OBJ);
                     ?>
 
-                    <img class="load-delay<?= $d->id ?> d-block w-100" src="<?php $this->url('images/load.gif') ?>" data-original="<?php $this->url('images/project/'. $data->image) ?>" style="object-fit:cover" height="200">
+                    <img class="load-delay<?= $d->id ?> d-block w-100" src="<?php $this->url('images/load.gif') ?>" data-original="<?php $this->url('images/project/'. $data->image) ?>" style="object-fit:cover;border-radius:2%" height="200">
 
                     <script type="text/javascript">
           						$(document).ready(function () {
@@ -83,12 +83,12 @@
 
                   </div>
                 </div>
-                <div class="card bg-gradient-white card-img-holder text-grey">
+                <div class="card bg-gradient-white card-img-holder text-grey" style="border-radius: 5% !important">
                   <div class="card-body" style="padding: 10% !important">
                     <!-- <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image"> -->
-                    <h4 class="font-weight-bold mb-3" style="position:absolute">
+                    <h5 class="font-weight-bold mb-3" style="position:absolute">
                       <i class="mdi mdi-check-circle text-success mdi-24px float-right"></i> <?= $d->name ?>
-                    </h4><br><br><br>
+                    </h5><br><br><br>
                     <?php
                       if(isset($d->collected)){
                         $percent = ($d->collected/$d->fund)*100;
@@ -102,8 +102,6 @@
                     <h6 class="text-left">Fund Collected: </h6>
                     <h6 class="text-right"> Rp <?= number_format(($d->collected),0,',','.') ?> </h6>
                   </div>
-                </div>
-                <div class="card">
                   <a href="<?php $this->url('donation/detail?project='. $this->encrypt($d->id)) ?>" class="btn btn-sm btn-success">Detail</a>
                 </div>
               </div>

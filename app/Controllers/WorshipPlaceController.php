@@ -127,5 +127,72 @@ class WorshipPlaceController extends Controller{
   }
 // ______________________________________________ JAMAAH ______________________________________________
 
+  public function about()
+  {
+    $this->authJamaah();
+    $id = $_SESSION['user']->worship_place_id;
+    $stmt = $GLOBALS['pdo']->prepare("SELECT a.id, a.name, a.address, a.capacity, a.park_area_size,
+                                      ST_X(ST_Centroid(geom)) AS lang, ST_Y(ST_CENTROID(geom)) As lat
+                                      FROM worship_place as a WHERE id=:id");
+    $stmt->execute(['id' => $id]);
+    $data = $stmt->fetch(PDO::FETCH_OBJ);
 
+    $stmt = $GLOBALS['pdo']->prepare("SELECT image FROM gallery WHERE worship_place_id=:id");
+    $stmt->execute(['id' => $id]);
+    $g =  $stmt->fetch(PDO::FETCH_OBJ);
+
+    $this->authStewardship();
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM detail_condition
+                                      INNER JOIN facility ON detail_condition.facility_id = facility.id
+                                      INNER JOIN facility_condition ON detail_condition.facility_condition_id = facility_condition.id
+                                      WHERE worship_place_id=:id ORDER BY detail_condition.updated_at DESC");
+    $stmt->execute(['id' => $id]);
+    $f =  $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $this->authStewardship();
+    $stmt = $GLOBALS['pdo']->prepare("SELECT ustad.name as ustad, event.*, ustad_payment.* FROM ustad_payment
+                                      INNER JOIN ustad ON ustad_payment.ustad_id = ustad.id
+                                      INNER JOIN event ON ustad_payment.event_id = event.id
+                                      WHERE event.worship_place_id=:id");
+    $stmt->execute(['id' => $id]);
+    $e =  $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    if (!empty($e)) {
+      foreach ($e as $key) {
+        $date = new DateTime($key->schedule);
+        $now = new DateTime();
+        if($date < $now) {
+          $key->status = 'past';
+        }else {
+          $key->status = 'ongoing';
+        }
+      }
+    }
+
+    $data->image = 'images/mosque/'. $g->image;
+    $data->facility = $f;
+    $data->event = $e;
+
+
+    $stmt = $GLOBALS['pdo']->prepare("(SELECT id, status_in, status_out, datetime, description, fund
+                                      FROM cash_in WHERE worship_place_id=:id
+                                      AND status_in != 'orphan balance' AND status_in != 'project balance' AND status_in != 'poor balance'
+                                      AND status_in != 'event balance' AND status_in != 'tpa balance'
+                                      AND EXTRACT(YEAR FROM datetime)=:y
+                                      AND EXTRACT(MONTH FROM datetime)=:m AND confirmation='true' ORDER BY datetime)
+                                      UNION ALL (SELECT id, status_in, status_out, datetime, description, fund
+                                      FROM cash_out WHERE worship_place_id=:id
+                                      AND status_in != 'orphan balance' AND status_in != 'project balance' AND status_in != 'poor balance'
+                                      AND status_in != 'event balance' AND status_in != 'tpa balance'
+                                      AND EXTRACT(YEAR FROM datetime)=:y
+                                      AND EXTRACT(MONTH FROM datetime)=:m ORDER BY datetime) ORDER BY datetime");
+    $stmt->execute(['id' => $_SESSION['user']->worship_place_id, 'y' => date('Y'), 'm' => '5']);
+    $reportDonation = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM detail_qurban WHERE worship_place_id=:id AND year=:y");
+    $stmt->execute(['id' => $_SESSION['user']->worship_place_id, 'y' => date('Y')]);
+    $qurban = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    return $this->view('jamaah/report', ['q' => $data, 'allReport' => $reportDonation, 'qurban' => $qurban]);
+  }
 }

@@ -51,8 +51,8 @@
             </style>
             <div class="col-md-12 grid-margin">
               <div class="card" style="position:relative !important;">
-                <img class="img-fluid" src="<?php $this->url('images/poor.png') ?>" style="object-fit:cover;filter: sepia(90%) brightness(30%);height:150px">
-                <p class="fund">Poor Donation</p>
+                <img class="img-fluid" src="<?php $this->url('images/tpa.png') ?>" style="object-fit:cover;filter: sepia(90%) brightness(30%);height:150px">
+                <p class="fund">TPA / MDA Donation</p>
               </div>
             </div>
 
@@ -85,7 +85,7 @@
                   </div>
                 </div>
                 <div class="card">
-                  <a href="<?php $this->url('donation/poor/detail?id='. $this->encrypt($d->id)) ?>" class="btn btn-sm btn-success">Donate via this Mosque</a>
+                  <a href="<?php $this->url('donation/tpa/detail?id='. $this->encrypt($d->id)) ?>" class="btn btn-sm btn-success">Donate via this Mosque</a>
                 </div>
               </div>
               <?php $t = $t + 1000; ?>

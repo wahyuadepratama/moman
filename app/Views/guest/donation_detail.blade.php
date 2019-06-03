@@ -87,7 +87,7 @@
                 </div>
 
 
-                 <div class="card bg-gradient-light card-img-holder text-grey form-control" style="margin-top: 5%;padding: 2% !important;">
+                 <div class="card bg-gradient-white card-img-holder text-grey form-control" style="margin-top: 5%;padding: 2% !important;">
                   <div class="card-body" style="padding: 5% !important">
                     <!-- <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image"> -->
                     <h4 class="font-weight-bold mb-3">
@@ -123,7 +123,7 @@
               </div>
               <div class="col-md-5">
 
-                <div class="card bg-gradient-light card-img-holder text-grey form-control" style="padding: 1% !important;">
+                <div class="card bg-gradient-white card-img-holder text-grey form-control" style="padding: 1% !important;">
                   <div class="card-body">
                     <div class="row">
 
@@ -167,7 +167,7 @@
                   </div>
                 </div>
 
-                <div class="card bg-gradient-light card-img-holder text-grey form-control" style="margin-top:5%;padding: 2% !important;">
+                <div class="card bg-gradient-white card-img-holder text-grey form-control" style="margin-top:5%;padding: 2% !important;">
                   <div class="card-body" style="padding: 10% !important">
                     <!-- <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image"> -->
                     <h4 class="font-weight-bold mb-3">

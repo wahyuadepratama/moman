@@ -116,7 +116,7 @@
                                  ?> </td>
                                 <td>
                                   <?php $e = $this->encrypt($value['id']) ?>
-                                  <a onclick="window.open('<?= $this->url('donation/detail?project='. $e) ?>', '_blank');" href="#" class="btn btn-sm btn-success">Show</a>
+                                  <a onclick="window.open('<?= $this->url('donation/detail?project='. $e) ?>', '_blank');" href="#" class="btn btn-sm btn-success"> <i class="fa fa-search"></i> </a>
                                 </td>
                                 <td>
                                   <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#progress<?= $value['id'] ?>">+ Add Progress</a>

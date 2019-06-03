@@ -67,7 +67,7 @@
                     <?php
                       $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM gallery WHERE worship_place_id=:id"); $stmt->execute(['id' => $d->id]); $data = $stmt->fetch(PDO::FETCH_OBJ);
                     ?>
-                    <img class="load-delay<?= $d->id ?> d-block w-100" src="<?php $this->url('images/load.gif') ?>" data-original="<?php $this->url('images/mosque/'. $data->image) ?>" height="200px">
+                    <img class="load-delay<?= $d->id ?> d-block w-100" src="<?php $this->url('images/load.gif') ?>" data-original="<?php $this->url('images/mosque/'. $data->image) ?>" height="200px" style="border-radius: 3%">
                     <script type="text/javascript">
           						$(document).ready(function () {
           						setTimeout(function () {
@@ -76,7 +76,7 @@
           					</script>
                   </div>
                 </div>
-                <div class="card bg-gradient-white card-img-holder text-grey">
+                <div class="card bg-gradient-white card-img-holder text-grey" style="border-radius: 5%">
                   <div class="card-body" style="padding: 5% !important">
                     <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image">
                     <h6 class="font-weight-bold mb-3">

@@ -52,6 +52,13 @@ function active($currect_page){
           </a>
         </li>
 
+        <li class="nav-item <?php active('jamaah/about');  $this->active('jamaah/about')?>">
+          <a class="nav-link" href="<?php $this->url('jamaah/about') ?>">
+            <span class="menu-title">About Mosque</span>
+            <i class="mdi mdi-home menu-icon"></i>
+          </a>
+        </li>
+
       </span>
     </li>
 

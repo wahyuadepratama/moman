@@ -226,4 +226,20 @@ class MapsController extends Controller{
     }
   }
 
+  public function filterFacility()
+  {
+    $str = explode (",", $_GET['name']);
+    $result = array();
+    foreach ($str as $key) {
+      $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                        ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a INNER JOIN detail_condition ON
+                                        detail_condition.worship_place_id=a.id WHERE facility_id = :id");
+      $stmt->execute(['id' => $key]);
+      $data = $stmt->fetchAll(PDO::FETCH_OBJ);
+      $result = array_merge($result,$data);
+    }
+
+    echo json_encode($result);
+  }
+
 }

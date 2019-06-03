@@ -56,6 +56,12 @@ function active($currect_page){
                   <i class="mdi mdi-cash-multiple menu-icon"></i>
                 </a>
               </li>
+              <li class="nav-item <?php $this->active('stewardship/donation/payment');?>">
+                <a class="nav-link" href="<?php $this->url('stewardship/donation/payment') ?>">
+                  <span class="menu-title">Payment</span>
+                  <i class="mdi mdi-account-multiple menu-icon"></i>
+                </a>
+              </li>
             </ul>
           </div>
         </li>
@@ -151,7 +157,7 @@ function active($currect_page){
               </li>
               <li class="nav-item <?php $this->active('stewardship/recipient/orphanage');?>">
                 <a class="nav-link" href="<?php $this->url('stewardship/recipient/orphanage') ?>">
-                  <span class="menu-title" style="color:red">Orphanage</span>
+                  <span class="menu-title">Orphanage</span>
                   <i class="mdi mdi-account-convert menu-icon"></i>
                 </a>
               </li>
@@ -171,33 +177,11 @@ function active($currect_page){
           </div>
         </li>
 
-        <li class="nav-item <?php $this->active('stewardship/financial/cashin');?> <?php $this->active('stewardship/financial/cashout'); $this->active('stewardship/financial/report');?>">
-          <a class="nav-link" data-toggle="collapse" href="#financial" aria-expanded="false" aria-controls="ui-basic">
-            <span class="menu-title">Financial</span>
-            <i class="menu-arrow"></i>
+        <li class="nav-item <?php $this->active('stewardship/report');?>">
+          <a class="nav-link" href="<?php $this->url('stewardship/report?year='. date('Y') .'&month='. date('m') .'&type=All Donation') ?>">
+            <span class="menu-title">Report</span>
+            <i class="mdi mdi-chart-line menu-icon"></i>
           </a>
-          <div class="collapse" id="financial">
-            <ul class="nav flex-column sub-menu">
-              <li class="nav-item <?php $this->active('stewardship/financial/cashin');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/financial/cashout') ?>">
-                  <span class="menu-title">Cash In</span>
-                  <i class="mdi mdi-chart-line menu-icon"></i>
-                </a>
-              </li>
-              <li class="nav-item <?php $this->active('stewardship/financial/cashout');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/financial/cashout') ?>">
-                  <span class="menu-title">Cash Out</span>
-                  <i class="mdi mdi-chart-bar menu-icon"></i>
-                </a>
-              </li>
-              <li class="nav-item <?php $this->active('stewardship/financial/report');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/financial/report') ?>">
-                  <span class="menu-title">Report</span>
-                  <i class="mdi mdi-chart-histogram menu-icon"></i>
-                </a>
-              </li>
-            </ul>
-          </div>
         </li>
 
       </span>

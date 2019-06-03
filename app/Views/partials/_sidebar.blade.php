@@ -82,6 +82,28 @@
         </li>
 
         <li class="nav-item">
+          <a class="nav-link" data-toggle="collapse" href="#facility" aria-expanded="false" aria-controls="ui-basic">
+            <span class="menu-title">Facility</span>
+            <i class="menu-arrow"></i>
+          </a>
+          <div class="collapse" id="facility">
+              <?php
+                $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM facility");
+                $stmt->execute();
+                $fac = $stmt->fetchAll(PDO::FETCH_OBJ);
+              ?>
+              <?php foreach ($fac as $f): ?>
+                <div class="form-check" style="margin:3%">
+                  <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" value="<?= $f->id ?>" name="facility"> <?= $f->name ?>
+                  </label>
+                </div>
+              <?php endforeach; ?>
+              <button style="margin:3%" type="submit" class="form-control btn btn-gradient-success btn-sm" onclick="filterFacility()">Filter</button>
+          </div>
+        </li>
+
+        <li class="nav-item">
           <a class="nav-link" data-toggle="collapse" href="#kegiatan" aria-expanded="false" aria-controls="ui-basic">
             <span class="menu-title">Event</span>
             <i class="menu-arrow"></i>

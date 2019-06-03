@@ -187,4 +187,41 @@ class RecipientController extends Controller{
     }
   }
 
+  public function indexOrphanage()
+  {
+    $this->authStewardship();
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM orphanage");
+    $stmt->execute();
+    $data = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    return $this->view('stewardship/orphanage', ['orphanage' => $data]);
+  }
+
+  public function storeOrphanage()
+  {
+    $this->authStewardship();
+    $this->check_csrf($_POST);
+    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO orphanage(name, address, phone)
+                                      VALUES(:name, :address, :phone)");
+    $stmt->execute(['name'=> $_POST['name'], 'address' => $_POST['address'], 'phone' => $_POST['phone'],]);
+
+    $this->flash('Add Orphan Data Successfully!');
+    return $this->redirect('stewardship/recipient/orphanage');
+  }
+
+  public function updateOrphanage()
+  {
+    if (isset($_GET['id'])) {
+      $this->authStewardship();
+      $this->check_csrf($_POST);
+      $stmt = $GLOBALS['pdo']->prepare("UPDATE orphanage SET name=:name, address=:address, phone=:phone WHERE id=:id");
+      $stmt->execute(['name'=> $_POST['name'], 'address' => $_POST['address'], 'phone' => $_POST['phone'], 'id' => $_GET['id']]);
+
+      $this->flash('Edit Orphan Data Successfully!');
+      return $this->redirect('stewardship/recipient/orphanage');
+    }else{
+      return $this->redirect('stewardship/recipient/orphanage');
+    }
+  }
+
 }

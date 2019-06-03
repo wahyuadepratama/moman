@@ -54,6 +54,7 @@
                       <table class="table" id="data">
                         <thead style="text-align:center">
                           <tr>
+                            <th>Trx Qurban</th>
                             <th>Datetime</th>
                             <th>Animal</th>
                             <th>Total</th>
@@ -64,6 +65,7 @@
                         <tbody style="text-align:center">
                           <?php foreach ($trans as $h): ?>
                             <tr>
+                              <td>#<?= $h->worship_place_id ?><?= $h->grup ?><?= $h->year ?></td>
                               <td>
                                 <?php
                                   $date = new DateTime($h->datetime);

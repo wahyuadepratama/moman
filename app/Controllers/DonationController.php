@@ -65,7 +65,7 @@ class DonationController extends Controller{
 
   public function orphans()
   {
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place ORDER BY name DESC");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
     return $this->view('guest/orphan', ['orphan' => $r]);
@@ -110,7 +110,7 @@ class DonationController extends Controller{
 
   public function poor()
   {
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place ORDER BY name DESC");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place ORDER BY id ASC");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
     return $this->view('guest/poor', ['orphan' => $r]);
@@ -145,6 +145,51 @@ class DonationController extends Controller{
       $donatur = $stmt->fetchAll(PDO::FETCH_OBJ);
 
       return $this->view('guest/poor_detail', ['mosque' => $m,
+                                               'steward' => $stewardship,
+                                               'account' => $account,
+                                               'donatur' => $donatur]);
+    }else{
+      return $this->view('error/404');
+    }
+  }
+
+  public function tpa()
+  {
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place ORDER BY id ASC");
+    $stmt->execute();
+    $r = $stmt->fetchAll(PDO::FETCH_OBJ);
+    return $this->view('guest/tpa', ['orphan' => $r]);
+  }
+
+  public function tpaDetail()
+  {
+    if(isset($_GET['id'])){
+      $id = $this->decrypt($_GET['id']);
+
+      $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place WHERE id = :id");
+      $stmt->execute(['id' => $id]);
+      $m = $stmt->fetch(PDO::FETCH_OBJ);
+
+      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp FROM stewardship
+                                        INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
+                                        WHERE jamaah.worship_place_id = :id");
+      $stmt->execute(['id' => $id]);
+      $stewardship = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
+                                        FROM account INNER JOIN stewardship ON account.stewardship_id = stewardship.jamaah_id
+                                        INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
+                                        WHERE jamaah.worship_place_id=:id");
+      $stmt->execute(['id' => $id]);
+      $account = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+      $stmt = $GLOBALS['pdo']->prepare("SELECT cash_in.public, cash_in.fund, jamaah.username FROM cash_in INNER JOIN jamaah ON
+                                        cash_in.jamaah_id = jamaah.id WHERE cash_in.status_in='transfer jamaah'
+                                        AND cash_in.status_out='tpa' AND cash_in.confirmation=true AND cash_in.worship_place_id=:id");
+      $stmt->execute(['id' => $id]);
+      $donatur = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+      return $this->view('guest/tpa_detail', ['mosque' => $m,
                                                'steward' => $stewardship,
                                                'account' => $account,
                                                'donatur' => $donatur]);
@@ -284,6 +329,47 @@ class DonationController extends Controller{
     }
   }
 
+  public function storeTpa()
+  {
+    $this->authJamaah();
+    $this->check_csrf($_POST);
+
+    if (isset($_GET['id'])) {
+
+      if (!isset($_POST)) {
+        return $this->redirect('tpa/detail?id='. $_GET['id']);
+      }
+
+      $_POST['fund'] = substr($_POST['fund'], 4);
+      $_POST['fund'] = str_replace(".", "", $_POST['fund']);
+
+      $id = $this->decrypt($_GET['id']);
+
+      if ($_POST['public'] == 'public') {
+        $_POST['public'] = 'true';
+      }else{
+        $_POST['public'] = 'false';
+      }
+
+      $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, jamaah_id, fund,
+                                        status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:worship, :jamaah, :fund, :_in, :_out, now(), :dsc, 'false', :public)");
+      $stmt->execute(['worship' => $id,
+                      'jamaah' => $_SESSION['user']->jamaah_id,
+                      'fund' => $_POST['fund'],
+                      '_in' => 'transfer jamaah',
+                      '_out' => 'tpa',
+                      'dsc' => $_POST['account'],
+                      'public' => $_POST['public']
+                    ]);
+
+      return $this->redirect('jamaah/checking?id='. $this->encrypt($GLOBALS['pdo']->lastInsertId()));
+
+    }else{
+      return $this->view('error/404');
+    }
+  }
+
   public function checkDonation()
   {
     $this->authJamaah();
@@ -383,7 +469,7 @@ class DonationController extends Controller{
   public function transactionStewardship()
   {
     $this->authStewardship();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT cash_in.*, worship_place.name, jamaah.username FROM cash_in
+    $stmt = $GLOBALS['pdo']->prepare("SELECT cash_in.*, worship_place.name, jamaah.username, jamaah.phone FROM cash_in
                                       INNER JOIN worship_place ON cash_in.worship_place_id = worship_place.id
                                       INNER JOIN jamaah ON cash_in.jamaah_id = jamaah.id
                                       WHERE worship_place.id=:worship_id ORDER BY confirmation ASC");
@@ -406,7 +492,104 @@ class DonationController extends Controller{
     }else {
       return $this->redirect('stewardship/donation/transaction');
     }
+  }
 
+  public function storeAllInfaq()
+  {
+    $this->authStewardship();
+    $this->check_csrf($_POST);
+    // $this->die($_POST);
+
+    $_POST['fund'] = substr($_POST['fund'], 4);
+    $_POST['fund'] = str_replace(".", "", $_POST['fund']);
+
+    if ($_POST['type'] == 'event') {
+      $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, fund, status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:wpi, :f, :si, :so, now(), :ds, :c, :p)");
+      $stmt->execute([
+        'wpi' => $_SESSION['user']->worship_place_id,
+        'f' => $_POST['fund'],
+        'si' => 'infaq box',
+        'so' => 'event',
+        'ds' => $_POST['name'],
+        'c' => 'true',
+        'p' => 'false'
+      ]);
+    }
+
+    if ($_POST['type'] == 'infaq box') {
+      $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, fund, status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:wpi, :f, :si, :so, now(), :ds, :c, :p)");
+      $stmt->execute([
+        'wpi' => $_SESSION['user']->worship_place_id,
+        'f' => $_POST['fund'],
+        'si' => 'infaq box',
+        'so' => 'cash',
+        'ds' => $_POST['name'],
+        'c' => 'true',
+        'p' => 'false'
+      ]);
+    }
+
+    if ($_POST['type'] == 'project') {
+      $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, project_id, fund, status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:wpi, :pr, :f, :si, :so, now(), :ds, :c, :p)");
+      $stmt->execute([
+        'wpi' => $_SESSION['user']->worship_place_id,
+        'pr' => $_POST['project_id'],
+        'f' => $_POST['fund'],
+        'si' => 'cash jamaah',
+        'so' => 'project',
+        'ds' => $_POST['name'],
+        'c' => 'true',
+        'p' => 'false'
+      ]);
+    }
+
+    if ($_POST['type'] == 'poor') {
+      $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, fund, status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:wpi, :f, :si, :so, now(), :ds, :c, :p)");
+      $stmt->execute([
+        'wpi' => $_SESSION['user']->worship_place_id,
+        'f' => $_POST['fund'],
+        'si' => 'cash jamaah',
+        'so' => 'poor',
+        'ds' => $_POST['name'],
+        'c' => 'true',
+        'p' => 'false'
+      ]);
+    }
+
+    if ($_POST['type'] == 'orphanage') {
+      $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, fund, status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:wpi, :f, :si, :so, now(), :ds, :c, :p)");
+      $stmt->execute([
+        'wpi' => $_SESSION['user']->worship_place_id,
+        'f' => $_POST['fund'],
+        'si' => 'cash jamaah',
+        'so' => 'orphanage',
+        'ds' => $_POST['name'],
+        'c' => 'true',
+        'p' => 'false'
+      ]);
+    }
+
+    if ($_POST['type'] == 'tpa') {
+      $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, fund, status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:wpi, :f, :si, :so, now(), :ds, :c, :p)");
+      $stmt->execute([
+        'wpi' => $_SESSION['user']->worship_place_id,
+        'f' => $_POST['fund'],
+        'si' => 'cash jamaah',
+        'so' => 'tpa',
+        'ds' => $_POST['name'],
+        'c' => 'true',
+        'p' => 'false'
+      ]);
+    }
+
+    $this->flash('Transaction Added Successfully! Check Payment Menu to Use Fund');
+    return $this->redirect('stewardship/donation/transaction');
   }
 
 }

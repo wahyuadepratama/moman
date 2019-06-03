@@ -101,6 +101,7 @@
                                 <div class="form-group">
                                   <label>Qurban Option</label>
                                   <select class="form-control" name="account" style="color: black;" onchange="choose(this.value)">
+                                    <option value="0">===== Choose Qurban Animal =====</option>
                                     <?php foreach ($qurban as $q): ?>
                                       <option value="<?= $q->max_person . '~' . 'Rp ' . number_format(($q->animal_price),0,',','.').'~'. $q->animal_type ?>"><?= $q->animal_type ?></option>
                                     <?php endforeach; ?>

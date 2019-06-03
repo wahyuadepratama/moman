@@ -40,8 +40,76 @@
               <span class="page-title-icon bg-gradient-primary text-white mr-2">
                 <i class="mdi mdi-account-multiple"></i>
               </span>
-              Transaction Confirmation
+              Confirmation From Jamaah
             </h3>
+
+            <a href="#" data-toggle="modal" data-target="#add_project" class="btn btn-gradient-danger btn-sm">+ Add Donation</a>
+            <!-- Modal Avatar -->
+            <div class="modal fade" id="add_project" role="dialog" aria-labelledby="avatar" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <form action="<?php $this->url('stewardship/donation/transaction/store') ?>" method="post" enctype="multipart/form-data">
+
+                  <?php $this->csrf_field() ?>
+
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="avatar">New Infaq</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <h6> <small>Select Donation Type</small> </h6>
+                      <select class="form-control" name="type" style="color:black" onchange="changes(this.value)">
+                        <option value="event">Donation from Event</option>
+                        <option value="infaq box">Donation from Infaq Box</option>
+                        <option value="project">Donation for Mosque Construction</option>
+                        <option value="poor">Donation for Poor</option>
+                        <option value="orphanage">Donation for Orphans</option>
+                        <option value="tpa">Donation for TPA/MDA</option>
+                      </select>
+
+                      <script type="text/javascript">
+                        function changes(v) {
+                          if (v == 'project') {
+                            var z = document.getElementById("projectOption");
+                            z.style.display = "block";
+                          }else{
+                            var z = document.getElementById("projectOption");
+                            z.style.display = "none";
+                          }
+                        }
+                      </script>
+
+                      <div id="projectOption" style="margin-top:2%;margin-bottom:2%;display:none">
+                        <select class="js-example-basic-single form-control" name="project_id" style="color:black">
+                          <?php
+                            $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM project WHERE worship_place_id=:id");
+                            $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
+                            $b = $stmt->fetchAll(PDO::FETCH_OBJ);
+                          ?>
+                          <?php foreach ($b as $k): ?>
+                            <option value="<?= $k->id ?>"><?= $k->name ?></option>
+                          <?php endforeach; ?>
+                        </select>
+                      </div>
+
+                      <br><h6> <small>Write Description (optional)</small> </h6>
+                      <input type="text" name="name" class="form-control" placeholder="Description (optional)">
+
+                      <br><h6> <small>Fund</small> </h6>
+                      <input type="text" placeholder="Fund" name="fund" class="form-control" id="rupiah" required><br>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-success">Add</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- End Modal -->
+
           </div>
 
           <div class="row">
@@ -54,6 +122,7 @@
                       <table class="table" id="data">
                         <thead style="text-align:center">
                           <tr>
+                            <th>Trx</th>
                             <th>Datetime</th>
                             <th>Donation</th>
                             <th>Total</th>
@@ -64,6 +133,7 @@
                         <tbody style="text-align:center">
                           <?php foreach ($trans as $h): ?>
                             <tr>
+                              <td>#<?= $h->id ?></td>
                               <td>
                                 <?php
                                   $date = new DateTime($h->datetime);
@@ -72,13 +142,15 @@
                               </td>
                               <td>
                                 <?php if ($h->status_out == 'project'): ?>
-                                  Mosque Development
+                                  Mosque Construction
                                 <?php elseif ($h->status_out == 'tpa'): ?>
                                   Infaq TPA
                                 <?php elseif ($h->status_out == 'orphanage'): ?>
                                   Infaq Orphanage
                                 <?php elseif ($h->status_out == 'poor'): ?>
                                   Infaq Poor
+                                <?php elseif ($h->status_out == 'event'): ?>
+                                  From Event
                                 <?php endif; ?>
                               </td>
                               <td>
@@ -116,6 +188,11 @@
                                               <td>Donatur</td>
                                               <td>:</td>
                                               <td><?= $h->username ?></td>
+                                            </tr>
+                                            <tr>
+                                              <td>Contact</td>
+                                              <td>:</td>
+                                              <td><?= $h->phone ?></td>
                                             </tr>
                                             <?php if ($h->confirmation == true): ?>
                                               <tr>
@@ -193,6 +270,37 @@
     } );
 
   </script>
+  <script type="text/javascript">
+
+		var rupiah = document.getElementById('rupiah');
+		rupiah.addEventListener('keyup', function(e){
+			// tambahkan 'Rp.' pada saat form di ketik
+			// gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
+			rupiah.value = formatRupiah(this.value, 'Rp. ');
+		});
+
+		/* Fungsi formatRupiah */
+		function formatRupiah(angka, prefix){
+			var number_string = angka.replace(/[^,\d]/g, '').toString(),
+			split   		= number_string.split(','),
+			sisa     		= split[0].length % 3,
+			rupiah     		= split[0].substr(0, sisa),
+			ribuan     		= split[0].substr(sisa).match(/\d{3}/gi);
+
+			// tambahkan titik jika yang di input sudah menjadi angka ribuan
+			if(ribuan){
+				separator = sisa ? '.' : '';
+				rupiah += separator + ribuan.join('.');
+			}
+
+			rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+			return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+		}
+
+    rupiah.addEventListener('keyup', function(e){
+      rupiah.value = formatRupiah(this.value, 'Rp. ');
+    });
+	</script>
   <script src="<?php $this->url('script/js/dashboard.js') ?>"></script>
   <!-- End custom js for this page-->
 </body>
