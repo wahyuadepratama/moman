@@ -166,3 +166,5 @@ Route::web('api/facility', 'ApiFacilityController', 'index');
 Route::web('api/donation', 'ApiDonationController', 'index');
 Route::web('api/donation/detail', 'ApiDonationController', 'show');
 Route::web('api/donation/store', 'ApiDonationController', 'store');
+
+Route::web('api/qurban', 'ApiQurbanController', 'index');
