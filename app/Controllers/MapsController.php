@@ -60,7 +60,7 @@ class MapsController extends Controller{
       $stmt->execute(['id' => $id]);
       $g =  $stmt->fetch(PDO::FETCH_OBJ);
 
-      $this->authStewardship();
+      // $this->authStewardship();
       $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM detail_condition
                                         INNER JOIN facility ON detail_condition.facility_id = facility.id
                                         INNER JOIN facility_condition ON detail_condition.facility_condition_id = facility_condition.id
@@ -68,7 +68,7 @@ class MapsController extends Controller{
       $stmt->execute(['id' => $id]);
       $f =  $stmt->fetchAll(PDO::FETCH_OBJ);
 
-      $this->authStewardship();
+      // $this->authStewardship();
       $stmt = $GLOBALS['pdo']->prepare("SELECT ustad.name as ustad, event.*, ustad_payment.* FROM ustad_payment
                                         INNER JOIN ustad ON ustad_payment.ustad_id = ustad.id
                                         INNER JOIN event ON ustad_payment.event_id = event.id

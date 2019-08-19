@@ -123,7 +123,7 @@
                           map: map,
                           animation: google.maps.Animation.DROP,
                         });
-        console.log(id);
+
         markersDua.push(marker);
         map.setCenter(centerBaru);
         klikInfoWindow(id);
@@ -140,7 +140,7 @@
        hapusInfo();
        clearroute2();
     	 clearroute();
-       hapusMarkerTerdekat();
+       hapusMarkerTerdekat();       
        $.ajax({url: server+'maps/mosque/marker?id='+idd, data: "", dataType: 'json', success: function(rows){
 
              for (var i in rows){
@@ -387,7 +387,6 @@
 
     $.ajax({
       url: server+'/maps/mosque/radius?lat='+pos.lat+'&lang='+pos.lng+'&rad='+rad, data: "", dataType: 'json', success: function(rows){
-        console.log("hy");
         for (var i in rows){
           var row     = rows[i];
           var id   = row.id;
