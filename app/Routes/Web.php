@@ -168,3 +168,14 @@ Route::web('api/donation/detail', 'ApiDonationController', 'show');
 Route::web('api/donation/store', 'ApiDonationController', 'store');
 
 Route::web('api/qurban', 'ApiQurbanController', 'index');
+
+Route::web('api/maps', 'ApiMapsController', 'index');
+
+Route::web('api/mosque', 'ApiDonationController', 'listMosque');
+Route::web('api/mosque/detail', 'ApiDonationController', 'detailMosqueForDonation');
+Route::web('api/mosque/orphan/store', 'ApiDonationController', 'storeOrphan');
+Route::web('api/mosque/poor/store', 'ApiDonationController', 'storePoor');
+Route::web('api/mosque/tpa/store', 'ApiDonationController', 'storeTpa');
+
+Route::web('api/history', 'ApiDonationController', 'history');
+Route::web('api/history/detail', 'ApiDonationController', 'historyDetail');

@@ -474,7 +474,7 @@ class DonationController extends Controller{
                                       INNER JOIN jamaah ON cash_in.jamaah_id = jamaah.id
                                       WHERE worship_place.id=:worship_id ORDER BY confirmation ASC");
     $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
-    $data = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $data = $stmt->fetchAll(PDO::FETCH_OBJ);    
 
     return $this->view('stewardship/transaction', ['trans' => $data]);
   }

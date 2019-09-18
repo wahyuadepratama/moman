@@ -20,15 +20,7 @@ class ApiQurbanController extends Controller
       $stmt->execute(['id'=>$key->id, 'y' => date('Y')]);
       $t = $stmt->fetchAll(PDO::FETCH_OBJ);
       $key->animal_type = $t;
-    }
-
-    foreach($r as $key){
-      $i=0;
-      if(empty($key->animal_type)){
-        $r[$i] = $key;
-      }
-      $i++;
-    }
+    }    
 
     echo json_encode($r);
   }

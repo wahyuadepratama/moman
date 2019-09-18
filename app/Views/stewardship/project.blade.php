@@ -108,7 +108,14 @@
                                 <td><?= $no ?></td>
                                 <td> <?= $value['name']  ?> </td>
                                 <td> Rp <?= number_format(($value['fund']),0,',','.') ?> </td>
-                                <td> belum dibuat </td>
+                                <td>
+                                  <?php
+                                    $stmt = $GLOBALS['pdo']->prepare("SELECT SUM(fund) as total FROM cash_in WHERE project_id=:id AND confirmation = 'true'");
+                                    $stmt->execute(['id' => $value['id']]);
+                                    $collected = $stmt->fetch(PDO::FETCH_OBJ);
+                                    echo 'Rp '. number_format($collected->total,0,',','.');
+                                  ?>
+                                </td>
                                 <td> <?php
                                   $stmt = $GLOBALS['pdo']->prepare("SELECT count(*) FROM project_gallery WHERE project_id=:project_id");
                                   $stmt->execute(['project_id' => $value['id']]);

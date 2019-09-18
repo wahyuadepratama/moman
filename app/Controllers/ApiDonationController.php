@@ -66,7 +66,6 @@ class ApiDonationController extends Controller
       $stmt->execute(['id' => $result->worship_id]);
       $stewardship = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-      // ------------------ Belum digunakan
       $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
                                         FROM account INNER JOIN stewardship ON account.stewardship_id = stewardship.jamaah_id
                                         INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
@@ -80,17 +79,20 @@ class ApiDonationController extends Controller
                                         cash_in.confirmation=true");
       $stmt->execute(['id' => $id]);
       $donatur = $stmt->fetchAll(PDO::FETCH_OBJ);
-      // -------------------
 
       $stmt = $GLOBALS['pdo']->prepare("SELECT SUM(fund) as total FROM cash_in WHERE project_id=:id AND confirmation = 'true'");
       $stmt->execute(['id' => $id]);
       $collected = $stmt->fetch(PDO::FETCH_OBJ);
 
+      $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM project_gallery WHERE project_id=:id");
+      $stmt->execute(['id' => $result->id]);
+      $gallery = $stmt->fetchAll(PDO::FETCH_OBJ);;
+
       $result->fund_collected = 'Rp '. number_format(($collected->total),0,',','.');
-      $finally['project'] = $result;
-      $finally['account'] = $account;
+      $finally = array('project' => $result, 'account' => $account, 'gallery' => $gallery);
 
       echo json_encode($finally);
+      
     }else{
       $result = ['status' => 'data not found'];
       echo json_encode($result);
@@ -170,6 +172,187 @@ class ApiDonationController extends Controller
       $result = ['status' => 'data not found'];
       echo json_encode($result);
     }
+  }
+
+  // ---------------------------------------------- For Orphans, TPA/MDA, Poor ------------------------------------------------------------
+
+  public function listMosque()
+  {
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place");
+    $stmt->execute();
+    $collected = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    echo json_encode($collected);
+  }
+
+  public function detailMosqueForDonation()
+  {
+    if(isset($_GET['id'])){
+
+      $id = $_GET['id'];
+
+      $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place WHERE id = :id");
+      $stmt->execute(['id' => $id]);
+      $m = $stmt->fetch(PDO::FETCH_OBJ);
+
+      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp FROM stewardship
+                                        INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
+                                        WHERE jamaah.worship_place_id = :id");
+      $stmt->execute(['id' => $id]);
+      $stewardship = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
+                                        FROM account INNER JOIN stewardship ON account.stewardship_id = stewardship.jamaah_id
+                                        INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
+                                        WHERE jamaah.worship_place_id=:id");
+      $stmt->execute(['id' => $id]);
+      $account = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+      $stmt = $GLOBALS['pdo']->prepare("SELECT cash_in.public, cash_in.fund, jamaah.username FROM cash_in INNER JOIN jamaah ON
+                                        cash_in.jamaah_id = jamaah.id WHERE cash_in.status_in='transfer jamaah'
+                                        AND cash_in.status_out='orphanage' AND cash_in.confirmation=true AND cash_in.worship_place_id=:id");
+      $stmt->execute(['id' => $id]);
+      $donatur = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+      $result = array('mosque' => $m,
+                      'stewardship' => $stewardship,
+                      'account' => $account,
+                      'donatur' => $donatur);
+
+      echo json_encode($result);
+
+    }else{
+      $result = ['status' => 'data not found'];
+      echo json_encode($result);
+    }
+  }
+
+  public function storeOrphan()
+  {
+    if (isset($_GET['id'])) {
+
+      $id = $_GET['id'];
+
+      $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, jamaah_id, fund,
+                                        status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:worship, :jamaah, :fund, :_in, :_out, now(), :dsc, 'false', :public)");
+      $stmt->execute(['worship' => $id,
+                      'jamaah' => $_POST['jamaah'],
+                      'fund' => $_POST['fund'],
+                      '_in' => 'transfer jamaah',
+                      '_out' => 'orphanage',
+                      'dsc' => $_POST['account'],
+                      'public' => $_POST['public']
+                    ]);
+
+      $result = ['status' => 'store data success', 'trx' => $GLOBALS['pdo']->lastInsertId()];
+      echo json_encode($result);
+
+    }else{
+      $result = ['status' => 'error store data'];
+      echo json_encode($result);
+    }
+  }
+
+  public function storePoor()
+  {
+    if (isset($_GET['id'])) {
+
+      $id = $_GET['id'];
+
+      $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, jamaah_id, fund,
+                                        status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:worship, :jamaah, :fund, :_in, :_out, now(), :dsc, 'false', :public)");
+      $stmt->execute(['worship' => $id,
+                      'jamaah' => $_POST['jamaah'],
+                      'fund' => $_POST['fund'],
+                      '_in' => 'transfer jamaah',
+                      '_out' => 'poor',
+                      'dsc' => $_POST['account'],
+                      'public' => $_POST['public']
+                    ]);
+
+      $result = ['status' => 'store data success', 'trx' => $GLOBALS['pdo']->lastInsertId()];
+      echo json_encode($result);
+
+    }else{
+      $result = ['status' => 'error store data'];
+      echo json_encode($result);
+    }
+  }
+
+  public function storeTpa()
+  {
+    if (isset($_GET['id'])) {
+
+      $id = $_GET['id'];
+
+      $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, jamaah_id, fund,
+                                        status_in, status_out, datetime, description, confirmation, public)
+                                        VALUES(:worship, :jamaah, :fund, :_in, :_out, now(), :dsc, 'false', :public)");
+      $stmt->execute(['worship' => $id,
+                      'jamaah' => $_POST['jamaah'],
+                      'fund' => $_POST['fund'],
+                      '_in' => 'transfer jamaah',
+                      '_out' => 'tpa',
+                      'dsc' => $_POST['account'],
+                      'public' => $_POST['public']
+                    ]);
+
+      $result = ['status' => 'store data success', 'trx' => $GLOBALS['pdo']->lastInsertId()];
+      echo json_encode($result);
+
+    }else{
+      $result = ['status' => 'error store data'];
+      echo json_encode($result);
+    }
+  }
+
+  public function history()
+  {
+    $stmt = $GLOBALS['pdo']->prepare("SELECT cash_in.*, worship_place.name FROM cash_in
+                                      INNER JOIN worship_place ON cash_in.worship_place_id = worship_place.id
+                                      WHERE jamaah_id=:jamaah_id ORDER BY datetime DESC");
+    $stmt->execute(['jamaah_id' => $_GET['id']]);
+    $data = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    foreach ($data as $key){
+        $key->fund = 'Rp '. number_format(($key->fund),0,',','.');
+        if ($key->status_out == "project") {
+          $key->donation_name = 'Infaq Mosque Development';
+        }elseif ($key->status_out == "tpa") {
+          $key->donation_name = 'Infaq TPA/MDA';
+        }elseif ($key->status_out == "orphanage") {
+          $key->donation_name = 'Infaq Orphans';
+        }elseif ($key->status_out == "poor") {
+          $key->donation_name = 'Infaq Poor';
+        }
+        $date = new DateTime($key->datetime);
+        $key->datetime = $date->format('j F Y, g:i a');
+    }
+
+    echo json_encode($data);
+  }
+
+  public function historyDetail()
+  {
+    $id = $_GET['id'];
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM cash_in WHERE id=:id");
+    $stmt->execute(['id' => $id]);
+    $cash = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp, account.*, worship_place.name as mosque
+                                      FROM account INNER JOIN stewardship ON account.stewardship_id = stewardship.jamaah_id
+                                      INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
+                                      INNER JOIN worship_place ON jamaah.worship_place_id = worship_place.id
+                                      WHERE account.id=:id");
+    $stmt->execute(['id' => $cash->description]);
+    $account = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $result = array('mosque' => $account->mosque, 'account' => $account, 'donation' => 'Rp '. number_format(($cash->fund),0,',','.'));
+
+    echo json_encode($result);
   }
 
 }
