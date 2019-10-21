@@ -57,11 +57,11 @@
                     <?php foreach ($data as $k): ?>
                       <?php if ($s == 1): ?>
                         <div class="carousel-item active imgfix" style="height: 375px">
-                          <img class="d-block w-100 load-delay<?= $k->id ?>" src="<?php $this->url('images/load.gif'); $s=2; ?>" data-original="<?php $this->url('images/project/'. $k->image); ?>">
+                          <img class="w-100 load-delay<?= $k->id ?>" src="<?php $this->url('images/load.gif'); $s=2; ?>" data-original="<?php $this->url('images/project/'. $k->image); ?>">
                         </div>
                       <?php else: ?>
                         <div class="carousel-item imgfix" style="height: 375px">
-                          <img class="d-block w-100 load-delay<?= $k->id ?>" src="<?php $this->url('images/load.gif'); $s=2; ?>" data-original="<?php $this->url('images/project/'. $k->image); ?>">
+                          <img class="w-100 load-delay<?= $k->id ?>" src="<?php $this->url('images/load.gif'); $s=2; ?>" data-original="<?php $this->url('images/project/'. $k->image); ?>">
                         </div>
                       <?php endif; ?>
 

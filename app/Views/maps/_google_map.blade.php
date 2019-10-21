@@ -140,7 +140,7 @@
        hapusInfo();
        clearroute2();
     	 clearroute();
-       hapusMarkerTerdekat();       
+       hapusMarkerTerdekat();
        $.ajax({url: server+'maps/mosque/marker?id='+idd, data: "", dataType: 'json', success: function(rows){
 
              for (var i in rows){
@@ -554,6 +554,10 @@
             strokeColor: "red"
           }
         });;
+
+        console.log('start --------------- '+start);
+        console.log('end --------------- '+end);
+        console.log('map --------------- '+map);
 
        directionsService.route
        (

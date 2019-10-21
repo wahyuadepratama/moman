@@ -91,7 +91,7 @@
                     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
                   ?>
                   <?php if (!empty($r)): ?>
-                    <a href="<?php $this->url('qurban/detail?id='. $this->encrypt($d->id)) ?>"
+                    <a href="<?php $this->url('qurban/detail?id='. $this->encrypt($d->id)) ?><?= '&mosque=' . $d->name ?>"
                       class="btn btn-sm btn-success">Qurban Here</a>
                   <?php else: ?>
                     <a class="btn btn-sm btn-danger">Qurban isn't Available</a>

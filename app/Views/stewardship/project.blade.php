@@ -142,8 +142,11 @@
                                             </button>
                                           </div>
                                           <div class="modal-body">
-                                            <textarea name="progress" rows="4" placeholder="Progress Project" cols="40" class="form-control"> <?= $value['progress'] ?> </textarea>
-                                            <script>CKEDITOR.replace( 'progress' );</script><br>
+                                            <textarea id="progresstxt<?= $value['id'] ?>" name="progress" rows="4" placeholder="Progress Project" cols="40" class="form-control"> <?= $value['progress'] ?> </textarea>
+                                            <script>
+                                              var textarea = document.getElementById('progresstxt'+<?= $value['id'] ?>);
+                                              CKEDITOR.replace(textarea);
+                                            </script><br>
 
                                             <h6 style="text-align:left !important"> <small>Photo Progress</small> </h6>
                                             <input type="file" name="gallery[]" multiple class="form-control">
