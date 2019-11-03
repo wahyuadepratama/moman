@@ -96,7 +96,12 @@ Route::web('stewardship/qurban', 'QurbanController', 'animalStewardship');
 Route::web('stewardship/qurban/store', 'QurbanController', 'storeAnimalStewardship');
 Route::web('stewardship/qur/detail', 'QurbanController', 'transactionStewardship');
 Route::web('stewardship/qur/confirm', 'QurbanController', 'confirmTransactionStewardship');
+Route::web('stewardship/qur/close', 'QurbanController', 'closeTransactionStewardship');
 Route::web('stewardship/qurban/destroy', 'QurbanController', 'destroyAnimalStewardship');
+Route::web('stewardship/qurb/group', 'QurbanController', 'indexGroupAnimalStewardship');
+Route::web('stewardship/qurb/group/add', 'QurbanController', 'addGroupAnimalStewardship');
+Route::web('stewardship/qurb/group/change', 'QurbanController', 'changeGroupAnimalStewardship');
+Route::web('stewardship/qurb/group/destroy', 'QurbanController', 'destroyGroupAnimalStewardship');
 
 Route::web('stewardship/mosque/event', 'EventController', 'index');
 Route::web('stewardship/mosque/event/store', 'EventController', 'store');

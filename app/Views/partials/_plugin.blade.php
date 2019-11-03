@@ -34,9 +34,10 @@
       }
     })
   }
-  function notif(url, title, type, b){
+  function notif(url, title, text, type, b){
     Swal.fire({
       title: title,
+      text: text,
       type: type,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',

@@ -609,11 +609,72 @@ class FinancialController extends Controller{
 
     }
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM detail_qurban WHERE worship_place_id=:id AND year=:y");
-    $stmt->execute(['id' => $_SESSION['user']->worship_place_id, 'y' => $_GET['year']]);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT gq.*, mq.max_person FROM group_qurban as gq INNER JOIN
+                                      mosque_qurban as mq ON gq.worship_place_id = mq.worship_place_id
+                                      AND gq.year = mq.year AND gq.animal_type = mq.animal_type
+                                      WHERE gq.worship_place_id=:id AND gq.year=:y ORDER BY gq.group ASC");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $_GET['year']]);
     $qurban = $stmt->fetchAll(PDO::FETCH_OBJ);
-    
-    return $this->view('stewardship/report', ['allReport' => $data, 'qurban' => $qurban]);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM jamaah WHERE worship_place_id=:worship_id");
+    $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
+    $jamaah = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM tpa");
+    $stmt->execute();
+    $tpa = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM orphanage");
+    $stmt->execute();
+    $orphan = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM store");
+    $stmt->execute();
+    $store = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM poor");
+    $stmt->execute();
+    $poor = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM ustad");
+    $stmt->execute();
+    $ustad = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM builder");
+    $stmt->execute();
+    $builder = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship");
+    $stmt->execute();
+    $stewardship = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM project WHERE worship_place_id=:id");
+    $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
+    $project = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM cash_in WHERE worship_place_id=:worship_id");
+    $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
+    $cash_in = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM cash_out WHERE worship_place_id=:worship_id");
+    $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
+    $cash_out = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    // $this->die($data);
+    return $this->view('stewardship/report', ['allReport' => $data,
+                                              'qurban' => $qurban,
+                                              'jamaah' => $jamaah,
+                                              'tpa' => $tpa,
+                                              'orphan' => $orphan,
+                                              'store' => $store,
+                                              'poor' => $poor,
+                                              'ustad' => $ustad,
+                                              'builder' => $builder,
+                                              'stewardship' => $stewardship,
+                                              'project' => $project,
+                                              'cash_in' => $cash_in,
+                                              'cash_out' => $cash_out
+                                              ]);
   }
 
 }

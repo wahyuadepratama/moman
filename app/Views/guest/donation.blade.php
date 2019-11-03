@@ -51,7 +51,7 @@
             </style>
             <div class="col-md-12 grid-margin">
               <div class="card" style="position:relative !important;">
-                <img class="img-fluid" src="<?php $this->url('images/masjid.png') ?>" style="object-fit:cover;filter: sepia(90%) brightness(30%); height:150px">
+                <img class="img-fluid" src="<?php $this->url('images/masjid.png') ?>" style="object-fit:cover;filter: sepia(90%) brightness(30%); height:150px" width="100%">
                 <p class="x">Mosque Construction Donation</p>
               </div>
             </div>
@@ -87,7 +87,8 @@
                   <div class="card-body" style="padding: 10% !important">
                     <!-- <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image"> -->
                     <h5 class="font-weight-bold mb-3" style="position:absolute">
-                      <i class="mdi mdi-check-circle text-success mdi-24px float-right"></i> <?= $d->name ?>
+                      <i class="mdi mdi-check-circle text-success mdi-24px float-right"></i> <?= $d->name ?> <br>
+                      <small style="font-size:12px"><?= date('d M Y | H:i:s', strtotime($d->date)) ?></small>
                     </h5><br><br><br>
                     <?php
                       if(isset($d->collected)){

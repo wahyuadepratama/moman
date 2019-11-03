@@ -32,7 +32,7 @@ class Controller{
     $get_url    = ltrim($_SERVER['REQUEST_URI'], '/');
     $get_url    = explode('?', $get_url, 2);
     $get_url    = $get_url[0];
-        
+
     if($currect_page == $get_url){
         echo 'active'; //class name in css
     }
@@ -122,6 +122,14 @@ class Controller{
   public function die($v){
     echo json_encode($v);
     die('');
+  }
+
+  public function getLastId($table, $id)
+  {
+    $stmt = $GLOBALS['pdo']->prepare("SELECT ". $id ." FROM ". $table ." ORDER BY ". $id ." DESC LIMIT 1");
+    $stmt->execute();
+    $data = $stmt->fetch(PDO::FETCH_OBJ);    
+    return $data;
   }
 
 }

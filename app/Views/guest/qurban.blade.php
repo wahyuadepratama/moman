@@ -58,6 +58,14 @@
 
             <?php $t = 1000; ?>
             <?php foreach ($qurban as $d): ?>
+
+              <?php
+                $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM mosque_qurban WHERE worship_place_id=:id AND year=:y");
+                $stmt->execute(['id'=> $d->id, 'y' => date('Y')]);
+                $r = $stmt->fetchAll(PDO::FETCH_OBJ);
+              ?>
+              <?php if (!empty($r)): ?>
+
               <div class="col-md-3 grid-margin">
                 <div class="card">
                   <style media="screen">
@@ -85,20 +93,12 @@
                   </div>
                 </div>
                 <div class="card">
-                  <?php
-                    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM mosque_qurban WHERE worship_place_id=:id AND year=:y");
-                    $stmt->execute(['id'=> $d->id, 'y' => date('Y')]);
-                    $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-                  ?>
-                  <?php if (!empty($r)): ?>
-                    <a href="<?php $this->url('qurban/detail?id='. $this->encrypt($d->id)) ?><?= '&mosque=' . $d->name ?>"
-                      class="btn btn-sm btn-success">Qurban Here</a>
-                  <?php else: ?>
-                    <a class="btn btn-sm btn-danger">Qurban isn't Available</a>
-                  <?php endif; ?>
+                  <a href="<?php $this->url('qurban/detail?id='. $this->encrypt($d->id)) ?><?= '&mosque=' . $d->name ?>"
+                    class="btn btn-sm btn-success">Qurban Here</a>
                 </div>
               </div>
               <?php $t = $t + 1000; ?>
+              <?php endif; ?>
             <?php endforeach; ?>
           </div>
         <!-- content-wrapper ends -->

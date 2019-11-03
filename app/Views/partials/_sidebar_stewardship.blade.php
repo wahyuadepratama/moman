@@ -85,6 +85,12 @@ function active($currect_page){
                   <i class="mdi mdi-format-list-bulleted menu-icon"></i>
                 </a>
               </li>
+              <li class="nav-item <?php $this->active('stewardship/qurb/group');?>">
+                <a class="nav-link" href="<?php $this->url('stewardship/qurb/group') ?>">
+                  <span class="menu-title">Group</span>
+                  <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+                </a>
+              </li>
             </ul>
           </div>
         </li>

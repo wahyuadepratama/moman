@@ -54,10 +54,10 @@
                       <table class="table" id="data">
                         <thead style="text-align:center">
                           <tr>
-                            <th>Trx Qurban</th>
-                            <th>Datetime</th>
-                            <th>Animal</th>
-                            <th>Total</th>
+                            <th>ID Trx</th>
+                            <th>Group</th>
+                            <th>Paid</th>
+                            <th>Unpaid</th>
                             <th>Status</th>
                             <th>Action</th>
                           </tr>
@@ -65,33 +65,31 @@
                         <tbody style="text-align:center">
                           <?php foreach ($trans as $h): ?>
                             <tr>
-                              <td>#<?= $h->worship_place_id ?><?= $h->grup ?><?= $h->year ?></td>
-                              <td>
-                                <?php
-                                  $date = new DateTime($h->datetime);
-                                  echo $date->format('l, j F Y, g:i a');
-                                ?>
-                              </td>
-                              <td>
-                                <?= $h->animal_type ?>
-                              </td>
-                              <td>
-                                Rp <?= number_format(($h->fund),0,',','.') ?>
-                              </td>
+                              <td>#<?= $h->worship_place_id ?><?= $h->group ?><?= $h->year ?><?= date('jmyHis', strtotime($h->datetime)) ?></td>
+                              <td><?= $h->group ?></td>
+                              <td>Rp <?= number_format($h->fund * (int)substr($h->payment_method, 2, 1),0,',','.') ?></td>
+                              <td>Rp <?= number_format($h->fund * (int)substr($h->payment_method, 0, 1),0,',','.') ?></td>
                               <td>
                                 <?php if ($h->confirmation == true): ?>
-                                  <div class="text-success"> <b>Confirmed</b> </div>
+                                  <span class="badge badge-success">Payment Completed</span>
                                 <?php else: ?>
-                                  <div class="text-danger"> <b>Checking</b> </div>
+                                  <span class="badge badge-danger">Payment in Progress</span>
                                 <?php endif; ?>
                               </td>
                               <td>
-                                <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#invoice<?= $h->worship_place_id ?><?= $h->grup ?><?= $h->year ?>"> <i class="mdi mdi-crop-free"></i> </a>
+                                <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#invoice<?= $h->worship_place_id ?><?= $h->group ?><?= $h->year ?><?= date('jmyHis', strtotime($h->datetime)) ?>"> <i class="mdi mdi-crop-free"></i> </a>
+
+                                  <?php if (rtrim($h->animal_type) != 'Goat'): ?>
+                                  <button type="button" class="btn btn-sm btn-danger" onclick="notif('<?php $this->url('stewardship/qur/close?id='. $this->encrypt($h->datetime)) ?>', 'Warning!',
+                                    'This feature is used if qurban funds from jamaah are insufficient and only enough for qurban goats. The remaining excess funds will be refunded',
+                                    'question', 'Yes, Change Qurban to Goat!')" name="button">Close Qurban</button>
+                                <?php endif; ?>
+
                                 <!-- Modal Avatar -->
-                                <div class="modal fade" id="invoice<?= $h->worship_place_id ?><?= $h->grup ?><?= $h->year ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
+                                <div class="modal fade" id="invoice<?= $h->worship_place_id ?><?= $h->group ?><?= $h->year ?><?= date('jmyHis', strtotime($h->datetime)) ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
                                   <div class="modal-dialog" role="document">
                                       <div class="modal-content">
-                                        <form method="post" action="<?php $this->url('stewardship/qur/confirm?id='. $h->datetime) ?>">
+                                        <form method="post" action="<?php $this->url('stewardship/qur/confirm?id='. $this->encrypt($h->datetime)) ?>">
                                           <?php $this->csrf_field() ?>
                                         <div class="modal-header">
                                           <h5 class="modal-title" id="avatar">Detail</h5>
@@ -107,43 +105,48 @@
                                               <td><?= $h->name ?></td>
                                             </tr>
                                             <tr>
+                                              <td>Qurban</td>
+                                              <td>:</td>
+                                              <td><?= $h->animal_type ?></td>
+                                            </tr>
+                                            <tr>
                                               <td>Jamaah</td>
                                               <td>:</td>
                                               <td><?= $h->username ?></td>
                                             </tr>
                                             <tr>
-                                              <td style="vertical-align:top">Participant</td>
-                                              <td style="vertical-align:top">:</td>
-                                              <td>
-                                                <?php
-                                                  $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM participant WHERE grup=:grup AND year=:year AND worship_place_id=:id");
-                                                  $stmt->execute(['grup' => $h->grup, 'year' => $h->year, 'id' => $h->worship_place_id]);
-                                                  $part = $stmt->fetchAll(PDO::FETCH_OBJ);
-                                                ?>
-                                                <ul>
-                                                  <?php foreach ($part as $p): ?>
-                                                    <li><?= $p->name ?></li>
-                                                  <?php endforeach; ?>
-                                                </ul>
-                                              </td>
+                                              <td>Payment of each Installment</td>
+                                              <td>:</td>
+                                              <td>Rp <?= number_format($h->fund,0,',','.') ?></td>
                                             </tr>
-                                            <?php if ($h->confirmation == true): ?>
-                                              <tr>
-                                                <td style="vertical-align:top">Description</td>
-                                                <td style="vertical-align:top">:</td>
-                                                <td>
-                                                    <?= $h->description ?>
-                                                </td>
-                                              </tr>
-                                            <?php else: ?>
-                                              <tr>
-                                                <td style="vertical-align:top">Description</td>
-                                                <td style="vertical-align:top">:</td>
-                                                <td>
-                                                  <textarea name="description" rows="5" required placeholder="Example: Ditransfer dari bank Mandiri (121312) a/n Jhony pada tanggal 20 Mei 2019" cols="30" class="form-control"></textarea>
-                                                </td>
+                                            <tr>
+                                              <td>Unpaid Installments</td>
+                                              <td>:</td>
+                                              <td><?= substr($h->payment_method, 0, 1) ?> more times</td>
+                                            </tr>
+                                            <tr>
+                                              <td>Paid Installments</td>
+                                              <td>:</td>
+                                              <td><?= substr($h->payment_method, 2, 1) ?> times</td>
+                                            </tr>
+                                            <tr style="color: red">
+                                              <td>Unpaid</td>
+                                              <td>:</td>
+                                              <td>Rp <?= number_format($h->fund * (int)substr($h->payment_method, 0, 1),0,',','.') ?></td>
+                                            </tr>
+                                            <tr style="color: green">
+                                              <td>Paid</td>
+                                              <td>:</td>
+                                              <td>Rp <?= number_format($h->fund * (int)substr($h->payment_method, 2, 1),0,',','.') ?></td>
+                                            </tr>
+                                            <?php if (substr($h->payment_method, 10, 20)): ?>
+                                              <tr style="font-weight: bold">
+                                                <td>Refund</td>
+                                                <td>:</td>
+                                                <td>Rp <?= number_format((int)substr($h->payment_method, 10, 20),0,',','.') ?></td>
                                               </tr>
                                             <?php endif; ?>
+
                                           </table>
                                         </div>
                                         <div class="modal-footer">

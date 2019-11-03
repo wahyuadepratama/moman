@@ -36,21 +36,22 @@
                   <div class="row">
                     <div class="col-md-12" style="text-align:center;">
                       <!-- <i style="font-size: 10em" class="mdi mdi-check-circle text-success"></i> -->
-                      <img src="<?php $this->url('images/wait.gif') ?>">
-                      <h3>Qurban Confirmation (<?= $animal ?>)</h3><br>
-                      <h3>Rp <?= number_format(($donation),0,',','.') ?></h3><br>
+                      <img src="<?php $this->url('images/wait.gif') ?>" width="300px">
+                      <h3>Qurban Confirmation (<?=$qurban->total_slot .' Slot '. $qurban->animal_type ?>)</h3>
+                      <h3>Rp <?= number_format(($qurban->fund),0,',','.') ?></h3><br><br>
 
-                      <h5>Participant:</h5>
-                      <ul class="list-group list-group-flush" style="align:center">
-                        <?php foreach ($part as $k): ?>
-                          <li class="list-group-item"><?= $k->name ?></li>
-                        <?php endforeach; ?>
-                      </ul><br>
+                      <h5>Installments that have been Paid: <?= substr($qurban->payment_method, 2, 1) ?> times</h5>
+                      <h5>Unpaid Installments: <?= substr($qurban->payment_method, 0, 1) ?> more times</h5><br>
+                      <h5>Already Paid: Rp <?= number_format($qurban->fund * (int)substr($qurban->payment_method, 2, 1),0,',','.') ?></h5>
+                      <h5>Remaining Payment: Rp <?= number_format($qurban->fund * (int)substr($qurban->payment_method, 0, 1),0,',','.') ?></h5><br>
+
+                      <h5>Invoice #<?= $qurban->worship_place_id ?><?= $qurban->group ?><?= $qurban->year ?><?= date('jmyHis', strtotime($qurban->datetime)) ?><h5><br>
 
                       <h4>Transfer Qurban Fund via <?= $mosque ?> Bank Account</h4>
                       <h4><?= $account->bank ?> a/n <?= $account->owner ?> (<?= $account->account_number ?>)</h4><br>
+
                       <h4>After making a payment, please confirm immediately via the following SMS or WhatsApp to:</h4>
-                      <h4><?= $account->whatsapp ?></h4> OR <h4><?= $account->phone ?></h4> <br>
+                      <h4><?= $account->whatsapp ?> (SMS) | <?= $account->phone ?> (Whatsapp)</h4> <br>
                       <a href="<?php $this->url('jamaah/qurban') ?>" class="btn btn-md btn-success">Check Invoice After Payment</a>
                     </div>
                   </div>

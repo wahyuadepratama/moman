@@ -53,7 +53,7 @@
                       <table class="table" id="data">
                         <thead>
                           <tr>
-                            <th>No</th>
+                            <th>ID</th>
                             <th>Name</th>
                             <th>Address</th>
                             <th>Capacity</th>
@@ -64,10 +64,9 @@
                         </thead>
                         <tbody>
                           <?php if (isset($mosque)): ?>
-                            <?php $no=1; ?>
                             <?php foreach ($mosque as $value): ?>
                               <tr>
-                                <td><?= $no ?></td>
+                                <td><?= $value['id'] ?></td>
                                 <td> <?= $value['name']  ?> </td>
                                 <td> <?= $value['address']  ?> </td>
                                 <td> <?= $value['capacity'] . ' jamaah'?> </td>
@@ -82,7 +81,6 @@
                                   <a href="#" onclick="confirm('<?php $this->url('admin/mosque/destroy?id=' . $value['id']) ?>')" class="btn btn-sm btn-danger">Delete</a>
                                 </td>
                               </tr>
-                              <?php $no++ ?>
                             <?php endforeach; ?>
                           <?php endif; ?>
                         </tbody>

@@ -304,9 +304,17 @@ class UserController extends Controller{
   public function historyQurban()
   {
     $this->authJamaah();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT detail_qurban.*, worship_place.name FROM detail_qurban
+    $stmt = $GLOBALS['pdo']->prepare("SELECT detail_qurban.*, worship_place.name, group_qurban.*, j.username, mq.*
+                                      FROM detail_qurban
                                       INNER JOIN worship_place ON detail_qurban.worship_place_id = worship_place.id
-                                      WHERE jamaah_id=:jamaah_id ORDER BY datetime DESC");
+                                      INNER JOIN jamaah as j ON detail_qurban.jamaah_id=j.id
+                                      INNER JOIN group_qurban ON group_qurban.year=detail_qurban.year AND
+                                      group_qurban.worship_place_id=detail_qurban.worship_place_id AND
+                                      group_qurban.group=detail_qurban.group
+                                      INNER JOIN mosque_qurban as mq ON group_qurban.year=mq.year AND
+                                      group_qurban.worship_place_id=mq.worship_place_id AND
+                                      group_qurban.animal_type=mq.animal_type WHERE jamaah_id=:jamaah_id
+                                      ORDER BY datetime DESC");
     $stmt->execute(['jamaah_id' => $_SESSION['user']->jamaah_id]);
     $data = $stmt->fetchAll(PDO::FETCH_OBJ);
 

@@ -53,7 +53,7 @@
                       <table class="table" id="data">
                         <thead>
                           <tr>
-                            <th>No</th>
+                            <th>ID</th>
                             <th>Username</th>
                             <th>Avatar</th>
                             <th>Phone</th>
@@ -67,7 +67,7 @@
                             <?php $no=1; ?>
                             <?php foreach ($j as $value): ?>
                               <tr>
-                                <td><?= $no ?></td>
+                                <td> #<?= $value->id ?></td>
                                 <td> <?= $value->username  ?> </td>
                                 <td> <img src="<?php $this->url('images/avatar/'. $value->avatar) ?>" width="100px"> </td>
                                 <td> <?= $value->phone ?> </td>

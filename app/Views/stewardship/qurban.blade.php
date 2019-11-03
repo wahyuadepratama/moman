@@ -59,6 +59,7 @@
                     <div class="modal-body">
                       <label>Type</label>
                       <select class="form-control" name="person" style="color:black" id="general" onchange="change(this.value)">
+                        <option value="0">===== Select Animal =====</option>
                         <option value="1">Goat </option>
                         <option value="1">Sheep </option>
                         <option value="7">Cow </option>
@@ -67,14 +68,16 @@
                       <label>Max Person</label>
                       <input type="text" class="form-control" value="" disabled id="person" placeholder="Please choose your qurban type"><br>
 
-                      <label>Animal Name</label>
-                      <input type="text" name="animal_type" class="form-control" placeholder="Example: Sapi Limousin"><br>
+                      <input type="hidden" name="animal_type" id="animal_type" class="form-control"><br>
 
                       <label>Price</label>
                       <input type="text" name="animal_price" class="form-control" placeholder="Price" id="rupiah">
                       <script type="text/javascript">
                         function change(v){
                           document.getElementById('person').value = v + ' Person';
+                          var e = document.getElementById("general");
+                          var animal = e.options[e.selectedIndex].text;
+                          document.getElementById('animal_type').value = animal;
                         }
                       </script>
                     </div>
@@ -114,7 +117,17 @@
                               <td><?= $p->max_person ?></td>
                               <td>Rp <?= number_format(($p->animal_price),0,',','.') ?></td>
                               <td>
-                                <a href="#" onclick="confirm('<?php $this->url('stewardship/qurban/destroy?y='. $p->year. '&w=' . $p->worship_place_id . '&a=' . $p->animal_type) ?>')" class="btn btn-sm btn-danger"> <i class="mdi mdi-delete"></i> </a>
+                                <?php
+                                  $stmt = $GLOBALS['pdo']->prepare("SELECT animal_type FROM group_qurban WHERE worship_place_id=:id
+                                                                    AND year=:y AND animal_type=:a");
+                                  $stmt->execute(['id'=> $p->worship_place_id, 'y' => date('Y'), 'a' => $p->animal_type]);
+                                  $mosque = $stmt->fetch(PDO::FETCH_OBJ);
+                                ?>
+                                <?php if ($mosque): ?>
+                                  ~
+                                <?php else: ?>
+                                  <a href="#" onclick="confirm('<?php $this->url('stewardship/qurban/destroy?y='. $p->year. '&w=' . $p->worship_place_id . '&a=' . $p->animal_type) ?>')" class="btn btn-sm btn-danger"> <i class="mdi mdi-delete"></i> </a>
+                                <?php endif; ?>
                               </td>
                             </tr>
                           <?php endforeach; ?>

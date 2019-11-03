@@ -58,7 +58,7 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <input type="text" name="name" class="form-control" placeholder="Nama Project">
+                      <input type="text" maxlength="25" name="name" class="form-control" placeholder="Nama Project">
                       <script src="https://cdn.ckeditor.com/4.11.4/standard/ckeditor.js"></script>
                       <input type="text" placeholder="Fund Needed" name="fund" class="form-control" id="rupiah"><br>
 

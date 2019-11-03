@@ -44,11 +44,12 @@
           </div>
 
           <div class="row">
+            <div class="col-md-3"></div>
               <div class="col-md-6">
                 <div class="row">
                   <?php $t = 1000; ?>
                   <?php foreach ($qurban as $d): ?>
-                    <div class="col-md-6 grid-margin">
+                    <div class="<?= (count($qurban) == 1) ? 'col-md-12' : 'col-md-6' ?> grid-margin">
                       <div class="card">
                         <style media="screen">
                           .effect{transform-origin: 50% 65%;transition: transform 15s, filter 6s ease-in-out;filter: brightness(70%);height: 150px;color:white}
@@ -81,7 +82,8 @@
                   <?php endforeach; ?>
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-3"></div>
+              <div class="col-md-4">
                 <div class="card bg-gradient-light card-img-holder text-grey form-control" style="padding: 1% !important;">
                   <div class="card-body">
                     <form action="<?php $this->url('qurban/store?id='. $_GET['id']) ?>" method="post">
@@ -103,36 +105,75 @@
                                   <select class="form-control" name="account" style="color: black;" onchange="choose(this.value)">
                                     <option value="0">===== Choose Qurban Animal =====</option>
                                     <?php foreach ($qurban as $q): ?>
-                                      <option value="<?= $q->max_person . '~' . 'Rp ' . number_format(($q->animal_price),0,',','.').'~'. $q->animal_type ?>"><?= $q->animal_type ?></option>
+                                      <option value="<?= $q->max_person . '~' . 'Rp ' . number_format(($q->animal_price/$q->max_person),0,',','.').
+                                      '~'. $q->animal_type.'~'. 'Rp ' . number_format(($q->animal_price/$q->max_person),0,',','.').
+                                      '~'. $q->animal_price/$q->max_person ?>">
+                                        <?= $q->animal_type ?> (1x payment)
+                                      </option>
+                                    <?php endforeach; ?>
+                                    <?php foreach ($qurban as $q): ?>
+                                      <option value="<?= $q->max_person . '~' . 'Rp ' . number_format(($q->animal_price/$q->max_person),0,',','.').
+                                      '~'. $q->animal_type.'~'. 'Rp ' . number_format((($q->animal_price/3)/$q->max_person),0,',','.').
+                                      '~'. ($q->animal_price/3)/$q->max_person .'~'.'3'?>">
+                                        <?= $q->animal_type ?> (3x payment)
+                                      </option>
+                                    <?php endforeach; ?>
+                                    <?php foreach ($qurban as $q): ?>
+                                      <option value="<?= $q->max_person . '~' . 'Rp ' . number_format(($q->animal_price/$q->max_person),0,',','.').
+                                      '~'. $q->animal_type.'~'. 'Rp ' . number_format((($q->animal_price/6)/$q->max_person),0,',','.').
+                                      '~'. ($q->animal_price/6)/$q->max_person .'~'.'6'?>">
+                                        <?= $q->animal_type ?> (6x payment)
+                                      </option>
+                                    <?php endforeach; ?>
+                                    <?php foreach ($qurban as $q): ?>
+                                      <option value="<?= $q->max_person . '~' . 'Rp ' . number_format(($q->animal_price/$q->max_person),0,',','.').
+                                      '~'. $q->animal_type.'~'. 'Rp ' . number_format((($q->animal_price/9)/$q->max_person),0,',','.').
+                                      '~'. ($q->animal_price/9)/$q->max_person .'~'.'9'?>">
+                                        <?= $q->animal_type ?> (9x payment)
+                                      </option>
                                     <?php endforeach; ?>
                                   </select>
                                 </div>
 
+                                <input id="payment" name="payment" value="" type="hidden">
+
                                 <div class="form-group" id="goat" style="display:none">
-                                  <input type="text" name="goat[]" class="form-control" placeholder="Participant 1">
+                                  <label>Total Slot</label>
+                                  <select id="dGoat" class="form-control" name="total_slot" style="color: black;" onchange="onSelectedSlot(this.value)">
+                                    <option value="1" id="default_selected_1">===== Choose Total Slot =====</option>
+                                    <option value="1">1</option>
+                                  </select>
                                 </div>
 
                                 <div class="form-group" id="cow" style="display:none">
-                                  <input type="text" name="cow[]" class="form-control" placeholder="Participant 1"><br>
-                                  <input type="text" name="cow[]" class="form-control" placeholder="Participant 2 (Optional)"><br>
-                                  <input type="text" name="cow[]" class="form-control" placeholder="Participant 3 (Optional)"><br>
-                                  <input type="text" name="cow[]" class="form-control" placeholder="Participant 4 (Optional)"><br>
-                                  <input type="text" name="cow[]" class="form-control" placeholder="Participant 5 (Optional)"><br>
-                                  <input type="text" name="cow[]" class="form-control" placeholder="Participant 6 (Optional)"><br>
-                                  <input type="text" name="cow[]" class="form-control" placeholder="Participant 7 (Optional)">
+                                  <label>Total Slot</label>
+                                  <select id="dCow" class="form-control" name="total_slot" style="color: black;" onchange="onSelectedSlot(this.value)">
+                                    <option value="1" id="default_selected_2">===== Choose Total Slot =====</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                  </select>
                                 </div>
 
                                 <div class="form-group" id="camel" style="display:none">
-                                  <input type="text" name="camel[]" class="form-control" placeholder="Participant 1"><br>
-                                  <input type="text" name="camel[]" class="form-control" placeholder="Participant 2 (Optional)"><br>
-                                  <input type="text" name="camel[]" class="form-control" placeholder="Participant 3 (Optional)"><br>
-                                  <input type="text" name="camel[]" class="form-control" placeholder="Participant 4 (Optional)"><br>
-                                  <input type="text" name="camel[]" class="form-control" placeholder="Participant 5 (Optional)"><br>
-                                  <input type="text" name="camel[]" class="form-control" placeholder="Participant 6 (Optional)"><br>
-                                  <input type="text" name="camel[]" class="form-control" placeholder="Participant 7 (Optional)"><br>
-                                  <input type="text" name="camel[]" class="form-control" placeholder="Participant 8 (Optional)"><br>
-                                  <input type="text" name="camel[]" class="form-control" placeholder="Participant 9 (Optional)"><br>
-                                  <input type="text" name="camel[]" class="form-control" placeholder="Participant 10 (Optional)"><br>
+                                  <label>Total Slot</label>
+                                  <select id="dCamel" class="form-control" name="total_slot" style="color: black;" onchange="onSelectedSlot(this.value)">
+                                    <option value="1" id="default_selected_3">===== Choose Total Slot =====</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                  </select>
                                 </div>
 
                                 <div class="form-group">
@@ -144,6 +185,11 @@
                                   </select>
                                 </div>
 
+                                <div class="form-group">
+                                  <label>Your Total Payment</label>
+                                  <input type="text" placeholder="Rp 0" class="form-control" disabled id="total_fund">
+                                </div>
+
                                 <input type="submit" name="" value="Qurban" class="form-control btn btn-sm btn-gradient-success">
                               </div>
 
@@ -153,6 +199,56 @@
                         <?php endif; ?>
                       </div>
                     </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-8">
+                <div class="card bg-gradient-light card-img-holder text-grey form-control" style="padding: 1% !important;">
+                  <div class="card-body">
+                    <table class="table">
+                      <thead style="text-align:left">
+                        <tr>
+                          <th>Group</th>
+                          <th>Animal</th>
+                          <th>Participant</th>
+                          <th>Slot Used</th>
+                          <th>Slot Available</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <?php foreach ($group as $key): ?>
+                          <tr>
+                            <?php
+                              $stmt = $GLOBALS['pdo']->prepare("SELECT dq.*, j.username
+                                                                FROM detail_qurban as dq INNER JOIN jamaah as j ON dq.jamaah_id = j.id
+                                                                WHERE dq.worship_place_id=:id AND dq.year=:y AND dq.group=:g");
+                              $stmt->execute(['id'=> $key->worship_place_id, 'y' => $key->year, 'g' => $key->group]);
+                              $r = $stmt->fetchAll(PDO::FETCH_OBJ);
+                              // $this->die($r);
+                              $slot = 0;
+                            ?>
+                            <td><?= $key->group ?></td>
+                            <td><?= $key->animal_type ?></td>
+                            <td>
+                              <?php foreach ($r as $val): ?>
+                                <li><?= $val->username ?></li>
+                                <?php
+                                  $slot += $val->total_slot
+                                ?>
+                              <?php endforeach; ?>
+                            </td>
+                            <td>
+                              <?php foreach ($r as $val): ?>
+                                <?= $val->total_slot ?> Slot<br>
+                              <?php endforeach; ?>
+                            </td>
+                            <td>
+                              <?= $key->max_person - $slot ?>
+                            </td>
+                          </tr>
+                        <?php endforeach; ?>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -185,35 +281,75 @@
     } );
   </script>
   <script type="text/javascript">
+
+  var animal_price = 0;
+
   function choose(v) {
     console.log(v);
     var arr = [];
-    var arr = v.split('~', 3);
+    var arr = v.split('~', 6);
     var m = arr[0];
     var p = arr[1];
     var at = arr[2];
+    var price = arr[3];
+    animal_price = arr[4];
+    var installments = arr[5]
 
-    console.log(p);
-    document.getElementById('fund').value = p;
-    document.getElementById('price').value = p;
+    document.getElementById('price').value = price;
     document.getElementById('type').value = at;
+    document.getElementById('total_fund').value = numberWithCommas(0);
+    if (installments == '9') {
+      document.getElementById('fund').value = p + ' /slot (9x Installments)';
+      document.getElementById('payment').value = '9';
+    }else if (installments == '6') {
+      document.getElementById('fund').value = p + ' /slot (6x Installments)';
+      document.getElementById('payment').value = '6';
+    }else if(installments == '3'){
+      document.getElementById('fund').value = p + ' /slot (3x Installments)';
+      document.getElementById('payment').value = '3';
+    }else{
+      document.getElementById('fund').value = p + ' /slot';
+      document.getElementById('payment').value = '1';
+    }
 
     if (m == '1') {
       document.getElementById('goat').style.display = 'block';
       document.getElementById('cow').style.display = 'none';
       document.getElementById('camel').style.display = 'none';
+      document.getElementById('dCamel').name = '';
+      document.getElementById('dCow').name = '';
+      document.getElementById('dGoat').name = 'total_slot';
+      document.getElementById('default_selected_1').selected = true;
     }
     if (m == '7') {
       document.getElementById('goat').style.display = 'none';
       document.getElementById('cow').style.display = 'block';
       document.getElementById('camel').style.display = 'none';
+      document.getElementById('dGoat').name = '';
+      document.getElementById('dCamel').name = '';
+      document.getElementById('dCow').name = 'total_slot';
+      document.getElementById('default_selected_2').selected = true;
     }
     if (m == '10') {
       document.getElementById('goat').style.display = 'none';
       document.getElementById('cow').style.display = 'none';
+      document.getElementById('dGoat').name = '';
+      document.getElementById('dCow').name = '';
       document.getElementById('camel').style.display = 'block';
+      document.getElementById('dCamel').name = 'total_slot';
+      document.getElementById('default_selected_3').selected = true;
     }
   }
+
+  function onSelectedSlot(val){
+    result = (animal_price * val).toFixed(0);
+    document.getElementById('total_fund').value = numberWithCommas(result);
+  }
+
+  function numberWithCommas(x) {
+      return 'Rp ' + x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
   </script>
   <!-- End custom js for this page-->
 </body>

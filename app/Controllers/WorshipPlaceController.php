@@ -16,6 +16,7 @@ class WorshipPlaceController extends Controller{
 
   public function addMosque()
   {
+    $this->authAdmin();
     $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM facility");
     $stmt->execute();
     return $this->view('admin/mosque_new', ['f' => $stmt]);
@@ -25,16 +26,17 @@ class WorshipPlaceController extends Controller{
   {
     $this->authAdmin();
     $this->check_csrf($_POST);
+    $lastId = $this->getLastId('worship_place', 'id');
+    $id = (int)substr($lastId->id ,1) + 1;
 
-    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO worship_place(name, address, capacity, park_area_size, geom, type, updated_at)
-                                      VALUES(:name, :address, :capacity, :park_area_size, ST_GeomFromText(:geom), :type, now())");
-    $stmt->execute(['name' => $_POST['name'], 'address' => $_POST['address'], 'capacity' => $_POST['capacity'], 'park_area_size' => $_POST['park_area_size'], 'geom' => $_POST['geom'], 'type' => $_POST['type']]);
-    $worship_place_id = $GLOBALS['pdo']->lastInsertId();
+    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO worship_place(id, name, address, capacity, park_area_size, geom, type, updated_at)
+                                      VALUES(:id, :name, :address, :capacity, :park_area_size, ST_GeomFromText(:geom), :type, now())");
+    $stmt->execute(['id' => $id, 'name' => $_POST['name'], 'address' => $_POST['address'], 'capacity' => $_POST['capacity'], 'park_area_size' => $_POST['park_area_size'], 'geom' => $_POST['geom'], 'type' => $_POST['type']]);
 
     foreach ($_POST['facility'] as $key) {
       $stmt = $GLOBALS['pdo']->prepare("INSERT INTO detail_condition(worship_place_id, facility_id, facility_condition_id, total, updated_at)
                                         VALUES(:worship_place_id, :facility_id, :facility_condition_id, :total, now())");
-      $stmt->execute(['worship_place_id' => $worship_place_id, 'facility_id' => $key, 'facility_condition_id' => 2, 'total' => 1]);
+      $stmt->execute(['worship_place_id' => $id, 'facility_id' => $key, 'facility_condition_id' => 2, 'total' => 1]);
     }
 
     $this->flash('Berhasil menambah data masjid!');
@@ -186,13 +188,74 @@ class WorshipPlaceController extends Controller{
                                       AND status_in != 'event balance' AND status_in != 'tpa balance'
                                       AND EXTRACT(YEAR FROM datetime)=:y
                                       AND EXTRACT(MONTH FROM datetime)=:m ORDER BY datetime) ORDER BY datetime");
-    $stmt->execute(['id' => $_SESSION['user']->worship_place_id, 'y' => date('Y'), 'm' => '5']);
+    $stmt->execute(['id' => $_SESSION['user']->worship_place_id, 'y' => date('Y'), 'm' => date('m')]);
     $reportDonation = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM detail_qurban WHERE worship_place_id=:id AND year=:y");
-    $stmt->execute(['id' => $_SESSION['user']->worship_place_id, 'y' => date('Y')]);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT gq.*, mq.max_person FROM group_qurban as gq INNER JOIN
+                                      mosque_qurban as mq ON gq.worship_place_id = mq.worship_place_id
+                                      AND gq.year = mq.year AND gq.animal_type = mq.animal_type
+                                      WHERE gq.worship_place_id=:id AND gq.year=:y ORDER BY gq.group ASC");
+    $stmt->execute(['id'=> $id, 'y' => date('Y')]);
     $qurban = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    return $this->view('jamaah/report', ['q' => $data, 'allReport' => $reportDonation, 'qurban' => $qurban]);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM jamaah WHERE worship_place_id=:worship_id");
+    $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
+    $jamaah = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM tpa");
+    $stmt->execute();
+    $tpa = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM orphanage");
+    $stmt->execute();
+    $orphan = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM store");
+    $stmt->execute();
+    $store = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM poor");
+    $stmt->execute();
+    $poor = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM ustad");
+    $stmt->execute();
+    $ustad = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM builder");
+    $stmt->execute();
+    $builder = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship");
+    $stmt->execute();
+    $stewardship = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM project WHERE worship_place_id=:id");
+    $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
+    $project = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM cash_in WHERE worship_place_id=:worship_id");
+    $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
+    $cash_in = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM cash_out WHERE worship_place_id=:worship_id");
+    $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
+    $cash_out = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    return $this->view('jamaah/report', ['q' => $data,
+                       'allReport' => $reportDonation,
+                       'qurban' => $qurban,
+                       'jamaah' => $jamaah,
+                       'tpa' => $tpa,
+                       'orphan' => $orphan,
+                       'store' => $store,
+                       'poor' => $poor,
+                       'ustad' => $ustad,
+                       'builder' => $builder,
+                       'stewardship' => $stewardship,
+                       'project' => $project,
+                       'cash_in' => $cash_in,
+                       'cash_out' => $cash_out
+                      ]);
   }
 }

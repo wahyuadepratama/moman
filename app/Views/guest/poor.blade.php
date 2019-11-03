@@ -58,37 +58,51 @@
 
             <?php $t = 1000; ?>
             <?php foreach ($orphan as $d): ?>
-              <div class="col-md-3 grid-margin">
-                <div class="card">
-                  <style media="screen">
-                    .effect{transform-origin: 50% 65%;transition: transform 15s, filter 6s ease-in-out;filter: brightness(90%);height: 150px;}
-                  </style>
-                  <div class="effect">
-                    <?php
-                      $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM gallery WHERE worship_place_id=:id"); $stmt->execute(['id' => $d->id]); $data = $stmt->fetch(PDO::FETCH_OBJ);
-                    ?>
-                    <img class="load-delay<?= $d->id ?> d-block w-100" src="<?php $this->url('images/load.gif') ?>" data-original="<?php $this->url('images/mosque/'. $data->image) ?>" height="200px" style="border-radius:3%">
-                    <script type="text/javascript">
-          						$(document).ready(function () {
-          						setTimeout(function () {
-          							$('.load-delay<?= $d->id ?>').each(function () { var imagex = $(this); var imgOriginal = imagex.data('original'); $(imagex).attr('src', imgOriginal); }); }, 1000 + <?= $t ?>);
-                      });
-          					</script>
+
+              <?php
+                $find = false;
+                foreach ($account as $a) {
+                  if ($a->worship_place_id == $d->id) {
+                    $find = true;
+                    break;
+                  }
+                }
+              ?>
+
+              <?php if ($find == true): ?>
+                <div class="col-md-3 grid-margin">
+                  <div class="card">
+                    <style media="screen">
+                      .effect{transform-origin: 50% 65%;transition: transform 15s, filter 6s ease-in-out;filter: brightness(90%);height: 150px;}
+                    </style>
+                    <div class="effect">
+                      <?php
+                        $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM gallery WHERE worship_place_id=:id"); $stmt->execute(['id' => $d->id]); $data = $stmt->fetch(PDO::FETCH_OBJ);
+                      ?>
+                      <img class="load-delay<?= $d->id ?> d-block w-100" src="<?php $this->url('images/load.gif') ?>" data-original="<?php $this->url('images/mosque/'. $data->image) ?>" height="200px" style="border-radius:3%">
+                      <script type="text/javascript">
+            						$(document).ready(function () {
+            						setTimeout(function () {
+            							$('.load-delay<?= $d->id ?>').each(function () { var imagex = $(this); var imgOriginal = imagex.data('original'); $(imagex).attr('src', imgOriginal); }); }, 1000 + <?= $t ?>);
+                        });
+            					</script>
+                    </div>
+                  </div>
+                  <div class="card bg-gradient-white card-img-holder text-grey">
+                    <div class="card-body" style="padding: 5% !important">
+                      <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image">
+                      <h6 class="font-weight-bold mb-3">
+                        <i class="mdi mdi-heart-outline text-success mdi-24px float-right"></i> <?= $d->name ?>
+                      </h6>
+                    </div>
+                  </div>
+                  <div class="card">
+                    <a href="<?php $this->url('donation/poor/detail?id='. $this->encrypt($d->id)) ?>" class="btn btn-sm btn-success">Donate via this Mosque</a>
                   </div>
                 </div>
-                <div class="card bg-gradient-white card-img-holder text-grey">
-                  <div class="card-body" style="padding: 5% !important">
-                    <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image">
-                    <h6 class="font-weight-bold mb-3">
-                      <i class="mdi mdi-heart-outline text-success mdi-24px float-right"></i> <?= $d->name ?>
-                    </h6>
-                  </div>
-                </div>
-                <div class="card">
-                  <a href="<?php $this->url('donation/poor/detail?id='. $this->encrypt($d->id)) ?>" class="btn btn-sm btn-success">Donate via this Mosque</a>
-                </div>
-              </div>
-              <?php $t = $t + 1000; ?>
+                <?php $t = $t + 1000; ?>
+              <?php endif; ?>
+
             <?php endforeach; ?>
           </div>
         </div>

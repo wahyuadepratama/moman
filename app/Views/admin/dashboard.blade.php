@@ -43,11 +43,11 @@
               <div class="card bg-gradient-danger card-img-holder text-white">
                 <div class="card-body">
                   <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image"/>
-                  <h4 class="font-weight-normal mb-3">Total Masjid
+                  <h4 class="font-weight-normal mb-3">Mosque
                     <i class="mdi mdi-chart-line mdi-24px float-right"></i>
                   </h4>
                   <h2 class="mb-5"> <?php echo $mosque ?> </h2>
-                  <h6 class="card-text">Kecamatan Padang Selatan</h6>
+                  <h6 class="card-text">Padang Selatan District</h6>
                 </div>
               </div>
             </div>
@@ -56,11 +56,11 @@
               <div class="card bg-gradient-danger card-img-holder text-white">
                 <div class="card-body">
                   <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image"/>
-                  <h4 class="font-weight-normal mb-3">Total Pengurus
+                  <h4 class="font-weight-normal mb-3">Stewardship
                     <i class="mdi mdi-chart-line mdi-24px float-right"></i>
                   </h4>
                   <h2 class="mb-5"> <?php echo $stewardship ?> </h2>
-                  <h6 class="card-text">Kecamatan Padang Selatan</h6>
+                  <h6 class="card-text">Padang Selatan District</h6>
                 </div>
               </div>
             </div>
@@ -69,11 +69,11 @@
               <div class="card bg-gradient-danger card-img-holder text-white">
                 <div class="card-body">
                   <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image"/>
-                  <h4 class="font-weight-normal mb-3">Total Jamaah
+                  <h4 class="font-weight-normal mb-3">Jamaah
                     <i class="mdi mdi-chart-line mdi-24px float-right"></i>
                   </h4>
                   <h2 class="mb-5"> <?php echo $jamaah ?> </h2>
-                  <h6 class="card-text">Kecamatan Padang Selatan</h6>
+                  <h6 class="card-text">Padang Selatan District</h6>
                 </div>
               </div>
             </div>

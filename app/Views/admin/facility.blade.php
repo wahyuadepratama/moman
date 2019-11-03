@@ -85,12 +85,14 @@
                     <div class="col-md-12 table-responsive" style="text-align:center">
                       <table class="table table-striped">
                         <tr>
+                          <th>ID</th>
                           <th>Facility Name</th>
                           <th>Action</th>
                         </tr>
                         <?php if (isset($facility)): ?>
                           <?php foreach ($facility as $value): ?>
                             <tr>
+                              <td><?= $value['id'] ?></td>
                               <td><?= $value['name'] ?></td>
                               <td>
                                 <a href="#" onclick="confirm('<?php $this->url('admin/facility-type/destroy?id=' . $value['id']) ?>')" class="btn btn-sm btn-danger">Delete</a>

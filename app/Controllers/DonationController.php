@@ -68,7 +68,12 @@ class DonationController extends Controller{
     $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-    return $this->view('guest/orphan', ['orphan' => $r]);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT account.*, jamaah.worship_place_id FROM account INNER JOIN jamaah ON account.stewardship_id=jamaah.id");
+    $stmt->execute();
+    $a = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    return $this->view('guest/orphan', ['orphan' => $r, 'account' => $a]);
   }
 
   public function orphanDetail()
@@ -113,7 +118,12 @@ class DonationController extends Controller{
     $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place ORDER BY id ASC");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-    return $this->view('guest/poor', ['orphan' => $r]);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT account.*, jamaah.worship_place_id FROM account INNER JOIN jamaah ON account.stewardship_id=jamaah.id");
+    $stmt->execute();
+    $a = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    return $this->view('guest/poor', ['orphan' => $r, 'account' => $a]);
   }
 
   public function poorDetail()
@@ -158,7 +168,12 @@ class DonationController extends Controller{
     $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place ORDER BY id ASC");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-    return $this->view('guest/tpa', ['orphan' => $r]);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT account.*, jamaah.worship_place_id FROM account INNER JOIN jamaah ON account.stewardship_id=jamaah.id");
+    $stmt->execute();
+    $a = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    return $this->view('guest/tpa', ['orphan' => $r, 'account' => $a]);
   }
 
   public function tpaDetail()
@@ -421,7 +436,7 @@ class DonationController extends Controller{
       if(($jenis_gambar=="image/jpeg" || $jenis_gambar=="image/jpg" || $jenis_gambar=="image/gif"  || $jenis_gambar=="image/png")
           && ($_FILES["gallery"]["size"][$i] <= 3000000)){
 
-            $name= time().'_'.($_FILES['gallery']['name'][$i]);
+            $name= time().'_'.$i.'.jpg';
             $filepath= 'images/project/' .$name;
             move_uploaded_file($_FILES["gallery"]["tmp_name"][$i], $filepath);
 
@@ -448,7 +463,7 @@ class DonationController extends Controller{
         if(($jenis_gambar=="image/jpeg" || $jenis_gambar=="image/jpg" || $jenis_gambar=="image/gif"  || $jenis_gambar=="image/png")
             && ($_FILES["gallery"]["size"][$i] <= 3000000)){
 
-              $name= time().'_'.($_FILES['gallery']['name'][$i]);
+              $name= time().'_'.$i.'.jpg';
               $filepath= 'images/project/' .$name;
               move_uploaded_file($_FILES["gallery"]["tmp_name"][$i], $filepath);
 
@@ -474,7 +489,7 @@ class DonationController extends Controller{
                                       INNER JOIN jamaah ON cash_in.jamaah_id = jamaah.id
                                       WHERE worship_place.id=:worship_id ORDER BY confirmation ASC");
     $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
-    $data = $stmt->fetchAll(PDO::FETCH_OBJ);    
+    $data = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     return $this->view('stewardship/transaction', ['trans' => $data]);
   }

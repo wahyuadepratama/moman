@@ -58,7 +58,7 @@
                     </div>
                     <div class="modal-body">
                       <input type="text" name="name" class="form-control" placeholder="Event Name">
-                      <textarea name="description" rows="8" cols="30" class="form-control" placeholder="Example: Event ini diselenggarakan setiap kamis"></textarea><br>
+                      <textarea name="description" rows="8" cols="30" class="form-control" placeholder="Event Description"></textarea><br>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

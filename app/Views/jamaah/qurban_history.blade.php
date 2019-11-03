@@ -54,27 +54,172 @@
                       <table class="table" id="data">
                         <thead style="text-align:center">
                           <tr>
-                            <th>Datetime</th>
-                            <th>Animal</th>
-                            <th>Fund</th>
-                            <th>Status</th>
-                            <th>Mosque</th>
-                            <th>View</th>
+                            <th></th>
                           </tr>
                         </thead>
-                        <tbody style="text-align:center">
+                        <tbody>
                           <?php foreach ($history as $h): ?>
                             <tr>
                               <td>
-                                <?php
-                                  $date = new DateTime($h->datetime);
-                                  echo $date->format('j F Y, g:i a');
-                                ?>
+                                <div class="card">
+                                  <h5 class="card-header">#<?= $h->worship_place_id ?><?= $h->group ?><?= $h->year ?><?= date('jmyHis', strtotime($h->datetime)) ?>
+                                    <div class="float-right"><?php $date = new DateTime($h->datetime); echo $date->format('j F Y, g:i a'); ?></div>
+                                  </h5>
+                                  <div class="card-body">
+                                    <div class="progress">
+                                      <?php $bar = ((int)substr($h->payment_method, 2, 1) / (((int)substr($h->payment_method, 0, 1) == 0) ? 1 : (int)substr($h->payment_method, 0, 1) + (int)substr($h->payment_method, 2, 1)) ) * 100 ?>
+                                      <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: <?= $bar ?>%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div><br>
+                                    <small class="float-left"><?= substr($h->payment_method, 2, 1) ?> Installments Paid</small><small class="float-right"><?= substr($h->payment_method, 0, 1) ?> Installments Unpaid</small>
+                                    <br><br>
+                                    <table>
+                                      <tr>
+                                        <td>Qurban Animal</td>
+                                        <td>:</td>
+                                        <td><?= $h->total_slot ?> Slot <?= $h->animal_type ?></td>
+                                      </tr>
+                                      <tr>
+                                        <td>Group</td>
+                                        <td>:</td>
+                                        <td><?= $h->group ?></td>
+                                      </tr>
+                                      <tr>
+                                        <td>Status</td>
+                                        <td>:</td>
+                                        <td>
+                                          <?php if ($h->confirmation == true): ?>
+                                            <span class="badge badge-success">Payment Completed</span>
+                                          <?php else: ?>
+                                            <span class="badge badge-danger">Payment in Progress</span>
+                                          <?php endif; ?>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td>Detail</td>
+                                        <td>:</td>
+                                        <td>
+                                          <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#invoice<?= $h->worship_place_id ?><?= $h->group ?><?= $h->year ?><?= date('jmyHis', strtotime($h->datetime)) ?>">Invoice</a>
+                                          <button type="submit" onclick="printDiv('printableArea<?= $h->worship_place_id ?><?= $h->group ?><?= $h->year ?><?= date('jmyHis', strtotime($h->datetime)) ?>')" class="btn btn-sm btn-primary"> <i class="mdi mdi-printer"></i> </button>
+                                          <!-- Modal Avatar -->
+                                          <div class="modal fade" id="invoice<?= $h->worship_place_id ?><?= $h->group ?><?= $h->year ?><?= date('jmyHis', strtotime($h->datetime)) ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <h5 class="modal-title" id="avatar">Invoice</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                      <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                  </div>
+                                                  <div class="modal-body" id="printableArea<?= $h->worship_place_id ?><?= $h->group ?><?= $h->year ?><?= date('jmyHis', strtotime($h->datetime)) ?>">
+                                                    <div class="invoice-box">
+                                                      <style media="all"> .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, .15); font-size: 16px; line-height: 24px; font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; color: #555; } .invoice-box table { width: 100%; line-height: inherit; text-align: left; } .invoice-box table td { padding: 5px; vertical-align: top; } .invoice-box table tr td:nth-child(2) { text-align: right; } .invoice-box table tr.top table td { padding-bottom: 20px; } .invoice-box table tr.top table td.title { font-size: 45px; line-height: 45px; color: #333; } .invoice-box table tr.information table td { padding-bottom: 40px; } .invoice-box table tr.heading td { background: #eee; border-bottom: 1px solid #ddd; font-weight: bold; } .invoice-box table tr.details td { padding-bottom: 20px; } .invoice-box table tr.item td{ border-bottom: 1px solid #eee; } .invoice-box table tr.item.last td { border-bottom: none; } .invoice-box table tr.total td:nth-child(2) { border-top: 2px solid #eee; font-weight: bold; } @media only screen and (max-width: 600px) { .invoice-box table tr.top table td { width: 100%; display: block; text-align: center; } .invoice-box table tr.information table td { width: 100%; display: block; text-align: center; } } /** RTL **/ .rtl { direction: rtl; font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; } .rtl table { text-align: right; } .rtl table tr td:nth-child(2) { text-align: left; } </style>
+                                                      <table cellpadding="0" cellspacing="0">
+                                                          <tr class="top">
+                                                              <td colspan="2">
+                                                                  <table>
+                                                                      <tr>
+                                                                          <td class="title">
+                                                                              <img src="<?php $this->url('images/favicon.png') ?>" style="height: 50px;width:50px; max-width:300px;">
+                                                                          </td>
+
+                                                                          <td>
+                                                                              Invoice #<?= $h->worship_place_id ?><?= $h->group ?><?= $h->year ?><?= date('jmyHis', strtotime($h->datetime)) ?><br>
+                                                                              <?=  $date->format('j F Y g:i a') ?><br>
+                                                                          </td>
+                                                                      </tr>
+                                                                  </table>
+                                                              </td>
+                                                          </tr>
+
+                                                          <tr class="heading">
+                                                            <td>Worship Place</td>
+                                                            <td>
+                                                                <?= $h->name ?>
+                                                            </td>
+                                                          </tr>
+
+                                                          <tr class="details">
+                                                            <td style="vertical-align:top">Participant</td>
+                                                            <td>
+                                                              <?= $h->username ?>
+                                                            </td>
+                                                          </tr>
+
+                                                          <tr class="heading">
+                                                              <td>Animal</td>
+                                                              <td>
+                                                                <?= $h->animal_type ?>
+                                                              </td>
+                                                          </tr>
+
+                                                          <tr>
+                                                              <td>Slot</td>
+                                                              <td>
+                                                                  <?= $h->total_slot ?>
+                                                              </td>
+                                                          </tr>
+
+                                                          <tr>
+                                                              <td>Total Installments</td>
+                                                              <td>
+                                                                  <?= (int)substr($h->payment_method, 0, 1) + (int)substr($h->payment_method, 2, 1) ?>x
+                                                              </td>
+                                                          </tr>
+
+                                                          <tr class="details">
+                                                              <td>Payment of each Installments</td>
+                                                              <td>
+                                                                  Rp <?= number_format(($h->fund),0,',','.') ?>
+                                                              </td>
+                                                          </tr>
+
+                                                          <tr class="heading">
+                                                            <td>
+                                                                Status
+                                                            </td>
+                                                            <td>
+                                                              <?php if ($h->confirmation == true): ?>
+                                                                <div class="text-success" name="button"> <b>Payment Completed</b> </div>
+                                                              <?php else: ?>
+                                                                <div class="text-danger"> <b>Payment in Progress</b> </div>
+                                                              <?php endif; ?>
+                                                            </td>
+                                                          </tr>
+                                                          <tr>
+                                                            <td>
+                                                                Already Paid
+                                                            </td>
+                                                            <td>
+                                                              Rp <?= number_format($h->fund * (int)substr($h->payment_method, 2, 1),0,',','.') ?>
+                                                            </td>
+                                                          </tr>
+                                                          <tr class="details">
+                                                            <td>
+                                                                Remaining Payment
+                                                            </td>
+                                                            <td>
+                                                              Rp <?= number_format($h->fund * (int)substr($h->payment_method, 0, 1),0,',','.') ?>
+                                                            </td>
+                                                          </tr>
+                                                      </table>
+                                                  </div>
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                  </div>
+                                                </div>
+                                            </div>
+                                          </div>
+                                          <!-- End Modal -->
+
+                                          <a href="<?php $this->url('jamaah/qurban/checking?id='. $this->encrypt($h->datetime)) ?>" class="btn btn-sm btn-primary">Payment</a>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                  </div>
+                                </div>
                               </td>
-                              <td>
-                                <?= $h->animal_type ?>
-                              </td>
-                              <td>
+                              <!-- <td>
                                 Rp <?= number_format(($h->fund),0,',','.') ?>
                               </td>
                               <td>
@@ -86,115 +231,7 @@
                               </td>
                               <td>
                                 <?= $h->name ?>
-                              </td>
-                              <td>
-                                <?php if ($h->confirmation == true): ?>
-                                  <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#invoice<?= $h->worship_place_id ?><?= $h->grup ?><?= $h->year ?>">Invoice</a>
-                                  <button type="submit" onclick="printDiv('printableArea<?= $h->worship_place_id ?><?= $h->grup ?><?= $h->year ?>')" class="btn btn-sm btn-primary"> <i class="mdi mdi-printer"></i> </button>
-                                  <!-- Modal Avatar -->
-                                  <div class="modal fade" id="invoice<?= $h->worship_place_id ?><?= $h->grup ?><?= $h->year ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="avatar">Invoice</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                          <div class="modal-body" id="printableArea<?= $h->worship_place_id ?><?= $h->grup ?><?= $h->year ?>">
-                                            <div class="invoice-box">
-                                              <style media="all"> .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, .15); font-size: 16px; line-height: 24px; font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; color: #555; } .invoice-box table { width: 100%; line-height: inherit; text-align: left; } .invoice-box table td { padding: 5px; vertical-align: top; } .invoice-box table tr td:nth-child(2) { text-align: right; } .invoice-box table tr.top table td { padding-bottom: 20px; } .invoice-box table tr.top table td.title { font-size: 45px; line-height: 45px; color: #333; } .invoice-box table tr.information table td { padding-bottom: 40px; } .invoice-box table tr.heading td { background: #eee; border-bottom: 1px solid #ddd; font-weight: bold; } .invoice-box table tr.details td { padding-bottom: 20px; } .invoice-box table tr.item td{ border-bottom: 1px solid #eee; } .invoice-box table tr.item.last td { border-bottom: none; } .invoice-box table tr.total td:nth-child(2) { border-top: 2px solid #eee; font-weight: bold; } @media only screen and (max-width: 600px) { .invoice-box table tr.top table td { width: 100%; display: block; text-align: center; } .invoice-box table tr.information table td { width: 100%; display: block; text-align: center; } } /** RTL **/ .rtl { direction: rtl; font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; } .rtl table { text-align: right; } .rtl table tr td:nth-child(2) { text-align: left; } </style>
-                                              <table cellpadding="0" cellspacing="0">
-                                                  <tr class="top">
-                                                      <td colspan="2">
-                                                          <table>
-                                                              <tr>
-                                                                  <td class="title">
-                                                                      <img src="<?php $this->url('images/favicon.png') ?>" style="height: 50px;width:50px; max-width:300px;">
-                                                                  </td>
-
-                                                                  <td>
-                                                                      Invoice #: <?= $h->worship_place_id ?><?= $h->grup ?><?= $h->year ?><br>
-                                                                      Created: <?=  $date->format('j F Y') ?><br>
-                                                                  </td>
-                                                              </tr>
-                                                          </table>
-                                                      </td>
-                                                  </tr>
-
-                                                  <tr class="heading">
-                                                    <td>Worship Place</td>
-                                                    <td>
-                                                        <?= $h->name ?>
-                                                    </td>
-                                                  </tr>
-
-                                                  <tr class="details">
-                                                    <td style="vertical-align:top">Participant</td>
-                                                    <td>
-                                                      <?php
-                                                        $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM participant WHERE grup=:grup AND year=:year AND worship_place_id=:id");
-                                                        $stmt->execute(['grup' => $h->grup, 'year' => $h->year, 'id' => $h->worship_place_id]);
-                                                        $part = $stmt->fetchAll(PDO::FETCH_OBJ);
-                                                      ?>
-                                                        <?php foreach ($part as $p): ?>
-                                                          <?= $p->name ?>,
-                                                        <?php endforeach; ?>
-                                                    </td>
-                                                  </tr>
-
-                                                  <tr class="heading">
-                                                      <td>Animal</td>
-                                                      <td>
-                                                        <?= $h->animal_type ?>
-                                                      </td>
-                                                  </tr>
-
-                                                  <tr class="details">
-                                                      <td>Fund</td>
-                                                      <td>
-                                                          Rp <?= number_format(($h->fund),0,',','.') ?>
-                                                      </td>
-                                                  </tr>
-
-                                                  <tr class="heading">
-                                                    <td>
-                                                        Payment Method
-                                                    </td>
-                                                    <td>
-                                                        <?php if ($h->payment_method == 'transfer'): ?>
-                                                          Transfer
-                                                        <?php elseif($h->payment_method == 'cash'): ?>
-                                                          Cash
-                                                        <?php endif; ?>
-                                                    </td>
-                                                  </tr>
-                                                  <tr class="details">
-                                                    <td>
-                                                        Status
-                                                    </td>
-                                                    <td>
-                                                      <?php if ($h->confirmation == true): ?>
-                                                        <div class="text-success" name="button"> <b>Confirmed</b> </div>
-                                                      <?php else: ?>
-                                                        <div class="text-danger"> <b>Checking</b> </div>
-                                                      <?php endif; ?>
-                                                    </td>
-                                                  </tr>
-                                              </table>
-                                          </div>
-                                          </div>
-                                          <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                          </div>
-                                        </div>
-                                    </div>
-                                  </div>
-                                  <!-- End Modal -->
-                                <?php else: ?>
-                                  <a href="<?php $this->url('jamaah/qurban/checking?id='. $this->encrypt($h->datetime)) ?>" class="btn btn-sm btn-warning">Payment</a>
-                                <?php endif; ?>
-                              </td>
+                              </td> -->
                             </tr>
                           <?php endforeach; ?>
                         </tbody>

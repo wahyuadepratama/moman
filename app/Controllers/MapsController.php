@@ -146,59 +146,143 @@ class MapsController extends Controller{
       $park = $_GET['park'];
       $capacity = $_GET['capacity'];
 
-      //--------------------------------------------------- Cek Park
-      if ($park == '0') {
+      //--------------------------------------------------- Cek Park and Capacity
+      if ($park == '0' && $capacity == '0') {
         $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
                                           ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
-                                          AND name iLIKE '%$name%' AND park_area_size > 0");
+                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND capacity > 0");
       }
-      if ($park == '50') {
+      if ($park == '0' && $capacity == '100') {
         $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
                                           ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
-                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND park_area_size <= 50");
+                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND capacity > 0 AND capacity <= 100");
       }
-      if ($park == '100') {
+      if ($park == '0' && $capacity == '300') {
         $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
                                           ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
-                                          AND name iLIKE '%$name%' AND park_area_size >= 50 AND park_area_size <= 100");
+                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND capacity >= 100 AND capacity <= 300");
       }
-      if ($park == '200') {
+      if ($park == '0' && $capacity == '500') {
         $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
                                           ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
-                                          AND name iLIKE '%$name%' AND park_area_size >= 100 AND park_area_size <= 200");
+                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND capacity >= 300 AND capacity <= 500");
       }
-      if ($park == 'more') {
+      if ($park == '0' && $capacity == '500') {
         $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
                                           ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
-                                          AND name iLIKE '%$name%' AND park_area_size > 200");
+                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND capacity > 500");
       }
 
-      //------------------------------------------------------ Cek Capacity
+      // -------------------------------------------------------------------------------------------------------------------------
 
-      if ($capacity == '0') {
+      if ($park == '50' && $capacity == '0') {
         $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
                                           ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
-                                          AND name iLIKE '%$name%' AND capacity > 0");
+                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND park_area_size <= 50 AND capacity > 0");
       }
-      if ($capacity == '100') {
+      if ($park == '50' && $capacity == '100') {
         $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
                                           ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
-                                          AND name iLIKE '%$name%' AND capacity > 0 AND capacity <= 100");
+                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND park_area_size <= 50 AND capacity > 0 AND capacity <= 100");
       }
-      if ($capacity == '300') {
+      if ($park == '50' && $capacity == '300') {
         $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
                                           ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
-                                          AND name iLIKE '%$name%' AND capacity >= 100 AND capacity <= 300");
+                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND park_area_size <= 50 AND capacity >= 100 AND capacity <= 300");
       }
-      if ($capacity == '500') {
+      if ($park == '50' && $capacity == '500') {
         $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
                                           ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
-                                          AND name iLIKE '%$name%' AND capacity >= 300 AND capacity <= 500");
+                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND park_area_size <= 50 AND capacity >= 300 AND capacity <= 500");
       }
-      if ($capacity == 'more') {
+      if ($park == '50' && $capacity == '500') {
         $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
                                           ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
-                                          AND name iLIKE '%$name%' AND capacity > 500");
+                                          AND name iLIKE '%$name%' AND park_area_size > 0 AND park_area_size <= 50 AND capacity > 500");
+      }
+
+      // -------------------------------------------------------------------------------------------------------------------------
+
+      if ($park == '100' && $capacity == '0') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size >= 50 AND park_area_size <= 100 AND capacity > 0");
+      }
+      if ($park == '100' && $capacity == '100') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size >= 50 AND park_area_size <= 100 AND capacity > 0 AND capacity <= 100");
+      }
+      if ($park == '100' && $capacity == '300') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size >= 50 AND park_area_size <= 100 AND capacity >= 100 AND capacity <= 300");
+      }
+      if ($park == '100' && $capacity == '500') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size >= 50 AND park_area_size <= 100 AND capacity >= 300 AND capacity <= 500");
+      }
+      if ($park == '100' && $capacity == '500') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size >= 50 AND park_area_size <= 100 AND capacity > 500");
+      }
+
+      // -------------------------------------------------------------------------------------------------------------------------
+
+      if ($park == '200' && $capacity == '0') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size >= 100 AND park_area_size <= 200 AND capacity > 0");
+      }
+      if ($park == '200' && $capacity == '100') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size >= 100 AND park_area_size <= 200 AND capacity > 0 AND capacity <= 100");
+      }
+      if ($park == '200' && $capacity == '300') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size >= 100 AND park_area_size <= 200 AND capacity >= 100 AND capacity <= 300");
+      }
+      if ($park == '200' && $capacity == '500') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size >= 100 AND park_area_size <= 200 AND capacity >= 300 AND capacity <= 500");
+      }
+      if ($park == '200' && $capacity == '500') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size >= 100 AND park_area_size <= 200 AND capacity > 500");
+      }
+
+      // -------------------------------------------------------------------------------------------------------------------------
+
+      if ($park == 'more' && $capacity == '0') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size > 200 AND capacity > 0");
+      }
+      if ($park == 'more' && $capacity == '100') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size > 200 AND capacity > 0 AND capacity <= 100");
+      }
+      if ($park == 'more' && $capacity == '300') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size > 200 AND capacity >= 100 AND capacity <= 300");
+      }
+      if ($park == 'more' && $capacity == '500') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size > 200 AND capacity >= 300 AND capacity <= 500");
+      }
+      if ($park == 'more' && $capacity == '500') {
+        $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                          ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a WHERE a.type iLIKE '%$type%'
+                                          AND name iLIKE '%$name%' AND park_area_size > 200 AND capacity > 500");
       }
 
     }else{
@@ -228,17 +312,19 @@ class MapsController extends Controller{
 
   public function filterFacility()
   {
-    $str = explode (",", $_GET['name']);
-    $result = array();
-    foreach ($str as $key) {
-      $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
-                                        ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a INNER JOIN detail_condition ON
-                                        detail_condition.worship_place_id=a.id WHERE facility_id = :id");
-      $stmt->execute(['id' => $key]);
-      $data = $stmt->fetchAll(PDO::FETCH_OBJ);
-      $result = array_merge($result,$data);
+    $str = "";
+    $array = explode (",", $_GET['name']);
+    foreach ($array as $key) {
+      $str .= ",'".$key."'";
     }
+    $str = substr($str,1);
 
+    $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
+                                      ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a INNER JOIN detail_condition ON
+                                      detail_condition.worship_place_id=a.id WHERE facility_id IN (". $str .")");
+    $stmt->execute();
+    $result = $stmt->fetchAll(PDO::FETCH_OBJ);
+    
     echo json_encode($result);
   }
 

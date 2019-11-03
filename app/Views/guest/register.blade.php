@@ -29,8 +29,8 @@
     <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
 
     <div class="form-group">
-      <label for="inputEmail" class="sr-only">Username</label>
-      <input type="text" name="username" class="form-control" placeholder="Username" required="">
+      <label for="inputEmail" class="sr-only">Jamaah Name</label>
+      <input type="text" maxlength="20" name="username" class="form-control" placeholder="Jamaah Name" required="">
     </div>
 
     <div class="form-group">
@@ -39,13 +39,13 @@
     </div>
 
     <div class="form-group">
-      <label for="inputPassword" class="sr-only">Alamat</label>
-      <input type="text" name="address" class="form-control" placeholder="Alamat" required="">
+      <label for="inputPassword" class="sr-only">Address</label>
+      <input type="text" maxlength="60" name="address" class="form-control" placeholder="Address" required="">
     </div>
 
     <div class="form-group">
       <label for="inputPassword" class="sr-only">Phone</label>
-      <input type="number" name="phone" class="form-control" placeholder="No. Handphone" required="">
+      <input type="number" name="phone" class="form-control" placeholder="Phone number" required="">
     </div>
 
     <div class="form-group">
@@ -58,8 +58,8 @@
 
     <div class="form-group">
       <select class="js-example-basic-single form-control" name="type">
-        <option value="domisili">I live around this mosque area</option>
-        <option value="pendatang">I don't live around this mosque area</option>
+        <option value="1">I live around this mosque area</option>
+        <option value="2">I don't live around this mosque area</option>
       </select>
     </div>
 
