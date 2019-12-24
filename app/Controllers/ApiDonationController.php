@@ -313,7 +313,7 @@ class ApiDonationController extends Controller
     if (isset($_GET['id'])) {
 
       $id = $_GET['id'];
-
+      $this->die($_POST['jamaah']);
       $stmt = $GLOBALS['pdo']->prepare("INSERT INTO cash_in(worship_place_id, project_id, jamaah_id, fund,
                                         status_in, status_out, datetime, description, confirmation, public)
                                         VALUES(:worship, :project, :jamaah, :fund, :_in, :_out, now(), :dsc, 'false', :public)");

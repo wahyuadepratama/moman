@@ -609,15 +609,8 @@ class FinancialController extends Controller{
 
     }
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT gq.*, mq.max_person FROM group_qurban as gq INNER JOIN
-                                      mosque_qurban as mq ON gq.worship_place_id = mq.worship_place_id
-                                      AND gq.year = mq.year AND gq.animal_type = mq.animal_type
-                                      WHERE gq.worship_place_id=:id AND gq.year=:y ORDER BY gq.group ASC");
-    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $_GET['year']]);
-    $qurban = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM jamaah WHERE worship_place_id=:worship_id");
-    $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.* FROM jamaah");
+    $stmt->execute();
     $jamaah = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM tpa");
@@ -660,9 +653,31 @@ class FinancialController extends Controller{
     $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
     $cash_out = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    // $this->die($data);
+    // qurban data
+    $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT group_name FROM qurban_detail WHERE worship_place_id=:id AND year=:y ORDER BY group_name");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $_GET['year']]);
+    $group = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT SUM(total_qurban) FROM qurban_detail WHERE worship_place_id=:id AND year=:y AND animal=:animal");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $_GET['year'], 'animal' => '']);
+    $total_qurban = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM qurban WHERE worship_place_id=:id AND year=:y");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $_GET['year']]);
+    $qurban = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $fundQurban =  $total_qurban->sum * $qurban->animal_price;
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(id) FROM qurban_detail WHERE worship_place_id=:id AND year=:y AND animal=:animal");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $_GET['year'], 'animal' => 'goat']);
+    $goat = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(id) FROM qurban_detail WHERE worship_place_id=:id AND year=:y AND animal=:animal");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $_GET['year'], 'animal' => 'cow']);
+    $cow = $stmt->fetch(PDO::FETCH_OBJ);
+    // end qurban data group
+
     return $this->view('stewardship/report', ['allReport' => $data,
-                                              'qurban' => $qurban,
                                               'jamaah' => $jamaah,
                                               'tpa' => $tpa,
                                               'orphan' => $orphan,
@@ -673,7 +688,11 @@ class FinancialController extends Controller{
                                               'stewardship' => $stewardship,
                                               'project' => $project,
                                               'cash_in' => $cash_in,
-                                              'cash_out' => $cash_out
+                                              'cash_out' => $cash_out,
+                                              'group' => $group,
+                                              'fund' => $fundQurban,
+                                              'goat' => $goat,
+                                              'cow' => $cow
                                               ]);
   }
 

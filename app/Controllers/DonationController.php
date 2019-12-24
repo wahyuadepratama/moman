@@ -5,7 +5,9 @@ class DonationController extends Controller{
   // __________________________________ GUEST ____________________________________
 
   public function donation(){
-    $stmt = $GLOBALS['pdo']->prepare("SELECT project.*, worship_place.name as worship FROM project INNER JOIN worship_place ON project.worship_place_id = worship_place.id ORDER BY project.id DESC");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT project.*, worship_place.name as worship FROM project INNER JOIN worship_place
+                                      ON project.worship_place_id = worship_place.id WHERE project.status = true
+                                      ORDER BY project.id DESC");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
 
@@ -29,16 +31,17 @@ class DonationController extends Controller{
       $stmt->execute(['project_id' => $id]);
       $result = $stmt->fetch(PDO::FETCH_OBJ);
 
-      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp FROM stewardship
-                                        INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
-                                        WHERE jamaah.worship_place_id = :id");
+      $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT ON (jamaah.username) jamaah.username, jamaah.phone, stewardship.whatsapp FROM stewardship
+                                        RIGHT JOIN jamaah ON stewardship.jamaah_id = jamaah.id
+                                        WHERE jamaah.worship_place_id = :id AND stewardship.period LIKE '%".date('Y')."%'");
       $stmt->execute(['id' => $result->worship_id]);
       $stewardship = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
+      $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT ON (account.account_number) jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
                                         FROM account INNER JOIN stewardship ON account.stewardship_id = stewardship.jamaah_id
+                                        AND account.stewardship_period = stewardship.period
                                         INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
-                                        WHERE jamaah.worship_place_id=:id");
+                                        WHERE jamaah.worship_place_id=:id AND account.stewardship_period LIKE '%".date('Y')."%'");
       $stmt->execute(['id' => $result->worship_id]);
       $account = $stmt->fetchAll(PDO::FETCH_OBJ);
 
@@ -65,15 +68,15 @@ class DonationController extends Controller{
 
   public function orphans()
   {
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT worship_place.* FROM worship_place INNER JOIN jamaah
+                                      ON worship_place.id=jamaah.worship_place_id INNER JOIN stewardship
+                                      ON jamaah.id=stewardship.jamaah_id INNER JOIN account
+                                      ON stewardship.jamaah_id=account.stewardship_id
+                                      AND stewardship.period=account.stewardship_period");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT account.*, jamaah.worship_place_id FROM account INNER JOIN jamaah ON account.stewardship_id=jamaah.id");
-    $stmt->execute();
-    $a = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    return $this->view('guest/orphan', ['orphan' => $r, 'account' => $a]);
+    return $this->view('guest/orphan', ['orphan' => $r]);
   }
 
   public function orphanDetail()
@@ -85,16 +88,17 @@ class DonationController extends Controller{
       $stmt->execute(['id' => $id]);
       $m = $stmt->fetch(PDO::FETCH_OBJ);
 
-      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp FROM stewardship
+      $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT ON (jamaah.username) jamaah.username, jamaah.phone, stewardship.whatsapp FROM stewardship
                                         INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
                                         WHERE jamaah.worship_place_id = :id");
       $stmt->execute(['id' => $id]);
       $stewardship = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
+      $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT ON (account.account_number) jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
                                         FROM account INNER JOIN stewardship ON account.stewardship_id = stewardship.jamaah_id
+                                        AND account.stewardship_period = stewardship.period
                                         INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
-                                        WHERE jamaah.worship_place_id=:id");
+                                        WHERE jamaah.worship_place_id=:id AND account.stewardship_period LIKE '%".date('Y')."%'");
       $stmt->execute(['id' => $id]);
       $account = $stmt->fetchAll(PDO::FETCH_OBJ);
 
@@ -115,15 +119,15 @@ class DonationController extends Controller{
 
   public function poor()
   {
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place ORDER BY id ASC");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT worship_place.* FROM worship_place INNER JOIN jamaah
+                                      ON worship_place.id=jamaah.worship_place_id INNER JOIN stewardship
+                                      ON jamaah.id=stewardship.jamaah_id INNER JOIN account
+                                      ON stewardship.jamaah_id=account.stewardship_id
+                                      AND stewardship.period=account.stewardship_period");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT account.*, jamaah.worship_place_id FROM account INNER JOIN jamaah ON account.stewardship_id=jamaah.id");
-    $stmt->execute();
-    $a = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    return $this->view('guest/poor', ['orphan' => $r, 'account' => $a]);
+    return $this->view('guest/poor', ['orphan' => $r]);
   }
 
   public function poorDetail()
@@ -135,22 +139,23 @@ class DonationController extends Controller{
       $stmt->execute(['id' => $id]);
       $m = $stmt->fetch(PDO::FETCH_OBJ);
 
-      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp FROM stewardship
+      $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT ON (jamaah.username) jamaah.username, jamaah.phone, stewardship.whatsapp FROM stewardship
                                         INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
                                         WHERE jamaah.worship_place_id = :id");
       $stmt->execute(['id' => $id]);
       $stewardship = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
+      $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT ON (account.account_number) jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
                                         FROM account INNER JOIN stewardship ON account.stewardship_id = stewardship.jamaah_id
+                                        AND account.stewardship_period = stewardship.period
                                         INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
-                                        WHERE jamaah.worship_place_id=:id");
+                                        WHERE jamaah.worship_place_id=:id AND account.stewardship_period LIKE '%".date('Y')."%'");
       $stmt->execute(['id' => $id]);
       $account = $stmt->fetchAll(PDO::FETCH_OBJ);
 
       $stmt = $GLOBALS['pdo']->prepare("SELECT cash_in.public, cash_in.fund, jamaah.username FROM cash_in INNER JOIN jamaah ON
                                         cash_in.jamaah_id = jamaah.id WHERE cash_in.status_in='transfer jamaah'
-                                        AND cash_in.status_out='poor' AND cash_in.confirmation=true AND cash_in.worship_place_id=:id");
+                                        AND cash_in.status_out='orphanage' AND cash_in.confirmation=true AND cash_in.worship_place_id=:id");
       $stmt->execute(['id' => $id]);
       $donatur = $stmt->fetchAll(PDO::FETCH_OBJ);
 
@@ -165,15 +170,15 @@ class DonationController extends Controller{
 
   public function tpa()
   {
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place ORDER BY id ASC");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT worship_place.* FROM worship_place INNER JOIN jamaah
+                                      ON worship_place.id=jamaah.worship_place_id INNER JOIN stewardship
+                                      ON jamaah.id=stewardship.jamaah_id INNER JOIN account
+                                      ON stewardship.jamaah_id=account.stewardship_id
+                                      AND stewardship.period=account.stewardship_period");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT account.*, jamaah.worship_place_id FROM account INNER JOIN jamaah ON account.stewardship_id=jamaah.id");
-    $stmt->execute();
-    $a = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    return $this->view('guest/tpa', ['orphan' => $r, 'account' => $a]);
+    return $this->view('guest/tpa', ['orphan' => $r]);
   }
 
   public function tpaDetail()
@@ -185,22 +190,23 @@ class DonationController extends Controller{
       $stmt->execute(['id' => $id]);
       $m = $stmt->fetch(PDO::FETCH_OBJ);
 
-      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp FROM stewardship
+      $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT ON (jamaah.username) jamaah.username, jamaah.phone, stewardship.whatsapp FROM stewardship
                                         INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
                                         WHERE jamaah.worship_place_id = :id");
       $stmt->execute(['id' => $id]);
       $stewardship = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-      $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
+      $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT ON (account.account_number) jamaah.username, jamaah.phone, stewardship.whatsapp, account.*
                                         FROM account INNER JOIN stewardship ON account.stewardship_id = stewardship.jamaah_id
+                                        AND account.stewardship_period = stewardship.period
                                         INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
-                                        WHERE jamaah.worship_place_id=:id");
+                                        WHERE jamaah.worship_place_id=:id AND account.stewardship_period LIKE '%".date('Y')."%'");
       $stmt->execute(['id' => $id]);
       $account = $stmt->fetchAll(PDO::FETCH_OBJ);
 
       $stmt = $GLOBALS['pdo']->prepare("SELECT cash_in.public, cash_in.fund, jamaah.username FROM cash_in INNER JOIN jamaah ON
                                         cash_in.jamaah_id = jamaah.id WHERE cash_in.status_in='transfer jamaah'
-                                        AND cash_in.status_out='tpa' AND cash_in.confirmation=true AND cash_in.worship_place_id=:id");
+                                        AND cash_in.status_out='orphanage' AND cash_in.confirmation=true AND cash_in.worship_place_id=:id");
       $stmt->execute(['id' => $id]);
       $donatur = $stmt->fetchAll(PDO::FETCH_OBJ);
 
@@ -247,7 +253,7 @@ class DonationController extends Controller{
                                         VALUES(:worship, :project, :jamaah, :fund, :_in, :_out, now(),:dsc, 'false', :public)");
       $stmt->execute(['worship' => $result->worship_id,
                       'project' => $id,
-                      'jamaah' => $_SESSION['user']->jamaah_id,
+                      'jamaah' => $_SESSION['user']->id,
                       'fund' => $_POST['fund'],
                       '_in' => 'transfer jamaah',
                       '_out' => 'project',
@@ -288,7 +294,7 @@ class DonationController extends Controller{
                                         status_in, status_out, datetime, description, confirmation, public)
                                         VALUES(:worship, :jamaah, :fund, :_in, :_out, now(), :dsc, 'false', :public)");
       $stmt->execute(['worship' => $id,
-                      'jamaah' => $_SESSION['user']->jamaah_id,
+                      'jamaah' => $_SESSION['user']->id,
                       'fund' => $_POST['fund'],
                       '_in' => 'transfer jamaah',
                       '_out' => 'orphanage',
@@ -329,7 +335,7 @@ class DonationController extends Controller{
                                         status_in, status_out, datetime, description, confirmation, public)
                                         VALUES(:worship, :jamaah, :fund, :_in, :_out, now(), :dsc, 'false', :public)");
       $stmt->execute(['worship' => $id,
-                      'jamaah' => $_SESSION['user']->jamaah_id,
+                      'jamaah' => $_SESSION['user']->id,
                       'fund' => $_POST['fund'],
                       '_in' => 'transfer jamaah',
                       '_out' => 'poor',
@@ -370,7 +376,7 @@ class DonationController extends Controller{
                                         status_in, status_out, datetime, description, confirmation, public)
                                         VALUES(:worship, :jamaah, :fund, :_in, :_out, now(), :dsc, 'false', :public)");
       $stmt->execute(['worship' => $id,
-                      'jamaah' => $_SESSION['user']->jamaah_id,
+                      'jamaah' => $_SESSION['user']->id,
                       'fund' => $_POST['fund'],
                       '_in' => 'transfer jamaah',
                       '_out' => 'tpa',
@@ -394,12 +400,15 @@ class DonationController extends Controller{
     $stmt->execute(['id' => $id]);
     $cash = $stmt->fetch(PDO::FETCH_OBJ);
 
+    $account = explode('~', $cash->description);
+
     $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.username, jamaah.phone, stewardship.whatsapp, account.*, worship_place.name as mosque
                                       FROM account INNER JOIN stewardship ON account.stewardship_id = stewardship.jamaah_id
+                                      AND account.stewardship_period = stewardship.period
                                       INNER JOIN jamaah ON stewardship.jamaah_id = jamaah.id
                                       INNER JOIN worship_place ON jamaah.worship_place_id = worship_place.id
-                                      WHERE account.id=:id");
-    $stmt->execute(['id' => $cash->description]);
+                                      WHERE account.stewardship_id=:id AND account.account_number=:an AND account.stewardship_period=:period");
+    $stmt->execute(['id' => $account['1'], 'an' => $account[0], 'period' => $account['2']]);
     $account = $stmt->fetch(PDO::FETCH_OBJ);
 
     return $this->view('jamaah/donation_confirm', ['mosque' => $account->mosque,
@@ -479,6 +488,15 @@ class DonationController extends Controller{
       $this->flash('Something Wrong!');
       return $this->redirect('stewardship/donation/project');
     }
+  }
+
+  public function closeProjectStewardship()
+  {
+    $stmt = $GLOBALS['pdo']->prepare("UPDATE project SET status=:status where id=:id");
+    $stmt->execute(['status' => 'false', 'id' => $_GET['id']]);
+
+    $this->flash('Project Successfully Closed!');
+    return $this->redirect('stewardship/donation/project');
   }
 
   public function transactionStewardship()

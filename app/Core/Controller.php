@@ -61,13 +61,14 @@ class Controller{
 
   public function csrf_field(){
     // session_start();
+    // Show input token to check csrf
     $_SESSION['csrf_token'] = base64_encode(openssl_random_pseudo_bytes(32));
     $field = "<input name='csrf_token' type='hidden' value='". $_SESSION['csrf_token'] ."'>";
     echo $field;
   }
 
   public function check_csrf($post){
-
+    // Prevent POST method from xss
     if (isset($post['csrf_token']) && $post['csrf_token'] === $post['csrf_token']) {
         return true;
     }else{
@@ -128,7 +129,7 @@ class Controller{
   {
     $stmt = $GLOBALS['pdo']->prepare("SELECT ". $id ." FROM ". $table ." ORDER BY ". $id ." DESC LIMIT 1");
     $stmt->execute();
-    $data = $stmt->fetch(PDO::FETCH_OBJ);    
+    $data = $stmt->fetch(PDO::FETCH_OBJ);
     return $data;
   }
 

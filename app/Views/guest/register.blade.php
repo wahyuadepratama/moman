@@ -30,7 +30,12 @@
 
     <div class="form-group">
       <label for="inputEmail" class="sr-only">Jamaah Name</label>
-      <input type="text" maxlength="20" name="username" class="form-control" placeholder="Jamaah Name" required="">
+      <input type="text" maxlength="30" name="name" class="form-control" placeholder="Jamaah Name" required="">
+    </div>
+
+    <div class="form-group">
+      <label for="inputEmail" class="sr-only">Username</label>
+      <input type="text" maxlength="15" name="username" class="form-control" placeholder="Username" required="">
     </div>
 
     <div class="form-group">
@@ -45,7 +50,7 @@
 
     <div class="form-group">
       <label for="inputPassword" class="sr-only">Phone</label>
-      <input type="number" name="phone" class="form-control" placeholder="Phone number" required="">
+      <input type="number" name="phone" class="form-control" placeholder="Phone number">
     </div>
 
     <div class="form-group">

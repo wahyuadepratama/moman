@@ -33,7 +33,7 @@
               <span class="page-title-icon bg-gradient-primary text-white mr-2">
                 <i class="mdi mdi-home"></i>
               </span>
-              <?= $_SESSION['user']->name ?> Report <?= date('Y') ?>
+              <?= $_SESSION['user']->name ?> Report this Month
             </h3>
           </div>
 
@@ -145,7 +145,7 @@
                             <tr>
                               <td><?= $f->name ?></td>
                               <td><?= $f->description ?></td>
-                              <td><?= $f->schedule ?></td>
+                              <td><?= date('d M Y', strtotime($f->date)) ?></td>
                               <td><?= $f->status ?></td>
                               <td><?= $f->ustad ?></td>
                             </tr>
@@ -165,7 +165,7 @@
                               <td><?= $f->name ?></td>
                               <td><?= $f->total ?></td>
                               <td><?= $f->condition ?></td>
-                              <td><?= $f->updated_at ?></td>
+                              <td><?= date('d M Y, h:i:s', strtotime($f->updated_at)) ?></td>
                             </tr>
                           <?php endforeach; ?>
                         </table>
@@ -297,7 +297,7 @@
                             <?php endif; ?>
                             <?php if ($ar->status_in == 'transfer jamaah'): ?>
                               <?php if ($ar->status_out == 'project'): ?>
-                                <?= $pr->name ?>
+                                For Project: "<?= $pr->name ?>"
                               <?php endif; ?>
                             <?php endif; ?>
                           </td>
@@ -326,65 +326,69 @@
                       </table>
                     </div>
 
-                    <div class="col-md-12 table-responsive" style="text-align:center;margin-top:2%;display:none" id="qurban">
-                      <table class="table resize-font">
-                        <thead style="text-align:left">
+                    <div class="col-md-12" id="qurban">
+
+                      <div class="col-md-6" style="margin-bottom: 15px">
+                        <table class="table">
                           <tr>
-                            <th>Group</th>
-                            <th>Animal</th>
-                            <th>Participant</th>
-                            <th>Slot Used</th>
-                            <th>Slot Available</th>
-                            <th>Paid</th>
-                            <th>Unpaid</th>
+                            <td>Total qurban funds</td>
+                            <td>:</td>
+                            <td>Rp <?= number_format($fund,0,',','.') ?></td>
                           </tr>
-                        </thead>
-                        <tbody style="text-align:left">
-                          <?php $paid=0; $unpaid=0; ?>
-                          <?php foreach ($qurban as $key): ?>
-                            <tr>
-                              <?php
-                                $stmt = $GLOBALS['pdo']->prepare("SELECT dq.*, j.username
-                                                                  FROM detail_qurban as dq INNER JOIN jamaah as j ON dq.jamaah_id = j.id
-                                                                  WHERE dq.worship_place_id=:id AND dq.year=:y AND dq.group=:g");
-                                $stmt->execute(['id'=> $key->worship_place_id, 'y' => $key->year, 'g' => $key->group]);
-                                $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-                                // $this->die($r);
-                                $slot = 0;
-                              ?>
-                              <td><?= $key->group ?></td>
-                              <td><?= $key->animal_type ?></td>
-                              <td>
-                                <?php foreach ($r as $val): ?>
-                                  <li><?= $val->username ?></li>
-                                  <?php
-                                    $slot += $val->total_slot
-                                  ?>
-                                <?php endforeach; ?>
-                              </td>
-                              <td><?= $slot ?></td>
-                              <td><?= $key->max_person- $slot ?></td>
-                              <td>
-                                <?php foreach ($r as $val): ?>
-                                  Rp <?= number_format($val->fund * (int)substr($val->payment_method, 2, 1),0,',','.') ?><br>
-                                  <?php $paid += $val->fund * (int)substr($val->payment_method, 2, 1) ?>
-                                <?php endforeach; ?>
-                              </td>
-                              <td>
-                                <?php foreach ($r as $val): ?>
-                                  Rp <?= number_format($val->fund * (int)substr($val->payment_method, 0, 1),0,',','.') ?><br>
-                                  <?php $unpaid += $val->fund * (int)substr($val->payment_method, 0, 1) ?>
-                                <?php endforeach; ?>
-                              </td>
-                            </tr>
+                          <tr>
+                            <td>Goats from jamaah</td>
+                            <td>:</td>
+                            <td><?= $goat->count ?></td>
+                          </tr>
+                          <tr>
+                            <td>Cows from jamaah</td>
+                            <td>:</td>
+                            <td><?= $cow->count ?></td>
+                          </tr>
+                        </table>
+                      </div>
+
+                      <div class="row">
+
+                          <?php foreach ($group as $key): ?>
+
+                            <?php
+                              $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_detail.*, qurban_participant.*
+                                                                FROM qurban_detail INNER JOIN qurban_participant ON
+                                                                qurban_participant.id = qurban_detail.participant_id
+                                                                WHERE worship_place_id=:id AND year=:y
+                                                                AND group_name=:grup ORDER BY datetime");
+                              $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $year, 'grup' => $key->group_name]);
+                              $group = $stmt->fetchAll(PDO::FETCH_OBJ);
+                            ?>
+
+                            <div class="col-md-3">
+                              <div class="card" style="width: 14rem; margin-bottom: 20px">
+                                <div class="card-header">
+                                  Group <?= $key->group_name ?>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                  <?php foreach ($group as $value): ?>
+
+                                    <?php if ($value->total_qurban > 1): ?>
+                                      <?php
+                                        for ($i=0; $i < $value->total_qurban; $i++) {
+                                          ?>
+                                            <li class="list-group-item"><?= $value->name ?></li>
+                                          <?php
+                                        }
+                                      ?>
+                                    <?php else: ?>
+                                      <li class="list-group-item"><?= $value->name ?></li>
+                                    <?php endif; ?>
+
+                                  <?php endforeach; ?>
+                                </ul>
+                              </div>
+                            </div>
                           <?php endforeach; ?>
-                          <tr style="background-color:#ebedf2">
-                            <td colspan="5" style="text-align:center">Total</td>
-                            <td>Rp <?= number_format($paid, 0,',','.') ?></td>
-                            <td>Rp <?= number_format($unpaid, 0,',','.') ?></td>
-                          </tr>
-                        </tbody>
-                      </table>
+
+                      </div>
                     </div>
 
                   </div>

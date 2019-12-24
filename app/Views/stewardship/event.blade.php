@@ -92,7 +92,7 @@
                               <td><?= $p->name ?></td>
                               <td><?= $p->description ?></td>
                               <td>
-                                <a href="#" data-toggle="modal" data-target="#edit_event<?= $p->id ?>" class="btn btn-sm btn-success">Edit</a>
+                                <a href="#" data-toggle="modal" data-target="#edit_event<?= $p->id ?>" class="btn btn-sm btn-success">Edit</a>                                
                                 <!-- Modal Avatar -->
                                 <div class="modal fade" id="edit_event<?= $p->id ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
                                   <div class="modal-dialog" role="document">

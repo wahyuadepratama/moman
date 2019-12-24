@@ -59,6 +59,13 @@
           </a>
         </li>
 
+        <li class="nav-item <?php $this->active('admin/jamaah');?>">
+          <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('admin/jamaah') ?>'">
+            <span class="menu-title">Jamaah</span>
+            <i class="mdi mdi-home-modern menu-icon"></i>
+          </a>
+        </li>
+
         <li class="nav-item <?php $this->active('admin/facility-type');?>">
           <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('admin/facility-type') ?>'">
             <span class="menu-title">Facility Type</span>

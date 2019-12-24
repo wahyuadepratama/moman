@@ -42,132 +42,105 @@
               </span>
               Qurban Group
             </h3>
-            <a href="#" data-toggle="modal" data-target="#add_event" class="btn btn-gradient-danger btn-sm">+ Add Group</a>
-            <!-- Modal Avatar -->
-            <div class="modal fade" id="add_event" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <form action="<?php $this->url('stewardship/qurb/group/add') ?>" method="post">
 
-                  <?php $this->csrf_field() ?>
-
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="avatar">New Qurban <?= date('Y') ?></h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <label>Group Name</label>
-                      <input type="text" class="form-control" name="group" placeholder="Example: 02" maxlength="2">
-                      <label>Group Name</label>
-                      <select class="form-control" name="animal_type">
-                        <option value="Goat">Goat</option>
-                        <option value="Cow">Cow</option>
-                      </select>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-success">Add</button>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-            <!-- End Modal -->
           </div>
 
           <div class="row">
 
-            <div class="col-md-12 grid-margin">
-              <div class="card">
-                <div class="card-body">
-                  <div class="row">
-                      <div class="col-md-12 table-responsive" id="qurban">
-                        <table class="table resize-font">
-                          <thead style="text-align:left">
-                            <tr>
-                              <th>Group</th>
-                              <th>Animal</th>
-                              <th>Participant</th>
-                              <th>Slot Used</th>
-                              <th>Slot Available</th>
-                              <th>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody style="text-align:left">
-                            <?php foreach ($qurban as $key): ?>
-                              <tr>
-                                <?php
-                                  $stmt = $GLOBALS['pdo']->prepare("SELECT dq.*, j.username
-                                                                    FROM detail_qurban as dq INNER JOIN jamaah as j ON dq.jamaah_id = j.id
-                                                                    WHERE dq.worship_place_id=:id AND dq.year=:y AND dq.group=:g");
-                                  $stmt->execute(['id'=> $key->worship_place_id, 'y' => $key->year, 'g' => $key->group]);
-                                  $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-                                  // $this->die($r);
-                                  $slot = 0;
-                                  $participant = 0;
-                                ?>
-                                <td><?= $key->group ?></td>
-                                <td><?= $key->animal_type ?></td>
-                                <td>
-                                  <?php foreach ($r as $val): ?>
-                                    <?php
-                                      $slot += $val->total_slot;
-                                      $participant++;
-                                    ?>
-                                    <li>
-                                      <?= $val->username ?>
-                                      <select class="float-right" name="" onchange="moveTo(this.value)">
-                                          <option value="<?= $val->group ?>">==== Select Group ===</option>
-                                        <?php foreach ($qurban as $q): ?>
+            <?php foreach ($group as $key): ?>
 
-                                            <?php
-                                              $stmt = $GLOBALS['pdo']->prepare("SELECT dq.*, j.username
-                                                                                FROM detail_qurban as dq INNER JOIN jamaah as j ON dq.jamaah_id = j.id
-                                                                                WHERE dq.worship_place_id=:id AND dq.year=:y AND dq.group=:g");
-                                              $stmt->execute(['id'=> $q->worship_place_id, 'y' => $q->year, 'g' => $q->group]);
-                                              $s = $stmt->fetchAll(PDO::FETCH_OBJ);
-                                              $countSlot = 0;
-                                              foreach ($s as $forMove) {
-                                                $countSlot += $forMove->total_slot;
-                                              }
-                                            ?>
+              <?php
+                $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_detail.*, qurban_detail.id as id_trx, qurban_participant.*
+                                                  FROM qurban_detail INNER JOIN qurban_participant ON
+                                                  qurban_participant.id = qurban_detail.participant_id
+                                                  WHERE worship_place_id=:id AND year=:y AND group_name=:grup ORDER BY datetime");
+                $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year'], 'grup' => $key->group_name]);
+                $group = $stmt->fetchAll(PDO::FETCH_OBJ);
+              ?>
 
-                                          <?php if ($q->animal_type == $key->animal_type && $q->max_person - $countSlot != 0): ?>
-                                            <option value="<?= $q->group ?>~<?= $this->encrypt($val->datetime) ?>">Move to group <?= $q->group ?></option>
-                                          <?php endif; ?>
-                                        <?php endforeach; ?>
-                                      </select>
-                                    </li>
-                                  <?php endforeach; ?>
-                                </td>
-                                <td>
-                                  <?php foreach ($r as $val): ?>
-                                    <?= $val->total_slot ?> Slot<br>
-                                  <?php endforeach; ?>
-                                </td>
-                                <td>
-                                  <?= $key->max_person - $slot ?>
-                                </td>
-                                <td>
-                                  <?php if ($participant > 0): ?>
-                                    ~
-                                  <?php else: ?>
-                                    <a href="#" onclick="confirm('<?php $this->url('stewardship/qurb/group/destroy?y='. $key->year. '&w=' . $key->worship_place_id . '&g=' . $key->group) ?>')" class="btn btn-sm btn-danger"> <i class="mdi mdi-delete"></i> </a>
-                                  <?php endif; ?>
-                                </td>
-                              </tr>
-                            <?php endforeach; ?>
-                          </tbody>
-                        </table>
-                      </div>
+              <div class="col-md-3">
+                <div class="card" style="width: 14rem; margin-bottom: 20px">
+                  <div class="card-header">
+                    Group <?= $key->group_name ?>
                   </div>
+                  <ul class="list-group list-group-flush">
+                    <?php foreach ($group as $value): ?>
+
+                      <?php if ($value->total_qurban > 1): ?>
+                        <?php
+                          $btn = true;
+                          for ($i=0; $i < $value->total_qurban; $i++) {
+                            ?>
+                              <li class="list-group-item">
+                                <?= $value->name ?>
+                                <?php if ($btn): ?>
+                                  <button data-toggle="modal" onclick="change('<?= $value->id_trx ?>')" data-target="#add_poor" class="float-right btn btn-gradient-primary btn-sm">Change</button>
+                                <?php endif; ?>
+                              </li>
+                            <?php
+                            $btn = false;
+                          }
+                        ?>
+                      <?php else: ?>
+                        <li class="list-group-item">
+                          <?= $value->name ?>
+                          <button data-toggle="modal" onclick="change('<?= $value->id_trx ?>')" data-target="#add_poor" class="float-right btn btn-gradient-primary btn-sm">Change</button>
+                        </li>
+                      <?php endif; ?>
+
+                    <?php endforeach; ?>
+                  </ul>
                 </div>
               </div>
-            </div>
+            <?php endforeach; ?>
 
           </div>
+
+          <!-- Modal Avatar -->
+          <div class="modal fade" id="add_poor" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <form action="<?php $this->url('stewardship/qurb/group/change?worship='. $_GET['worship'] .'&year='. $_GET['year']) ?>" method="post">
+
+                <?php $this->csrf_field() ?>
+
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="avatar">Change Group</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <label>Select Group</label>
+                    <select class="form-control" name="group_name" style="color: black">
+                      <option value="01">01</option>
+                      <option value="02">02</option>
+                      <option value="03">03</option>
+                      <option value="04">04</option>
+                      <option value="05">05</option>
+                      <option value="06">06</option>
+                      <option value="07">07</option>
+                      <option value="08">08</option>
+                      <option value="09">09</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                      <option value="12">12</option>
+                      <option value="13">13</option>
+                      <option value="14">14</option>
+                      <option value="15">15</option>
+                    </select>
+
+                    <input type="hidden" name="id" id="qurban_id">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Add</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- End Modal -->
 
         </div>
         <!-- content-wrapper ends -->
@@ -201,8 +174,8 @@
     });
     } );
 
-    function moveTo(val){
-      window.location = "<?= $this->url('stewardship/qurb/group/change?par=') ?>"+val;
+    function change(val){
+      $("#qurban_id").val(val);
     }
   </script>
   <script src="<?php $this->url('script/js/dashboard.js') ?>"></script>

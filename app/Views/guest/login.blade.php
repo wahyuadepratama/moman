@@ -24,7 +24,7 @@
 
       <div class="form-group">
         <label for="inputEmail" class="sr-only">Phone</label>
-        <input type="text" name="phone" class="form-control" placeholder="Phone" required="" autofocus="">
+        <input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="">
       </div>
 
       <div class="form-group">

@@ -82,9 +82,9 @@
                       <style media="screen">
                         .img-wrap { position: relative; } .img-wrap .close { position: absolute;top: 2px;right: 2px;z-index: 100; }
                       </style>
-                          <span class="close" onclick="confirm('<?php $this->url('admin/mosque/gallery/destroy?gallery='. $value['id'] . '&id=' . $_GET['id']) ?>')"> <i class="mdi mdi-delete"></i> </span>
+                          <span class="close" onclick="confirm('<?php $this->url('admin/mosque/gallery/destroy?gallery='. $value['serial_number'] . '&id=' . $_GET['id']) ?>')"> <i class="mdi mdi-delete"></i> </span>
                           <img class="img-fluid img-thumbnail" src="<?php $this->url('images/mosque/'. $value['image']) ?>" data-toggle="modal" data-target="#myModal<?= $value['id'] ?>">
-                          <div id="myModal<?= $value['id'] ?>" class="modal fade" tabindex="-1" role="dialog">
+                          <div id="myModal<?= $value['serial_number'] ?>" class="modal fade" tabindex="-1" role="dialog">
                             <div class="modal-dialog">
                               <div class="modal-content" style="background-color:#0000;border-color:#0000">
                                   <div class="modal-body" style="text-align:center">

@@ -28,6 +28,7 @@ class WorshipPlaceController extends Controller{
     $this->check_csrf($_POST);
     $lastId = $this->getLastId('worship_place', 'id');
     $id = (int)substr($lastId->id ,1) + 1;
+    $id = "M".$id;
 
     $stmt = $GLOBALS['pdo']->prepare("INSERT INTO worship_place(id, name, address, capacity, park_area_size, geom, type, updated_at)
                                       VALUES(:id, :name, :address, :capacity, :park_area_size, ST_GeomFromText(:geom), :type, now())");
@@ -89,7 +90,7 @@ class WorshipPlaceController extends Controller{
   {
     $this->authAdmin();
     if(isset($_GET['gallery'])){
-      $stmt = $GLOBALS['pdo']->prepare('SELECT image FROM gallery WHERE id=:id');
+      $stmt = $GLOBALS['pdo']->prepare('SELECT image FROM gallery WHERE serial_number=:id');
       $stmt->execute(['id' => $_GET['gallery']]);
       $stmt = $stmt->fetch();
 
@@ -98,7 +99,7 @@ class WorshipPlaceController extends Controller{
         return $this->redirect('admin/mosque/gallery?id='. $_GET['id']);
       }
 
-      $stmt = $GLOBALS['pdo']->prepare('DELETE FROM gallery WHERE id=:id');
+      $stmt = $GLOBALS['pdo']->prepare('DELETE FROM gallery WHERE serial_number=:id');
       $stmt->execute(['id' => $_GET['gallery']]);
 
       $this->flash('Data berhasil dihapus!');
@@ -116,7 +117,7 @@ class WorshipPlaceController extends Controller{
 
       foreach($stmt as $value){
         unlink('images/mosque/' . $value['image']);
-        $stmt = $GLOBALS['pdo']->prepare('DELETE FROM gallery WHERE id=:id');
+        $stmt = $GLOBALS['pdo']->prepare('DELETE FROM gallery WHERE serial_number=:id');
         $stmt->execute(['id' => $value['id']]);
       }
 
@@ -152,16 +153,16 @@ class WorshipPlaceController extends Controller{
     $f =  $stmt->fetchAll(PDO::FETCH_OBJ);
 
     // $this->authStewardship();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT ustad.name as ustad, event.*, ustad_payment.* FROM ustad_payment
-                                      INNER JOIN ustad ON ustad_payment.ustad_id = ustad.id
-                                      INNER JOIN event ON ustad_payment.event_id = event.id
-                                      WHERE event.worship_place_id=:id");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT ustad.name as ustad, event.*, schedule.* FROM schedule
+                                      INNER JOIN ustad ON schedule.ustad_id = ustad.id
+                                      INNER JOIN event ON schedule.event_id = event.id
+                                      WHERE schedule.worship_place_id=:id");
     $stmt->execute(['id' => $id]);
     $e =  $stmt->fetchAll(PDO::FETCH_OBJ);
 
     if (!empty($e)) {
       foreach ($e as $key) {
-        $date = new DateTime($key->schedule);
+        $date = new DateTime($key->date);
         $now = new DateTime();
         if($date < $now) {
           $key->status = 'past';
@@ -191,15 +192,8 @@ class WorshipPlaceController extends Controller{
     $stmt->execute(['id' => $_SESSION['user']->worship_place_id, 'y' => date('Y'), 'm' => date('m')]);
     $reportDonation = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT gq.*, mq.max_person FROM group_qurban as gq INNER JOIN
-                                      mosque_qurban as mq ON gq.worship_place_id = mq.worship_place_id
-                                      AND gq.year = mq.year AND gq.animal_type = mq.animal_type
-                                      WHERE gq.worship_place_id=:id AND gq.year=:y ORDER BY gq.group ASC");
-    $stmt->execute(['id'=> $id, 'y' => date('Y')]);
-    $qurban = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM jamaah WHERE worship_place_id=:worship_id");
-    $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.* FROM jamaah");
+    $stmt->execute();
     $jamaah = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM tpa");
@@ -242,9 +236,40 @@ class WorshipPlaceController extends Controller{
     $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
     $cash_out = $stmt->fetchAll(PDO::FETCH_OBJ);
 
+    // fetch qurban report this year
+    $stmt = $GLOBALS['pdo']->prepare("SELECT wp.id, wp.name, qurban.year FROM qurban
+                                      INNER JOIN worship_place as wp ON wp.id = qurban.worship_place_id
+                                      WHERE qurban.deadline_payment > now() AND qurban.worship_place_id=:id LIMIT 1");
+    $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
+    $r = $stmt->fetch(PDO::FETCH_OBJ);
+    // end fetch qurban report
+
+    // qurban data
+    $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT group_name FROM qurban_detail WHERE worship_place_id=:id AND year=:y ORDER BY group_name");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $r->year]);
+    $group = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT SUM(total_qurban) FROM qurban_detail WHERE worship_place_id=:id AND year=:y AND animal=:animal");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $r->year, 'animal' => '']);
+    $total_qurban = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM qurban WHERE worship_place_id=:id AND year=:y");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $r->year]);
+    $qurban = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $fundQurban =  $total_qurban->sum * $qurban->animal_price;
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(id) FROM qurban_detail WHERE worship_place_id=:id AND year=:y AND animal=:animal");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $r->year, 'animal' => 'goat']);
+    $goat = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(id) FROM qurban_detail WHERE worship_place_id=:id AND year=:y AND animal=:animal");
+    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $r->year, 'animal' => 'cow']);
+    $cow = $stmt->fetch(PDO::FETCH_OBJ);
+    // end qurban data group
+
     return $this->view('jamaah/report', ['q' => $data,
                        'allReport' => $reportDonation,
-                       'qurban' => $qurban,
                        'jamaah' => $jamaah,
                        'tpa' => $tpa,
                        'orphan' => $orphan,
@@ -255,7 +280,12 @@ class WorshipPlaceController extends Controller{
                        'stewardship' => $stewardship,
                        'project' => $project,
                        'cash_in' => $cash_in,
-                       'cash_out' => $cash_out
+                       'cash_out' => $cash_out,
+                       'year' => $r->year,
+                       'group' => $group,
+                       'fund' => $fundQurban,
+                       'goat' => $goat,
+                       'cow' => $cow
                       ]);
   }
 }

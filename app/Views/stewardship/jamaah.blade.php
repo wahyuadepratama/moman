@@ -53,33 +53,25 @@
                       <table class="table" id="data">
                         <thead>
                           <tr>
-                            <th>No</th>
+                            <th>ID</th>
                             <th>Username</th>
                             <th>Avatar</th>
+                            <th>Name</th>
                             <th>Phone</th>
-                            <th>Type</th>
                             <th>Address</th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php if (isset($j)): ?>
-                            <?php $no=1; ?>
                             <?php foreach ($j as $value): ?>
                               <tr>
-                                <td><?= $no ?></td>
+                                <td>#<?= $value->id ?></td>
                                 <td> <?= $value->username  ?> </td>
                                 <td> <img src="<?php $this->url('images/avatar/'. $value->avatar) ?>" width="100px"> </td>
+                                <td><?= $value->name ?></td>
                                 <td> <?= $value->phone ?> </td>
-                                <td>
-                                  <?php if ($value->type == 'domisili'): ?>
-                                    Jamaah berdomisili dilingkungan masjid ini
-                                  <?php else: ?>
-                                    Jamaah tidak berasal dari lingkungan masjid ini
-                                  <?php endif; ?>
-                                </td>
                                 <td><?= $value->address ?></td>
                               </tr>
-                              <?php $no++ ?>
                             <?php endforeach; ?>
                           <?php endif; ?>
                         </tbody>

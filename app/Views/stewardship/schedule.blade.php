@@ -59,6 +59,7 @@
                       </button>
                     </div>
                     <div class="modal-body col-md-12">
+
                       <label>Ustad / Pengisi Acara</label>
                       <select class="js-example-basic-single form-control" name="ustad">
                         <?php foreach ($ustad as $u): ?>
@@ -66,12 +67,14 @@
                         <?php endforeach; ?>
                       </select>
                       <div style="margin:5%"></div>
+
                       <label>Event</label>
                       <select class="js-example-basic-single form-control" name="event">
                         <?php foreach ($event as $e): ?>
                           <option value="<?= $e->id ?>"><?= $e->name ?></option>
                         <?php endforeach; ?>
                       </select>
+
                       <div style="margin:5%"></div>
                       <script type="text/javascript">
                         // In your Javascript (external .js resource or <script> tag)
@@ -90,6 +93,9 @@
                               iconsLibrary: 'materialicons'
                           });
                       </script>
+
+                      <div style="margin:5%"></div>
+                      <input type="time" name="time" class="form-control">
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -112,8 +118,9 @@
                       <table class="table" id="data">
                         <thead style="text-align:center">
                           <tr>
-                            <th>Date</th>
                             <th>Event</th>
+                            <th>Date</th>
+                            <th>Time</th>
                             <th>Ustad</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -122,17 +129,18 @@
                         <tbody style="text-align:center">
                           <?php foreach ($sch as $p): ?>
                             <tr>
+                              <td><?= $p->name ?></td>
                               <td>
                                 <?php
-                                  $date = new DateTime($p->schedule);
+                                  $date = new DateTime($p->date);
                                   echo $date->format('j F Y');
                                 ?>
                               </td>
-                              <td><?= $p->name ?></td>
+                              <td><?= $p->time ?></td>
                               <td><?= $p->ustad ?></td>
                               <td>
                                 <?php
-                                  $date = new DateTime($p->schedule);
+                                  $date = new DateTime($p->date);
                                   $now = new DateTime();
                                 ?>
                                 <?php if ($date < $now): ?>
@@ -142,7 +150,8 @@
                                 <?php endif; ?>
                               </td>
                               <td>
-                                <a href="#" onclick="confirm('<?php $this->url('stewardship/mosque/schedule/destroy?id='. $p->id) ?>')" class="btn btn-sm btn-danger"> <i class="mdi mdi-delete"></i> </a>
+                                <a href="#" onclick="confirm('<?php $this->url('stewardship/mosque/schedule/destroy?id='. $p->worship_place_id .'&date='. $p->date . '&time='. $p->time) ?>')"
+                                  class="btn btn-sm btn-danger"> <i class="mdi mdi-delete"></i> </a>
                               </td>
                             </tr>
                           <?php endforeach; ?>

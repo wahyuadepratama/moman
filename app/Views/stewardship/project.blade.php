@@ -58,7 +58,7 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <input type="text" maxlength="25" name="name" class="form-control" placeholder="Nama Project">
+                      <input type="text" maxlength="50" name="name" class="form-control" placeholder="Nama Project">
                       <script src="https://cdn.ckeditor.com/4.11.4/standard/ckeditor.js"></script>
                       <input type="text" placeholder="Fund Needed" name="fund" class="form-control" id="rupiah"><br>
 
@@ -126,40 +126,47 @@
                                   <a onclick="window.open('<?= $this->url('donation/detail?project='. $e) ?>', '_blank');" href="#" class="btn btn-sm btn-success"> <i class="fa fa-search"></i> </a>
                                 </td>
                                 <td>
-                                  <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target="#progress<?= $value['id'] ?>">+ Add Progress</a>
-                                  <!-- Modal Avatar -->
-                                  <div class="modal fade" id="progress<?= $value['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                      <form action="<?php $this->url('stewardship/donation/project/progress?id='. $value['id']) ?>" method="post" enctype="multipart/form-data">
+                                  <?php if ($value['status']): ?>
+                                    <a href="#" class="btn btn-sm btn-success form-control" data-toggle="modal" data-target="#progress<?= $value['id'] ?>">+ Add Progress</a>
+                                    <a href="<?= $this->url('stewardship/donation/project/close?id='. $value['id']) ?>" class="btn btn-sm btn-danger form-control">Close</a>
 
-                                        <?php $this->csrf_field() ?>
+                                    <!-- Modal Avatar -->
+                                    <div class="modal fade" id="progress<?= $value['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <form action="<?php $this->url('stewardship/donation/project/progress?id='. $value['id']) ?>" method="post" enctype="multipart/form-data">
 
-                                        <div class="modal-content">
-                                          <div class="modal-header">
-                                            <h5 class="modal-title" id="avatar">Update Progress</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                              <span aria-hidden="true">&times;</span>
-                                            </button>
-                                          </div>
-                                          <div class="modal-body">
-                                            <textarea id="progresstxt<?= $value['id'] ?>" name="progress" rows="4" placeholder="Progress Project" cols="40" class="form-control"> <?= $value['progress'] ?> </textarea>
-                                            <script>
-                                              var textarea = document.getElementById('progresstxt'+<?= $value['id'] ?>);
-                                              CKEDITOR.replace(textarea);
-                                            </script><br>
+                                          <?php $this->csrf_field() ?>
 
-                                            <h6 style="text-align:left !important"> <small>Photo Progress</small> </h6>
-                                            <input type="file" name="gallery[]" multiple class="form-control">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title" id="avatar">Update Progress</h5>
+                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                              </button>
+                                            </div>
+                                            <div class="modal-body">
+                                              <textarea id="progresstxt<?= $value['id'] ?>" name="progress" rows="4" placeholder="Progress Project" cols="40" class="form-control"> <?= $value['progress'] ?> </textarea>
+                                              <script>
+                                                var textarea = document.getElementById('progresstxt'+<?= $value['id'] ?>);
+                                                CKEDITOR.replace(textarea);
+                                              </script><br>
+
+                                              <h6 style="text-align:left !important"> <small>Photo Progress</small> </h6>
+                                              <input type="file" name="gallery[]" multiple class="form-control">
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                              <button type="submit" class="btn btn-success">Update</button>
+                                            </div>
                                           </div>
-                                          <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-success">Update</button>
-                                          </div>
-                                        </div>
-                                      </form>
+                                        </form>
+                                      </div>
                                     </div>
-                                  </div>
-                                  <!-- End Modal -->
+                                    <!-- End Modal -->
+
+                                  <?php else: ?>
+                                    <b>Closed</b>
+                                  <?php endif; ?>
                                 </td>
                               </tr>
                               <?php $no++ ?>

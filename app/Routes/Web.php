@@ -79,6 +79,7 @@ Route::web('stewardship/account/destroy', 'UserController', 'destroyAccountStewa
 Route::web('stewardship/donation/project', 'DonationController', 'projectStewardship');
 Route::web('stewardship/donation/project/store', 'DonationController', 'storeProjectStewardship');
 Route::web('stewardship/donation/project/progress', 'DonationController', 'updateProjectStewardship');
+Route::web('stewardship/donation/project/close', 'DonationController', 'closeProjectStewardship');
 
 Route::web('stewardship/donation/transaction', 'DonationController', 'transactionStewardship');
 Route::web('stewardship/donation/transaction/confirm', 'DonationController', 'confirmTransactionStewardship');
@@ -94,14 +95,14 @@ Route::web('stewardship/donation/payment/cash/store', 'FinancialController', 'st
 
 Route::web('stewardship/qurban', 'QurbanController', 'animalStewardship');
 Route::web('stewardship/qurban/store', 'QurbanController', 'storeAnimalStewardship');
+Route::web('stewardship/qurban/destroy', 'QurbanController', 'destroyAnimalStewardship');
+
 Route::web('stewardship/qur/detail', 'QurbanController', 'transactionStewardship');
 Route::web('stewardship/qur/confirm', 'QurbanController', 'confirmTransactionStewardship');
 Route::web('stewardship/qur/close', 'QurbanController', 'closeTransactionStewardship');
-Route::web('stewardship/qurban/destroy', 'QurbanController', 'destroyAnimalStewardship');
+
 Route::web('stewardship/qurb/group', 'QurbanController', 'indexGroupAnimalStewardship');
-Route::web('stewardship/qurb/group/add', 'QurbanController', 'addGroupAnimalStewardship');
 Route::web('stewardship/qurb/group/change', 'QurbanController', 'changeGroupAnimalStewardship');
-Route::web('stewardship/qurb/group/destroy', 'QurbanController', 'destroyGroupAnimalStewardship');
 
 Route::web('stewardship/mosque/event', 'EventController', 'index');
 Route::web('stewardship/mosque/event/store', 'EventController', 'store');
@@ -160,7 +161,9 @@ Route::web('admin/facility-type/store', 'FacilityController', 'storeFacility');
 Route::web('admin/facility-type/destroy', 'FacilityController', 'destroyFacility');
 
 Route::web('admin/stewardship', 'UserController', 'indexStewardship');
-Route::web('admin/stewardship/store', 'UserController', 'storeStewardship');
+
+Route::web('admin/jamaah', 'UserController', 'indexJamaah');
+Route::web('admin/jamaah/store', 'UserController', 'storeStewardship');
 
 // __________________________________________ API __________________________________________
 Route::web('api/login', 'ApiUserController', 'login');

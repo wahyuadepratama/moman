@@ -8,8 +8,8 @@ class EventController extends Controller{
   public function index()
   {
     $this->authStewardship();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM event WHERE worship_place_id=:id");
-    $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM event");
+    $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     return $this->view('stewardship/event', ['event' => $data]);
@@ -20,9 +20,9 @@ class EventController extends Controller{
     $this->authStewardship();
     $this->check_csrf($_POST);
 
-    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO event(name, description, worship_place_id)
-                                      VALUES(:name, :description, :id)");
-    $stmt->execute(['name'=> $_POST['name'], 'description' => $_POST['description'], 'id' => $_SESSION['user']->worship_place_id]);
+    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO event(name, description)
+                                      VALUES(:name, :description)");
+    $stmt->execute(['name'=> $_POST['name'], 'description' => $_POST['description']]);
 
     $this->flash('Add Event Data Successfully!');
     return $this->redirect('stewardship/mosque/event');
@@ -34,8 +34,8 @@ class EventController extends Controller{
       $this->authStewardship();
       $this->check_csrf($_POST);
 
-      $stmt = $GLOBALS['pdo']->prepare("UPDATE event SET name=:name, description=:description WHERE id=:id AND worship_place_id=:worship");
-      $stmt->execute(['name'=> $_POST['name'], 'description' => $_POST['description'], 'id' => $_GET['id'], 'worship' => $_SESSION['user']->worship_place_id]);
+      $stmt = $GLOBALS['pdo']->prepare("UPDATE event SET name=:name, description=:description WHERE id=:id");
+      $stmt->execute(['name'=> $_POST['name'], 'description' => $_POST['description'], 'id' => $_GET['id']]);
 
       $this->flash('Edit Event Data Successfully!');
       return $this->redirect('stewardship/mosque/event');
@@ -47,19 +47,21 @@ class EventController extends Controller{
   public function indexSchedule()
   {
     $this->authStewardship();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT ustad_payment.id, ustad.name as ustad, event.name, ustad_payment.schedule FROM ustad_payment
-                                      INNER JOIN ustad ON ustad_payment.ustad_id = ustad.id
-                                      INNER JOIN event ON ustad_payment.event_id=event.id
-                                      WHERE event.worship_place_id=:id");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT ustad.name as ustad, event.name, schedule.worship_place_id,
+                                      schedule.date, schedule.time FROM schedule
+                                      INNER JOIN ustad ON schedule.ustad_id = ustad.id
+                                      INNER JOIN event ON schedule.event_id = event.id
+                                      WHERE schedule.worship_place_id=:id");
     $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
     $data = $stmt->fetchAll(PDO::FETCH_OBJ);
+    // $this->die($data);
 
     $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM ustad");
     $stmt->execute();
     $ustad = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM event WHERE worship_place_id=:id");
-    $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM event ");
+    $stmt->execute();
     $event = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     return $this->view('stewardship/schedule', ['sch' => $data, 'ustad' => $ustad, 'event' => $event]);
@@ -73,9 +75,10 @@ class EventController extends Controller{
     $date = new DateTime($_POST['schedule']);
     $_POST['schedule'] = $date->format('Y-m-d');
 
-    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO ustad_payment(ustad_id, event_id, schedule)
-                                      VALUES(:ustad, :event, :sch)");
-    $stmt->execute(['ustad'=> $_POST['ustad'], 'event' => $_POST['event'], 'sch' => $_POST['schedule']]);
+    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO schedule(ustad_id, event_id, worship_place_id, date, time)
+                                      VALUES(:ustad, :event, :worship, :dates, :times)");
+    $stmt->execute(['ustad'=> $_POST['ustad'], 'event' => $_POST['event'], 'worship' => $_SESSION['user']->worship_place_id,
+                    'dates' => $_POST['schedule'], 'times' => $_POST['time']]);
 
     $this->flash('Add Schedule Success!');
     return $this->redirect('stewardship/mosque/schedule');
@@ -86,8 +89,8 @@ class EventController extends Controller{
     if (isset($_GET['id'])) {
       $this->authStewardship();
 
-      $stmt = $GLOBALS['pdo']->prepare("DELETE FROM ustad_payment WHERE id=:id");
-      $stmt->execute(['id' => $_GET['id']]);
+      $stmt = $GLOBALS['pdo']->prepare("DELETE FROM schedule WHERE worship_place_id=:id AND date=:dates AND time=:times");
+      $stmt->execute(['id' => $_GET['id'], 'dates' => $_GET['date'], 'times' => $_GET['time']]);
 
       $this->flash('Delete Schedule Success!');
       return $this->redirect('stewardship/mosque/schedule');

@@ -39,7 +39,7 @@
               <span class="page-title-icon bg-gradient-primary text-white mr-2">
                 <i class="mdi mdi-account-multiple"></i>
               </span>
-              Qurban Animal
+              Qurban Information
             </h3>
             <a href="#" data-toggle="modal" data-target="#add_event" class="btn btn-gradient-danger btn-sm">+ Add Qurban</a>
             <!-- Modal Avatar -->
@@ -57,29 +57,26 @@
                       </button>
                     </div>
                     <div class="modal-body">
-                      <label>Type</label>
-                      <select class="form-control" name="person" style="color:black" id="general" onchange="change(this.value)">
-                        <option value="0">===== Select Animal =====</option>
-                        <option value="1">Goat </option>
-                        <option value="1">Sheep </option>
-                        <option value="7">Cow </option>
-                        <option value="10">Camel </option>
-                      </select><br>
-                      <label>Max Person</label>
-                      <input type="text" class="form-control" value="" disabled id="person" placeholder="Please choose your qurban type"><br>
-
-                      <input type="hidden" name="animal_type" id="animal_type" class="form-control"><br>
-
-                      <label>Price</label>
-                      <input type="text" name="animal_price" class="form-control" placeholder="Price" id="rupiah">
-                      <script type="text/javascript">
-                        function change(v){
-                          document.getElementById('person').value = v + ' Person';
-                          var e = document.getElementById("general");
-                          var animal = e.options[e.selectedIndex].text;
-                          document.getElementById('animal_type').value = animal;
-                        }
+                      <label>Deadline Payment</label>
+                      <input name="deadline_payment" id="datepicker" class="form-control"/><br>
+                      <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
+                      <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css"/>
+                      <script>
+                          $('#datepicker').datepicker({
+                              uiLibrary: 'materialdesign',
+                              iconsLibrary: 'materialicons'
+                          });
                       </script>
+
+                      <label>Animal Price (Goat)</label>
+                      <input type="text" name="animal_price" class="form-control" placeholder="Price" id="rupiah"><br>
+
+                      <script src="https://cdn.ckeditor.com/4.11.4/standard/ckeditor.js"></script>
+                      <label>Description</label>
+                      <textarea name="description" rows="2" placeholder="Description Project" cols="10" class="form-control">
+                      </textarea><br>
+                      <script>CKEDITOR.replace( 'description' );</script>
+
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -99,40 +96,54 @@
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-12 table-responsive">
-                      <table class="table" id="data">
-                        <thead style="text-align:center">
-                          <tr>
-                            <th>Year</th>
-                            <th>Animal</th>
-                            <th>Max Person</th>
-                            <th>Price</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody style="text-align:center">
-                          <?php foreach ($qurban as $p): ?>
+                      <?php foreach ($qurban as $p): ?>
+                      <table class="table">
                             <tr>
-                              <td><?= $p->year ?></td>
-                              <td><?= $p->animal_type ?></td>
-                              <td><?= $p->max_person ?></td>
-                              <td>Rp <?= number_format(($p->animal_price),0,',','.') ?></td>
-                              <td>
+                              <td colspan="3">
+                                <b class="float-left">Qurban in <?= $p->year ?></b>
+
                                 <?php
-                                  $stmt = $GLOBALS['pdo']->prepare("SELECT animal_type FROM group_qurban WHERE worship_place_id=:id
-                                                                    AND year=:y AND animal_type=:a");
-                                  $stmt->execute(['id'=> $p->worship_place_id, 'y' => date('Y'), 'a' => $p->animal_type]);
-                                  $mosque = $stmt->fetch(PDO::FETCH_OBJ);
+                                  $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM qurban_detail WHERE worship_place_id=:id AND year=:year LIMIT 1");
+                                  $stmt->execute(['id'=> $p->worship_place_id, 'year' => $p->year]);
+                                  $r = $stmt->fetch(PDO::FETCH_OBJ);
                                 ?>
-                                <?php if ($mosque): ?>
-                                  ~
+
+                                <?php if (!$r): ?>
+                                  <b class="float-right">
+                                    <a href="<?php $this->url('/stewardship/qurban/destroy?worship='.$p->worship_place_id.'&year='.$p->year) ?>"
+                                      class="btn btn-sm btn-danger">Delete</a>
+                                  </b>
                                 <?php else: ?>
-                                  <a href="#" onclick="confirm('<?php $this->url('stewardship/qurban/destroy?y='. $p->year. '&w=' . $p->worship_place_id . '&a=' . $p->animal_type) ?>')" class="btn btn-sm btn-danger"> <i class="mdi mdi-delete"></i> </a>
+                                  <b class="float-right">
+                                    <a href="<?php $this->url('stewardship/qurb/group?worship='.$p->worship_place_id.'&year='.$p->year) ?>"
+                                      class="btn btn-sm btn-primary">Manage Group</a>
+                                  </b>
                                 <?php endif; ?>
+
                               </td>
                             </tr>
-                          <?php endforeach; ?>
-                        </tbody>
-                      </table>
+                            <tr>
+                              <td>Animal Price</td>
+                              <td>:</td>
+                              <td>Rp <?= number_format(($p->animal_price),0,',','.') ?></td>
+                            </tr>
+                            <tr>
+                              <td>Deadline Payment</td>
+                              <td>:</td>
+                              <td>
+                                <?php
+                                  $date = new DateTime($p->deadline_payment);
+                                  echo $date->format('j F Y');
+                                ?>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Description</td>
+                              <td>:</td>
+                              <td><?= $p->description ?></td>
+                            </tr>
+                      </table><hr><br><br><br>
+                      <?php endforeach; ?>
                     </div>
                   </div>
                 </div>

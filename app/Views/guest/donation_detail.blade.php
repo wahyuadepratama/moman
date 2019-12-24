@@ -57,18 +57,18 @@
                     <?php foreach ($data as $k): ?>
                       <?php if ($s == 1): ?>
                         <div class="carousel-item active imgfix" style="height: 375px">
-                          <img class="w-100 load-delay<?= $k->id ?>" src="<?php $this->url('images/load.gif'); $s=2; ?>" data-original="<?php $this->url('images/project/'. $k->image); ?>">
+                          <img class="w-100 load-delay<?= $k->serial_number ?>" src="<?php $this->url('images/load.gif'); $s=2; ?>" data-original="<?php $this->url('images/project/'. $k->image); ?>">
                         </div>
                       <?php else: ?>
                         <div class="carousel-item imgfix" style="height: 375px">
-                          <img class="w-100 load-delay<?= $k->id ?>" src="<?php $this->url('images/load.gif'); $s=2; ?>" data-original="<?php $this->url('images/project/'. $k->image); ?>">
+                          <img class="w-100 load-delay<?= $k->serial_number ?>" src="<?php $this->url('images/load.gif'); $s=2; ?>" data-original="<?php $this->url('images/project/'. $k->image); ?>">
                         </div>
                       <?php endif; ?>
 
                       <script type="text/javascript">
                         $(document).ready(function () {
                         setTimeout(function () {
-                          $('.load-delay<?= $k->id ?>').each(function () { var imagex = $(this); var imgOriginal = imagex.data('original'); $(imagex).attr('src', imgOriginal); }); }, <?= $t ?>);
+                          $('.load-delay<?= $k->serial_number ?>').each(function () { var imagex = $(this); var imgOriginal = imagex.data('original'); $(imagex).attr('src', imgOriginal); }); }, <?= $t ?>);
                         });
                       </script>
                       <?php $t = $t + 2000; ?>
@@ -123,49 +123,51 @@
               </div>
               <div class="col-md-5">
 
-                <div class="card bg-gradient-white card-img-holder text-grey form-control" style="padding: 1% !important;">
-                  <div class="card-body">
-                    <div class="row">
+                <?php if ($project->status): ?>
+                  <div class="card bg-gradient-white card-img-holder text-grey form-control" style="padding: 1% !important;">
+                    <div class="card-body">
+                      <div class="row">
 
-                      <?php if (isset($_SESSION['jamaah'])): ?>
-                        <?php if ($_SESSION['jamaah'] === true): ?>
+                        <?php if (isset($_SESSION['jamaah'])): ?>
+                          <?php if ($_SESSION['jamaah'] === true): ?>
 
-                          <form action="<?php $this->url('donation/detail/store?project='. $this->encrypt($project->id)) ?>" method="post">
-                            <?php $this->csrf_field() ?>
-                            <div class="col-md-12">
-                              <div class="form-group">
-                                <label>Total</label>
-                                <input type="text" placeholder="Fund" name="fund" class="form-control" id="rupiah">
+                            <form action="<?php $this->url('donation/detail/store?project='. $this->encrypt($project->id)) ?>" method="post">
+                              <?php $this->csrf_field() ?>
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label>Total</label>
+                                  <input type="text" placeholder="Fund" name="fund" class="form-control" id="rupiah">
+                                </div>
+                                <div class="form-group">
+                                  <label for="exampleInputConfirmPassword1">Stewardship Account Bank</label>
+                                  <select class="form-control" name="account" style="color: black;">
+                                    <?php foreach ($account as $ac): ?>
+                                      <option value="<?= $ac->account_number ?>~<?= $ac->stewardship_id ?>~<?= $ac->stewardship_period ?>"><?= $ac->bank ?> a/n <?= $ac->owner ?> (<?= $ac->account_number ?>)</option>
+                                    <?php endforeach; ?>
+                                  </select>
+                                </div>
+                                <div class="form-check">
+                                  <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" value="public" name="public" checked="checked">Use your profile as a donatur
+                                  </label>
+                                </div>
+                                <div class="form-check">
+                                  <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" value="private" name="public">Dont show donatur's name to public (write as Hamba Allah)
+                                  </label>
+                                </div>
+                                <input type="submit" name="" value="Donation" class="form-control btn btn-sm btn-gradient-success">
                               </div>
-                              <div class="form-group">
-                                <label for="exampleInputConfirmPassword1">Stewardship Account Bank</label>
-                                <select class="form-control" name="account" style="color: black;">
-                                  <?php foreach ($account as $ac): ?>
-                                    <option value="<?= $ac->id ?>"><?= $ac->bank ?> a/n <?= $ac->owner ?> (<?= $ac->account_number ?>)</option>
-                                  <?php endforeach; ?>
-                                </select>
-                              </div>
-                              <div class="form-check">
-                                <label class="form-check-label">
-                                  <input type="radio" class="form-check-input" value="public" name="public">Use your profile as a donatur
-                                </label>
-                              </div>
-                              <div class="form-check">
-                                <label class="form-check-label">
-                                  <input type="radio" class="form-check-input" value="private" name="public">Dont show donatur's name to public (write as Hamba Allah)
-                                </label>
-                              </div>
-                              <input type="submit" name="" value="Donation" class="form-control btn btn-sm btn-gradient-success">
-                            </div>
-                          </form>
+                            </form>
 
+                          <?php endif; ?>
+                        <?php else: ?>
+                          <h6>Please Login to Donate. Login  <a href="<?php $this->url('login') ?>">Here</a> </h6>
                         <?php endif; ?>
-                      <?php else: ?>
-                        <h6>Please Login to Donate. Login  <a href="<?php $this->url('login') ?>">Here</a> </h6>
-                      <?php endif; ?>
+                      </div>
                     </div>
                   </div>
-                </div>
+                <?php endif; ?>
 
                 <div class="card bg-gradient-white card-img-holder text-grey form-control" style="margin-top:5%;padding: 2% !important;">
                   <div class="card-body" style="padding: 10% !important">

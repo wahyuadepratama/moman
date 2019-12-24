@@ -34,15 +34,6 @@
       <div class=""><!-- <div class="main-panel"> -->
         <div class="content-wrapper">
 
-          <!-- <div class="page-header">
-            <h3 class="page-title">
-              <span class="page-title-icon bg-gradient-primary text-white mr-2">
-                <i class="mdi mdi-home"></i>
-              </span>
-              Donation Orphans
-            </h3>
-          </div> -->
-
           <div class="row">
 
             <style media="screen">
@@ -58,13 +49,6 @@
 
             <?php $t = 1000; ?>
             <?php foreach ($qurban as $d): ?>
-
-              <?php
-                $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM mosque_qurban WHERE worship_place_id=:id AND year=:y");
-                $stmt->execute(['id'=> $d->id, 'y' => date('Y')]);
-                $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-              ?>
-              <?php if (!empty($r)): ?>
 
               <div class="col-md-3 grid-margin">
                 <div class="card">
@@ -93,12 +77,11 @@
                   </div>
                 </div>
                 <div class="card">
-                  <a href="<?php $this->url('qurban/detail?id='. $this->encrypt($d->id)) ?><?= '&mosque=' . $d->name ?>"
+                  <a href="<?php $this->url('qurban/detail?id='. $this->encrypt($d->id)) ?><?= '&mosque=' . $d->name .'&year='. $d->year?>"
                     class="btn btn-sm btn-success">Qurban Here</a>
                 </div>
               </div>
-              <?php $t = $t + 1000; ?>
-              <?php endif; ?>
+              <?php $t = $t + 500; ?>
             <?php endforeach; ?>
           </div>
         <!-- content-wrapper ends -->

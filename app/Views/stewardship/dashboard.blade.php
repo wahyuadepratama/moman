@@ -94,19 +94,38 @@
                     <div class="col-md-12 table-responsive" style="margin-top: 3%">
                       <table class="table">
                         <tr>
+                          <td>Show Period</td>
+                          <td>:</td>
+                          <td>
+                            <select class="form-control" onchange="changePeriod(this)" style="color: black">
+                              <?php
+                                $period = $GLOBALS['pdo']->prepare("SELECT period FROM stewardship WHERE jamaah_id=:id");
+                                $period->execute(['id' => $_SESSION['user']->id]);
+                                $period = $period->fetchAll(PDO::FETCH_OBJ);
+                              ?>
+                              <option value="<?= $m->period ?>">Period <?= $m->period ?></option>
+                              <?php foreach ($period as $key): ?>
+                                <?php if ($key->period != $m->period): ?>
+                                  <option value="<?= $key->period ?>">Period <?= $key->period ?></option>
+                                <?php endif; ?>
+                              <?php endforeach; ?>
+                            </select>
+                          </td>
+                        </tr>
+                        <tr>
                           <td>Type of Work</td>
                           <td>:</td>
                           <td><?= $m->name ?></td>
                         </tr>
                         <tr>
+                          <td>Phone</td>
+                          <td>:</td>
+                          <td><?= $_SESSION['user']->phone ?></td>
+                        </tr>
+                        <tr>
                           <td>WhatsApp</td>
                           <td>:</td>
                           <td><?= $m->whatsapp ?></td>
-                        </tr>
-                        <tr>
-                          <td>KTP</td>
-                          <td>:</td>
-                          <td><?= $m->identity_number ?></td>
                         </tr>
                         <tr>
                           <td>Stewardship at</td>
@@ -119,8 +138,8 @@
                           <td>
                             <ul>
                               <?php
-                                $account = $GLOBALS['pdo']->prepare("SELECT * FROM account WHERE stewardship_id=:stewardship_id");
-                                $account->execute(['stewardship_id' => $_SESSION['user']->jamaah_id]);
+                                $account = $GLOBALS['pdo']->prepare("SELECT * FROM account WHERE stewardship_id=:stewardship_id AND stewardship_period=:period");
+                                $account->execute(['stewardship_id' => $_SESSION['user']->id, 'period' => $m->period]);
                                 $account = $account->fetchAll(PDO::FETCH_OBJ);
                               ?>
                               <?php foreach ($account as $a): ?>
@@ -149,8 +168,11 @@
                                       </button>
                                     </div>
                                     <div class="modal-body">
-                                      <input type="text" class="form-control" name="whatsapp" value="<?= $m->whatsapp ?>">
-                                      <select class="form-control" name="type">
+                                      <label>Whatsapp Number</label>
+                                      <input type="text" class="form-control" name="whatsapp" value="<?= $m->whatsapp ?>"><br>
+                                      <input type="hidden" name="period_hidden" value="<?= $m->period ?>">
+                                      <label>Type of Work</label>
+                                      <select class="form-control" name="type">                                        
                                         <?php
                                           $type = $GLOBALS['pdo']->prepare("SELECT * FROM type_of_work");
                                           $type->execute();
@@ -174,7 +196,7 @@
                             <!-- Modal Avatar -->
                             <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
                               <div class="modal-dialog" role="document">
-                                <form action="<?php $this->url('stewardship/account/store') ?>" method="post">
+                                <form action="<?php $this->url('stewardship/account/store?stewardship='. $_SESSION['user']->id.'&period='. $m->period) ?>" method="post">
 
                                   <?php $this->csrf_field() ?>
 
@@ -186,11 +208,6 @@
                                       </button>
                                     </div>
                                     <div class="modal-body">
-                                      <?php
-                                        $account = $GLOBALS['pdo']->prepare("SELECT * FROM account WHERE stewardship_id=:stewardship_id");
-                                        $account->execute(['stewardship_id' => $_SESSION['user']->jamaah_id]);
-                                        $account = $account->fetchAll(PDO::FETCH_OBJ);
-                                      ?>
                                       <input type="text" name="bank" class="form-control" placeholder="Bank" required>
                                       <input type="text" name="owner" class="form-control" placeholder="Owner" required>
                                       <input type="text" name="account_number" class="form-control" placeholder="No Rek " required>
@@ -202,7 +219,7 @@
                                               <?= $no.'. '. $a->bank ?> (<?= $a->account_number ?>) a/n <?= $a->owner ?>
                                             </div>
                                             <div class="col-md-2">
-                                              <h6> <a onclick="confirm('<?php $this->url('stewardship/account/destroy?id='. $a->id) ?>')" href="#" > <i class="mdi mdi-delete text-danger"></i> </a> </h6>
+                                              <h6> <a onclick="confirm('<?php $this->url('stewardship/account/destroy?stewardship='. $a->stewardship_id.'&period='. $a->stewardship_period.'&account='. $a->account_number) ?>')" href="#" > <i class="mdi mdi-delete text-danger"></i> </a> </h6>
                                             </div>
                                           </div>
                                           <?php $no++ ?>
@@ -278,6 +295,10 @@
       NProgress.start();
       NProgress.done();
       // setTimeout(function(){ NProgress.done(); }, 1000);
+    }
+
+    function changePeriod(val){
+      window.location = "<?= $this->url('stewardship/dashboard?period=') ?>" + val.value;
     }
   </script>
 

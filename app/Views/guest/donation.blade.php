@@ -27,10 +27,6 @@
 
     <div class="container-fluid page-body-wrapper">
 
-      <!-- partial:partials/_sidebar.html -->
-      <!-- $this->include('partials/_sidebar') -->
-      <!-- partial -->
-
       <div class=""><!-- <div class="main-panel"> -->
         <div class="content-wrapper">
 
@@ -97,7 +93,7 @@
                         $percent = 0;
                       }
                     ?>
-                    <div class="progress">
+                    <div class="progress" style="margin-top: 10px;">
                       <div class="progress-bar bg-success" role="progressbar" style="width: <?= $percent ?>%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
                     </div><br>
                     <h6 class="text-left">Fund Collected: </h6>

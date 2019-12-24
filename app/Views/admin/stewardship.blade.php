@@ -54,88 +54,26 @@
                         <thead>
                           <tr>
                             <th>ID</th>
+                            <th>Worship Place</th>
+                            <th>Period</th>
                             <th>Username</th>
                             <th>Avatar</th>
                             <th>Phone</th>
-                            <th>Worship Place</th>
-                            <th>Status</th>
-                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php if (isset($j)): ?>
-                            <?php $no=1; ?>
                             <?php foreach ($j as $value): ?>
                               <tr>
-                                <td> #<?= $value->id ?></td>
+                                <td> #<?= $value->jamaah_id ?></td>
+                                <td> <?= $value->name ?> </td>
+                                <td>
+                                  <?= $value->period ?>
+                                </td>
                                 <td> <?= $value->username  ?> </td>
                                 <td> <img src="<?php $this->url('images/avatar/'. $value->avatar) ?>" width="100px"> </td>
                                 <td> <?= $value->phone ?> </td>
-                                <td> <?= $value->name ?> </td>
-
-                                <?php
-                                  $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship WHERE jamaah_id=:id");
-                                  $stmt->execute(['id' => $value->jamaah_id]);
-                                  $data = $stmt->fetch(PDO::FETCH_OBJ);
-                                ?>
-
-                                <td>
-                                  <?php if (empty($data)): ?>
-                                    <p class="text-danger">Jamaah</p>
-                                  <?php else: ?>
-                                    <p class="text-success">Stewardship</p>
-                                  <?php endif; ?>
-                                </td>
-                                <td>
-                                  <?php if (empty($data)): ?>
-
-                                    <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#add_facility<?= $value->id ?>">Change</a>
-                                    <!-- Modal Avatar -->
-                                    <div class="modal fade" id="add_facility<?= $value->id ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
-                                      <div class="modal-dialog" role="document">
-
-                                          <?php $this->csrf_field() ?>
-
-                                          <form action="<?php $this->url('admin/stewardship/store?id='. $value->id) ?>" method="post">
-                                            <div class="modal-content">
-                                              <div class="modal-header">
-                                                <h5 class="modal-title" id="avatar">Upgrade Jamaah Menjadi Pengurus</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                  <span aria-hidden="true">&times;</span>
-                                                </button>
-                                              </div>
-                                              <div class="modal-body">
-                                                <?php
-                                                  $t = $GLOBALS['pdo']->prepare("SELECT * FROM type_of_work");
-                                                  $t->execute();
-                                                  $type = $t->fetchAll(PDO::FETCH_OBJ);
-                                                ?>
-                                                <select class="form-control" name="type">
-                                                  <?php foreach ($type as $t): ?>
-                                                    <option value="<?= $t->id ?>"><?= $t->name ?></option>
-                                                  <?php endforeach; ?>
-                                                </select>
-                                                <input type="text" name="identity" class="form-control" placeholder="Identity Number (KTP)" required>
-                                                <input type="text" name="whatsapp" class="form-control" placeholder="Whatsapp" value="<?= $value->phone ?>">
-                                              </div>
-                                              <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-success">Approve</button>
-                                              </div>
-                                            </div>
-                                          </form>
-
-                                      </div>
-                                    </div>
-                                    <!-- End Modal -->
-                                  <?php else: ?>
-
-                                    <a href="#" class="btn btn-sm btn-success" onclick="notif('#', 'This User has become stewardship', 'warning', 'Ok')">Done</a>
-
-                                  <?php endif; ?>
-                                </td>
-                              </tr>
-                              <?php $no++ ?>
+                              </tr>                              
                             <?php endforeach; ?>
                           <?php endif; ?>
                         </tbody>

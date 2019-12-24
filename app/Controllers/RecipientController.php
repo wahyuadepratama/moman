@@ -29,7 +29,7 @@ class RecipientController extends Controller{
     if (isset($_GET['id'])) {
       $this->authStewardship();
       $this->check_csrf($_POST);
-      $stmt = $GLOBALS['pdo']->prepare("UPDATE poor SET name=:name, address=:address, phone:phone WHERE id=:id");
+      $stmt = $GLOBALS['pdo']->prepare("UPDATE poor SET name=:name, address=:address, phone=:phone WHERE id=:id");
       $stmt->execute(['name'=> $_POST['name'], 'address' => $_POST['address'], 'phone' => $_POST['phone'], 'id' => $_GET['id']]);
 
       $this->flash('Edit Poor Data Successfully!');

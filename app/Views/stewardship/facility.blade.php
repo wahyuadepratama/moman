@@ -123,14 +123,14 @@
 
                                       <div class="modal-content">
                                         <div class="modal-header">
-                                          <h5 class="modal-title" id="avatar">Edit <?= $p->name ?></h5>
+                                          <h5 class="modal-title" id="avatar">Edit Detail <?= $p->name ?></h5>
                                           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>
                                         <div class="modal-body">
                                           <select class="form-control" name="condition">
-                                            <option value="0">Condition</option>
+                                            <option value="0">=== Condition ===</option>
                                             <?php foreach ($con as $c): ?>
                                               <option value="<?= $c->id ?>"><?= $c->condition ?></option>
                                             <?php endforeach; ?>
@@ -138,7 +138,7 @@
 
                                           <div style="margin: 5%"></div>
 
-                                          <input type="number" name="total" class="form-control" placeholder="Total">
+                                          <input type="number" name="total" class="form-control" placeholder="Total" value="<?= $p->total ?>">
                                         </div>
                                         <div class="modal-footer">
                                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

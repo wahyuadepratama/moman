@@ -59,18 +59,6 @@
             <?php $t = 1000; ?>
             <?php foreach ($orphan as $d): ?>
 
-              <?php
-                $find = false;
-                foreach ($account as $a) {
-                  if ($a->worship_place_id == $d->id) {
-                    $find = true;
-                    break;
-                  }
-                }
-              ?>
-
-              <?php if ($find == true): ?>
-
                 <div class="col-md-3 grid-margin">
                   <div class="card">
                     <style media="screen">
@@ -101,9 +89,7 @@
                     <a href="<?php $this->url('donation/orphans/detail?id='. $this->encrypt($d->id)) ?>" class="btn btn-sm btn-success">Donate via this Mosque</a>
                   </div>
                 </div>
-                <?php $t = $t + 1000; ?>
-
-              <?php endif; ?>
+                <?php $t = $t + 1000; ?>              
 
             <?php endforeach; ?>
           </div>

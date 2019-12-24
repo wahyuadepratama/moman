@@ -91,7 +91,7 @@
                         <tbody style="text-align:center">
                           <?php foreach ($tpa as $p): ?>
                             <tr>
-                              <td><?= $p->id ?></td>
+                              <td>#<?= $p->id ?></td>
                               <td><?= $p->name ?></td>
                               <td><?= $p->address ?></td>
                               <td>

@@ -238,8 +238,7 @@
                               <?php endif; ?>
 
                               <?php if ($ar->status_out == 'orphanage payment'): ?>
-                                <?php foreach ($orphan as $key) if ($key->id == $o->orphanage_id) $or = $key; ?>
-                                <?= 'Orphans Payment for '. $or->name ?>
+                                <?= 'Orphans Payment' ?>
                               <?php endif; ?>
 
                               <?php if ($ar->status_out == 'poor payment'): ?>
@@ -262,10 +261,18 @@
                               <!-- End of status out from cash out -->
 
                             </td>
+
+                            <!-- // Description every report -->
                             <td>
+                              <?php if ($ar->status_out == 'orphanage payment'): ?>
+                                <?php foreach ($orphan as $key) if ($key->id == $o->orphanage_id) $or = $key; ?>
+                                <?= 'For '. $or->name ?>
+                              <?php endif; ?>
+
                               <?php if ($ar->status_out == 'store payment'): ?>
                                 <?= $ar->description ?>
                               <?php endif; ?>
+
                               <?php if ($ar->status_in == 'infaq box'): ?>
                                 <?php
                                   if ($ar->status_out == 'event') {
@@ -275,12 +282,14 @@
                                   }
                                 ?>
                               <?php endif; ?>
+
                               <?php if ($ar->status_in == 'transfer jamaah'): ?>
                                 <?php if ($ar->status_out == 'project'): ?>
-                                  <?= $pr->name ?>
+                                  For Project "<?= $pr->name ?>"
                                 <?php endif; ?>
                               <?php endif; ?>
                             </td>
+                            <!-- End description every report -->
 
                             <?php if ($ar->status_in == 'transfer jamaah' || $ar->status_in == 'cash jamaah' || $ar->status_in == 'infaq box'): ?>
 
@@ -349,65 +358,68 @@
                         </div>
                       </form>
                       <div id='printableAreaQ'>
-                        <h4 style="display:none;text-align:center;margin:5%" id='titleQ'>Report Qurban <?= $_GET['year'] ?></h4>
-                        <table class="table resize-font">
-                          <thead style="text-align:left">
+
+                        <div class="col-md-6" style="margin-bottom: 15px">
+                          <table class="table">
                             <tr>
-                              <th>Group</th>
-                              <th>Animal</th>
-                              <th>Participant</th>
-                              <th>Slot Used</th>
-                              <th>Slot Available</th>
-                              <th>Paid</th>
-                              <th>Unpaid</th>
+                              <td>Total qurban funds</td>
+                              <td>:</td>
+                              <td>Rp <?= number_format($fund,0,',','.') ?></td>
                             </tr>
-                          </thead>
-                          <tbody style="text-align:left">
-                            <?php $paid=0; $unpaid=0; ?>
-                            <?php foreach ($qurban as $key): ?>
-                              <tr>
-                                <?php
-                                  $stmt = $GLOBALS['pdo']->prepare("SELECT dq.*, j.username
-                                                                    FROM detail_qurban as dq INNER JOIN jamaah as j ON dq.jamaah_id = j.id
-                                                                    WHERE dq.worship_place_id=:id AND dq.year=:y AND dq.group=:g");
-                                  $stmt->execute(['id'=> $key->worship_place_id, 'y' => $key->year, 'g' => $key->group]);
-                                  $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-                                  // $this->die($r);
-                                  $slot = 0;
-                                ?>
-                                <td><?= $key->group ?></td>
-                                <td><?= $key->animal_type ?></td>
-                                <td>
-                                  <?php foreach ($r as $val): ?>
-                                    <li><?= $val->username ?></li>
-                                    <?php
-                                      $slot += $val->total_slot
-                                    ?>
-                                  <?php endforeach; ?>
-                                </td>
-                                <td><?= $slot ?></td>
-                                <td><?= $key->max_person- $slot ?></td>
-                                <td>
-                                  <?php foreach ($r as $val): ?>
-                                    Rp <?= number_format($val->fund * (int)substr($val->payment_method, 2, 1),0,',','.') ?><br>
-                                    <?php $paid += $val->fund * (int)substr($val->payment_method, 2, 1) ?>
-                                  <?php endforeach; ?>
-                                </td>
-                                <td>
-                                  <?php foreach ($r as $val): ?>
-                                    Rp <?= number_format($val->fund * (int)substr($val->payment_method, 0, 1),0,',','.') ?><br>
-                                    <?php $unpaid += $val->fund * (int)substr($val->payment_method, 0, 1) ?>
-                                  <?php endforeach; ?>
-                                </td>
-                              </tr>
+                            <tr>
+                              <td>Goats from jamaah</td>
+                              <td>:</td>
+                              <td><?= $goat->count ?></td>
+                            </tr>
+                            <tr>
+                              <td>Cows from jamaah</td>
+                              <td>:</td>
+                              <td><?= $cow->count ?></td>
+                            </tr>
+                          </table>
+                        </div>
+
+                        <div class="row">
+
+                            <?php foreach ($group as $key): ?>
+
+                              <?php
+                                $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_detail.*, qurban_participant.*
+                                                                  FROM qurban_detail INNER JOIN qurban_participant ON
+                                                                  qurban_participant.id = qurban_detail.participant_id
+                                                                  WHERE worship_place_id=:id AND year=:y
+                                                                  AND group_name=:grup ORDER BY datetime");
+                                $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $_GET['year'], 'grup' => $key->group_name]);
+                                $group = $stmt->fetchAll(PDO::FETCH_OBJ);
+                              ?>
+
+                              <div class="col-md-3">
+                                <div class="card" style="width: 14rem; margin-bottom: 20px">
+                                  <div class="card-header">
+                                    Group <?= $key->group_name ?>
+                                  </div>
+                                  <ul class="list-group list-group-flush">
+                                    <?php foreach ($group as $value): ?>
+
+                                      <?php if ($value->total_qurban > 1): ?>
+                                        <?php
+                                          for ($i=0; $i < $value->total_qurban; $i++) {
+                                            ?>
+                                              <li class="list-group-item"><?= $value->name ?></li>
+                                            <?php
+                                          }
+                                        ?>
+                                      <?php else: ?>
+                                        <li class="list-group-item"><?= $value->name ?></li>
+                                      <?php endif; ?>
+
+                                    <?php endforeach; ?>
+                                  </ul>
+                                </div>
+                              </div>
                             <?php endforeach; ?>
-                            <tr style="background-color:#ebedf2">
-                              <td colspan="5" style="text-align:center">Total</td>
-                              <td>Rp <?= number_format($paid, 0,',','.') ?></td>
-                              <td>Rp <?= number_format($unpaid, 0,',','.') ?></td>
-                            </tr>
-                          </tbody>
-                        </table>
+
+                        </div>
                       </div>
                     </div>
 

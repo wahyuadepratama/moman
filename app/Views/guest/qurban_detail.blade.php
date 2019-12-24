@@ -25,14 +25,18 @@
     <?php $this->include('partials/_navbar'); ?>
     <!-- partial -->
 
-    <div class="container-fluid page-body-wrapper">
-
       <!-- partial:partials/_sidebar.html -->
       <!-- $this->include('partials/_sidebar') -->
       <!-- partial -->
 
-      <div class=""><!-- <div class="main-panel"> -->
+      <div style="margin-top: 50px"><!-- <div class="main-panel"> -->
         <div class="content-wrapper">
+
+          <?php if (!empty($this->flash())): ?>
+            <br><div class="alert alert-danger">
+              <small><?php $this->flash('print') ?></small>
+            </div>
+          <?php endif; ?>
 
           <div class="page-header">
             <h3 class="page-title">
@@ -47,46 +51,14 @@
             <div class="col-md-3"></div>
               <div class="col-md-6">
                 <div class="row">
-                  <?php $t = 1000; ?>
-                  <?php foreach ($qurban as $d): ?>
-                    <div class="<?= (count($qurban) == 1) ? 'col-md-12' : 'col-md-6' ?> grid-margin">
-                      <div class="card">
-                        <style media="screen">
-                          .effect{transform-origin: 50% 65%;transition: transform 15s, filter 6s ease-in-out;filter: brightness(70%);height: 150px;color:white}
-                          .fund {position: absolute;bottom: 1px;left: 20px;background-color: rgba(0,0,0,.5);border-radius: 5%;color: white;padding-left: 5px;padding-right: 10px;}
-                        </style>
 
-                        <div class="effect" style="position:relative">
-                          <p style="bottom: 20% !important" class="fund"> <i class="mdi mdi-cow"></i>&nbsp; <?= $d->animal_type ?></p>
-                          <p class="fund"> <i class="mdi mdi-account-multiple"></i>&nbsp; Max: <?= $d->max_person ?> Person</p>
-
-                          <?php if ($d->max_person == '1'): ?>
-                            <img class="d-block w-100" src="<?php $this->url('images/goat.jpg') ?>" style="object-fit:cover" height="180">
-                          <?php endif; ?>
-
-                          <?php if ($d->max_person == '7'): ?>
-                            <img class="d-block w-100" src="<?php $this->url('images/cow.jpg') ?>" style="object-fit:cover" height="180">
-                          <?php endif; ?>
-
-                          <?php if ($d->max_person == '10'): ?>
-                            <img class="d-block w-100" src="<?php $this->url('images/camel.jpg') ?>" style="object-fit:cover" height="180">
-                          <?php endif; ?>
-
-                        </div>
-                      </div>
-                      <div class="card">
-                        <a style="color:white" class="btn btn-sm btn-success">Rp <?= number_format(($d->animal_price),0,',','.') ?></a>
-                      </div>
-                    </div>
-                    <?php $t = $t + 1000; ?>
-                  <?php endforeach; ?>
                 </div>
               </div>
               <div class="col-md-3"></div>
-              <div class="col-md-4">
+              <div class="col-md-6">
                 <div class="card bg-gradient-light card-img-holder text-grey form-control" style="padding: 1% !important;">
                   <div class="card-body">
-                    <form action="<?php $this->url('qurban/store?id='. $_GET['id']) ?>" method="post">
+                    <form action="<?php $this->url('qurban/store?id='. $_GET['id'] .'&mosque='. $_GET['mosque']. '&year='. $_GET['year']) ?>" method="post">
                       <?php $this->csrf_field() ?>
                       <div class="row">
 
@@ -94,103 +66,120 @@
                           <?php if ($_SESSION['jamaah'] === true): ?>
 
                               <div class="col-md-12">
+
                                 <div class="form-group">
-                                  <label>Fund</label>
-                                  <input type="text" placeholder="Fund" class="form-control" disabled id="fund">
-                                  <input type="hidden" name="price" id='price'>
-                                  <input type="hidden" name="type" id="type">
+                                  <div class="row">
+                                    <div class="col-md-5">
+                                      <b><p>Qurban Price (1 Goat)</p></b>
+                                    </div>
+                                    <div class="col-md-1">
+                                      :
+                                    </div>
+                                    <div class="col-md-6">
+                                      <p>Rp <?= number_format(($qurban->animal_price),0,',','.') ?></p>
+                                    </div>
+                                  </div><br>
+                                  <div class="row">
+                                    <div class="col-md-5">
+                                      <b> <p>Description</p> </b>
+                                    </div>
+                                    <div class="col-md-1">
+                                      :
+                                    </div>
+                                    <div class="col-md-6">
+                                      <?= $qurban->description ?>
+                                    </div>
+                                  </div>
+                                  <input type="hidden" name="year" value="<?= $qurban->year ?>">
                                 </div>
+
                                 <div class="form-group">
-                                  <label>Qurban Option</label>
-                                  <select class="form-control" name="account" style="color: black;" onchange="choose(this.value)">
-                                    <option value="0">===== Choose Qurban Animal =====</option>
-                                    <?php foreach ($qurban as $q): ?>
-                                      <option value="<?= $q->max_person . '~' . 'Rp ' . number_format(($q->animal_price/$q->max_person),0,',','.').
-                                      '~'. $q->animal_type.'~'. 'Rp ' . number_format(($q->animal_price/$q->max_person),0,',','.').
-                                      '~'. $q->animal_price/$q->max_person ?>">
-                                        <?= $q->animal_type ?> (1x payment)
-                                      </option>
-                                    <?php endforeach; ?>
-                                    <?php foreach ($qurban as $q): ?>
-                                      <option value="<?= $q->max_person . '~' . 'Rp ' . number_format(($q->animal_price/$q->max_person),0,',','.').
-                                      '~'. $q->animal_type.'~'. 'Rp ' . number_format((($q->animal_price/3)/$q->max_person),0,',','.').
-                                      '~'. ($q->animal_price/3)/$q->max_person .'~'.'3'?>">
-                                        <?= $q->animal_type ?> (3x payment)
-                                      </option>
-                                    <?php endforeach; ?>
-                                    <?php foreach ($qurban as $q): ?>
-                                      <option value="<?= $q->max_person . '~' . 'Rp ' . number_format(($q->animal_price/$q->max_person),0,',','.').
-                                      '~'. $q->animal_type.'~'. 'Rp ' . number_format((($q->animal_price/6)/$q->max_person),0,',','.').
-                                      '~'. ($q->animal_price/6)/$q->max_person .'~'.'6'?>">
-                                        <?= $q->animal_type ?> (6x payment)
-                                      </option>
-                                    <?php endforeach; ?>
-                                    <?php foreach ($qurban as $q): ?>
-                                      <option value="<?= $q->max_person . '~' . 'Rp ' . number_format(($q->animal_price/$q->max_person),0,',','.').
-                                      '~'. $q->animal_type.'~'. 'Rp ' . number_format((($q->animal_price/9)/$q->max_person),0,',','.').
-                                      '~'. ($q->animal_price/9)/$q->max_person .'~'.'9'?>">
-                                        <?= $q->animal_type ?> (9x payment)
-                                      </option>
-                                    <?php endforeach; ?>
-                                  </select>
+                                  <label>Total Qurban Animal</label>
+                                  <input type="number" placeholder="Total" required name="total_qurban" class="form-control" min="1" max="7">
                                 </div>
 
-                                <input id="payment" name="payment" value="" type="hidden">
-
-                                <div class="form-group" id="goat" style="display:none">
-                                  <label>Total Slot</label>
-                                  <select id="dGoat" class="form-control" name="total_slot" style="color: black;" onchange="onSelectedSlot(this.value)">
-                                    <option value="1" id="default_selected_1">===== Choose Total Slot =====</option>
-                                    <option value="1">1</option>
-                                  </select>
-                                </div>
-
-                                <div class="form-group" id="cow" style="display:none">
-                                  <label>Total Slot</label>
-                                  <select id="dCow" class="form-control" name="total_slot" style="color: black;" onchange="onSelectedSlot(this.value)">
-                                    <option value="1" id="default_selected_2">===== Choose Total Slot =====</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                  </select>
-                                </div>
-
-                                <div class="form-group" id="camel" style="display:none">
-                                  <label>Total Slot</label>
-                                  <select id="dCamel" class="form-control" name="total_slot" style="color: black;" onchange="onSelectedSlot(this.value)">
-                                    <option value="1" id="default_selected_3">===== Choose Total Slot =====</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                    <option value="9">9</option>
+                                <div class="form-group">
+                                  <label>Group Qurban</label>
+                                  <select id="dCow" class="form-control" name="group_name" style="color: black;">
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
                                     <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
                                   </select>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" id="account">
                                   <label>Stewardship Account Bank</label>
                                   <select class="form-control" name="account" style="color: black;">
                                     <?php foreach ($account as $ac): ?>
-                                      <option value="<?= $ac->id ?>"><?= $ac->bank ?> a/n <?= $ac->owner ?> (<?= $ac->account_number ?>)</option>
+                                      <option value="<?= $ac->account_number ?>~<?= $ac->stewardship_id ?>~<?= $ac->stewardship_period ?>"><?= $ac->bank ?> a/n <?= $ac->owner ?> (<?= $ac->account_number ?>)</option>
                                     <?php endforeach; ?>
                                   </select>
                                 </div>
 
-                                <div class="form-group">
-                                  <label>Your Total Payment</label>
-                                  <input type="text" placeholder="Rp 0" class="form-control" disabled id="total_fund">
+                                <!-- checkbox animal -->
+                                <div class="form-check">
+                                  <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" onclick="openInputAnimal()">
+                                    Qurban with animal to this mosque
+                                  </label>
+                                  <script type="text/javascript">
+                                    var input_animal = 1;
+                                    function openInputAnimal() {
+                                      if (input_animal == 1) {
+                                        $('#account').css("display", "none");
+                                        $('#input_animal').css("display", "block"); input_animal++;
+                                      }else{
+                                        $('#account').css("display", "block");
+                                        $('#input_animal').css("display", "none"); input_animal--;
+                                      }
+                                    }
+                                  </script>
                                 </div>
+                                <div class="form-group" style="display: none" id="input_animal">
+                                  <select class="form-control" name="animal" style="color: black">
+                                    <option value="">=== Select Animal ===</option>
+                                    <option value="goat">Goat</option>
+                                    <option value="cow">Cow</option>
+                                  </select>
+                                </div>
+                                <!-- end checkbox animal -->
 
-                                <input type="submit" name="" value="Qurban" class="form-control btn btn-sm btn-gradient-success">
+                                <!-- checkbox particpant -->
+                                <div class="form-check">
+                                  <label class="form-check-label">
+                                    <input type="checkbox" class="form-check-input" onclick="openInputName()">
+                                    Use another name for qurban
+                                  </label>
+                                </div>
+                                <script type="text/javascript">
+                                  var input_name=1;
+                                  function openInputName() {
+                                    if (input_name == 1) {
+                                      $('#input_name').css("display", "block"); input_name++;
+                                    }else{
+                                      $('#input_name').css("display", "none"); input_name--;
+                                    }
+                                  }
+                                </script>
+                                <div class="form-group" style="display: none" id="input_name">
+                                  <input type="text" name="participant_name" class="form-control" placeholder="Participa name">
+                                </div>
+                                <!-- end checkbox participant -->
+
+                                <br><input type="submit" class="form-control btn btn-sm btn-success" value="Qurban">
+
                               </div>
 
                           <?php endif; ?>
@@ -202,54 +191,46 @@
                   </div>
                 </div>
               </div>
-              <div class="col-md-8">
-                <div class="card bg-gradient-light card-img-holder text-grey form-control" style="padding: 1% !important;">
-                  <div class="card-body">
-                    <table class="table">
-                      <thead style="text-align:left">
-                        <tr>
-                          <th>Group</th>
-                          <th>Animal</th>
-                          <th>Participant</th>
-                          <th>Slot Used</th>
-                          <th>Slot Available</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <?php foreach ($group as $key): ?>
-                          <tr>
-                            <?php
-                              $stmt = $GLOBALS['pdo']->prepare("SELECT dq.*, j.username
-                                                                FROM detail_qurban as dq INNER JOIN jamaah as j ON dq.jamaah_id = j.id
-                                                                WHERE dq.worship_place_id=:id AND dq.year=:y AND dq.group=:g");
-                              $stmt->execute(['id'=> $key->worship_place_id, 'y' => $key->year, 'g' => $key->group]);
-                              $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-                              // $this->die($r);
-                              $slot = 0;
-                            ?>
-                            <td><?= $key->group ?></td>
-                            <td><?= $key->animal_type ?></td>
-                            <td>
-                              <?php foreach ($r as $val): ?>
-                                <li><?= $val->username ?></li>
-                                <?php
-                                  $slot += $val->total_slot
-                                ?>
-                              <?php endforeach; ?>
-                            </td>
-                            <td>
-                              <?php foreach ($r as $val): ?>
-                                <?= $val->total_slot ?> Slot<br>
-                              <?php endforeach; ?>
-                            </td>
-                            <td>
-                              <?= $key->max_person - $slot ?>
-                            </td>
-                          </tr>
-                        <?php endforeach; ?>
-                      </tbody>
-                    </table>
-                  </div>
+              <div class="col-md-6">
+                <div class="row">
+
+                  <?php foreach ($group as $key): ?>
+
+                    <?php
+                      $id = $this->decrypt($_GET['id']);
+                      $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM qurban_detail INNER JOIN qurban_participant ON
+                                                        qurban_participant.id = qurban_detail.participant_id
+                                                        WHERE worship_place_id=:id AND year=:y AND group_name=:grup ORDER BY datetime");
+                      $stmt->execute(['id'=> $id, 'y' => $_GET['year'], 'grup' => $key->group_name]);
+                      $group = $stmt->fetchAll(PDO::FETCH_OBJ);
+                    ?>
+
+                    <div class="col-md-4">
+                      <div class="card" style="width: 12rem; margin-bottom: 20px">
+                        <div class="card-header">
+                          Group <?= $key->group_name ?>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                          <?php foreach ($group as $value): ?>
+
+                            <?php if ($value->total_qurban > 1): ?>
+                              <?php
+                                for ($i=0; $i < $value->total_qurban; $i++) {
+                                  ?>
+                                    <li class="list-group-item"><?= $value->name ?></li>
+                                  <?php
+                                }
+                              ?>
+                            <?php else: ?>
+                              <li class="list-group-item"><?= $value->name ?></li>
+                            <?php endif; ?>
+
+                          <?php endforeach; ?>
+                        </ul>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+
                 </div>
               </div>
           </div>
@@ -261,8 +242,6 @@
         <!-- partial -->
 
       </div>
-      <!-- main-panel ends -->
-    </div>
     <!-- page-body-wrapper ends -->
   </div>
   <!-- container-scroller -->
@@ -279,77 +258,6 @@
         dom: '<"clear"f><"clear">',
       });
     } );
-  </script>
-  <script type="text/javascript">
-
-  var animal_price = 0;
-
-  function choose(v) {
-    console.log(v);
-    var arr = [];
-    var arr = v.split('~', 6);
-    var m = arr[0];
-    var p = arr[1];
-    var at = arr[2];
-    var price = arr[3];
-    animal_price = arr[4];
-    var installments = arr[5]
-
-    document.getElementById('price').value = price;
-    document.getElementById('type').value = at;
-    document.getElementById('total_fund').value = numberWithCommas(0);
-    if (installments == '9') {
-      document.getElementById('fund').value = p + ' /slot (9x Installments)';
-      document.getElementById('payment').value = '9';
-    }else if (installments == '6') {
-      document.getElementById('fund').value = p + ' /slot (6x Installments)';
-      document.getElementById('payment').value = '6';
-    }else if(installments == '3'){
-      document.getElementById('fund').value = p + ' /slot (3x Installments)';
-      document.getElementById('payment').value = '3';
-    }else{
-      document.getElementById('fund').value = p + ' /slot';
-      document.getElementById('payment').value = '1';
-    }
-
-    if (m == '1') {
-      document.getElementById('goat').style.display = 'block';
-      document.getElementById('cow').style.display = 'none';
-      document.getElementById('camel').style.display = 'none';
-      document.getElementById('dCamel').name = '';
-      document.getElementById('dCow').name = '';
-      document.getElementById('dGoat').name = 'total_slot';
-      document.getElementById('default_selected_1').selected = true;
-    }
-    if (m == '7') {
-      document.getElementById('goat').style.display = 'none';
-      document.getElementById('cow').style.display = 'block';
-      document.getElementById('camel').style.display = 'none';
-      document.getElementById('dGoat').name = '';
-      document.getElementById('dCamel').name = '';
-      document.getElementById('dCow').name = 'total_slot';
-      document.getElementById('default_selected_2').selected = true;
-    }
-    if (m == '10') {
-      document.getElementById('goat').style.display = 'none';
-      document.getElementById('cow').style.display = 'none';
-      document.getElementById('dGoat').name = '';
-      document.getElementById('dCow').name = '';
-      document.getElementById('camel').style.display = 'block';
-      document.getElementById('dCamel').name = 'total_slot';
-      document.getElementById('default_selected_3').selected = true;
-    }
-  }
-
-  function onSelectedSlot(val){
-    result = (animal_price * val).toFixed(0);
-    document.getElementById('total_fund').value = numberWithCommas(result);
-  }
-
-  function numberWithCommas(x) {
-      return 'Rp ' + x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  }
-
   </script>
   <!-- End custom js for this page-->
 </body>

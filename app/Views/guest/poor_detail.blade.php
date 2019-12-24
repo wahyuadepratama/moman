@@ -84,13 +84,13 @@
                                   <label for="exampleInputConfirmPassword1">Stewardship Account Bank</label>
                                   <select class="form-control" name="account" style="color: black;">
                                     <?php foreach ($account as $ac): ?>
-                                      <option value="<?= $ac->id ?>"><?= $ac->bank ?> a/n <?= $ac->owner ?> (<?= $ac->account_number ?>)</option>
+                                      <option value="<?= $ac->account_number ?>~<?= $ac->stewardship_id ?>~<?= $ac->stewardship_period ?>"><?= $ac->bank ?> a/n <?= $ac->owner ?> (<?= $ac->account_number ?>)</option>
                                     <?php endforeach; ?>
                                   </select>
                                 </div>
                                 <div class="form-check">
                                   <label class="form-check-label">
-                                    <input type="radio" class="form-check-input" value="public" name="public">Use your profile as a donatur
+                                    <input type="radio" class="form-check-input" value="public" name="public" checked="checked">Use your profile as a donatur
                                   </label>
                                 </div>
                                 <div class="form-check">
