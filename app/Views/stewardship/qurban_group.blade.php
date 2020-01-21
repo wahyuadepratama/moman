@@ -47,46 +47,30 @@
 
           <div class="row">
 
-            <?php foreach ($group as $key): ?>
+            <?php foreach ($groups as $key): ?>
 
               <?php
-                $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_detail.*, qurban_detail.id as id_trx, qurban_participant.*
-                                                  FROM qurban_detail INNER JOIN qurban_participant ON
-                                                  qurban_participant.id = qurban_detail.participant_id
-                                                  WHERE worship_place_id=:id AND year=:y AND group_name=:grup ORDER BY datetime");
+                $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_detail.* , jamaah.name
+                                                  FROM qurban_detail
+                                                  INNER JOIN jamaah ON jamaah.id=qurban_detail.jamaah_id
+                                                  WHERE qurban_detail.worship_place_id=:id AND year=:y AND group_name=:grup
+                                                  ORDER BY serial_number");
                 $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year'], 'grup' => $key->group_name]);
                 $group = $stmt->fetchAll(PDO::FETCH_OBJ);
               ?>
 
               <div class="col-md-3">
-                <div class="card" style="width: 14rem; margin-bottom: 20px">
+                <div class="card" style="margin-bottom: 20px">
                   <div class="card-header">
                     Group <?= $key->group_name ?>
                   </div>
                   <ul class="list-group list-group-flush">
                     <?php foreach ($group as $value): ?>
 
-                      <?php if ($value->total_qurban > 1): ?>
-                        <?php
-                          $btn = true;
-                          for ($i=0; $i < $value->total_qurban; $i++) {
-                            ?>
-                              <li class="list-group-item">
-                                <?= $value->name ?>
-                                <?php if ($btn): ?>
-                                  <button data-toggle="modal" onclick="change('<?= $value->id_trx ?>')" data-target="#add_poor" class="float-right btn btn-gradient-primary btn-sm">Change</button>
-                                <?php endif; ?>
-                              </li>
-                            <?php
-                            $btn = false;
-                          }
-                        ?>
-                      <?php else: ?>
-                        <li class="list-group-item">
-                          <?= $value->name ?>
-                          <button data-toggle="modal" onclick="change('<?= $value->id_trx ?>')" data-target="#add_poor" class="float-right btn btn-gradient-primary btn-sm">Change</button>
-                        </li>
-                      <?php endif; ?>
+                      <li class="list-group-item">
+                        <?= $value->serial_number ?>. <?= $value->name ?>
+                        <button data-toggle="modal" onclick="change('<?= $value->serial_number .'~'. $value->group_name ?>')" data-target="#add_poor" class="float-right btn btn-gradient-primary btn-sm">Move</button>
+                      </li>
 
                     <?php endforeach; ?>
                   </ul>
@@ -105,7 +89,7 @@
 
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="avatar">Change Group</h5>
+                    <h5 class="modal-title" id="avatar">Move to Group</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -113,21 +97,9 @@
                   <div class="modal-body">
                     <label>Select Group</label>
                     <select class="form-control" name="group_name" style="color: black">
-                      <option value="01">01</option>
-                      <option value="02">02</option>
-                      <option value="03">03</option>
-                      <option value="04">04</option>
-                      <option value="05">05</option>
-                      <option value="06">06</option>
-                      <option value="07">07</option>
-                      <option value="08">08</option>
-                      <option value="09">09</option>
-                      <option value="10">10</option>
-                      <option value="11">11</option>
-                      <option value="12">12</option>
-                      <option value="13">13</option>
-                      <option value="14">14</option>
-                      <option value="15">15</option>
+                      <?php foreach ($groups as $key): ?>
+                        <option value="<?= $key->group_name ?>"><?= $key->group_name ?></option>
+                      <?php endforeach; ?>
                     </select>
 
                     <input type="hidden" name="id" id="qurban_id">

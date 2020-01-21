@@ -138,8 +138,8 @@
                           <td>
                             <ul>
                               <?php
-                                $account = $GLOBALS['pdo']->prepare("SELECT * FROM account WHERE stewardship_id=:stewardship_id AND stewardship_period=:period");
-                                $account->execute(['stewardship_id' => $_SESSION['user']->id, 'period' => $m->period]);
+                                $account = $GLOBALS['pdo']->prepare("SELECT * FROM account WHERE stewardship_id=:stewardship_id");
+                                $account->execute(['stewardship_id' => $_SESSION['user']->id]);
                                 $account = $account->fetchAll(PDO::FETCH_OBJ);
                               ?>
                               <?php foreach ($account as $a): ?>
@@ -172,7 +172,7 @@
                                       <input type="text" class="form-control" name="whatsapp" value="<?= $m->whatsapp ?>"><br>
                                       <input type="hidden" name="period_hidden" value="<?= $m->period ?>">
                                       <label>Type of Work</label>
-                                      <select class="form-control" name="type">                                        
+                                      <select class="form-control" name="type">
                                         <?php
                                           $type = $GLOBALS['pdo']->prepare("SELECT * FROM type_of_work");
                                           $type->execute();

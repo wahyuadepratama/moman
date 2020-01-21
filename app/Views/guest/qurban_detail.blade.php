@@ -95,27 +95,15 @@
 
                                 <div class="form-group">
                                   <label>Total Qurban Animal</label>
-                                  <input type="number" placeholder="Total" required name="total_qurban" class="form-control" min="1" max="7">
+                                  <input type="number" placeholder="Total" required name="total_qurban" class="form-control" min="1">
                                 </div>
 
                                 <div class="form-group">
-                                  <label>Group Qurban</label>
+                                  <label>Group Qurban Available</label>
                                   <select id="dCow" class="form-control" name="group_name" style="color: black;">
-                                    <option value="01">01</option>
-                                    <option value="02">02</option>
-                                    <option value="03">03</option>
-                                    <option value="04">04</option>
-                                    <option value="05">05</option>
-                                    <option value="06">06</option>
-                                    <option value="07">07</option>
-                                    <option value="08">08</option>
-                                    <option value="09">09</option>
-                                    <option value="10">10</option>
-                                    <option value="11">11</option>
-                                    <option value="12">12</option>
-                                    <option value="13">13</option>
-                                    <option value="14">14</option>
-                                    <option value="15">15</option>
+                                    <?php foreach ($group as $key): ?>
+                                      <option value="<?= $key->group_name ?>">Group <?= $key->group_name ?></option>
+                                    <?php endforeach; ?>
                                   </select>
                                 </div>
 
@@ -128,36 +116,8 @@
                                   </select>
                                 </div>
 
-                                <!-- checkbox animal -->
-                                <div class="form-check">
-                                  <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input" onclick="openInputAnimal()">
-                                    Qurban with animal to this mosque
-                                  </label>
-                                  <script type="text/javascript">
-                                    var input_animal = 1;
-                                    function openInputAnimal() {
-                                      if (input_animal == 1) {
-                                        $('#account').css("display", "none");
-                                        $('#input_animal').css("display", "block"); input_animal++;
-                                      }else{
-                                        $('#account').css("display", "block");
-                                        $('#input_animal').css("display", "none"); input_animal--;
-                                      }
-                                    }
-                                  </script>
-                                </div>
-                                <div class="form-group" style="display: none" id="input_animal">
-                                  <select class="form-control" name="animal" style="color: black">
-                                    <option value="">=== Select Animal ===</option>
-                                    <option value="goat">Goat</option>
-                                    <option value="cow">Cow</option>
-                                  </select>
-                                </div>
-                                <!-- end checkbox animal -->
-
                                 <!-- checkbox particpant -->
-                                <div class="form-check">
+                                <!-- <div class="form-check">
                                   <label class="form-check-label">
                                     <input type="checkbox" class="form-check-input" onclick="openInputName()">
                                     Use another name for qurban
@@ -175,7 +135,7 @@
                                 </script>
                                 <div class="form-group" style="display: none" id="input_name">
                                   <input type="text" name="participant_name" class="form-control" placeholder="Participa name">
-                                </div>
+                                </div> -->
                                 <!-- end checkbox participant -->
 
                                 <br><input type="submit" class="form-control btn btn-sm btn-success" value="Qurban">
@@ -198,32 +158,26 @@
 
                     <?php
                       $id = $this->decrypt($_GET['id']);
-                      $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM qurban_detail INNER JOIN qurban_participant ON
-                                                        qurban_participant.id = qurban_detail.participant_id
-                                                        WHERE worship_place_id=:id AND year=:y AND group_name=:grup ORDER BY datetime");
+                      $stmt = $GLOBALS['pdo']->prepare("SELECT name, serial_number FROM qurban_detail INNER JOIN qurban_order
+                                                        ON qurban_order.jamaah_id=qurban_detail.jamaah_id
+                                                        AND qurban_order.datetime=qurban_detail.datetime
+                                                        INNER JOIN jamaah ON jamaah.id=qurban_order.jamaah_id
+                                                        WHERE qurban_detail.worship_place_id=:id AND qurban_detail.year=:y
+                                                        AND qurban_detail.group_name=:grup ORDER BY qurban_detail.serial_number ASC");
                       $stmt->execute(['id'=> $id, 'y' => $_GET['year'], 'grup' => $key->group_name]);
                       $group = $stmt->fetchAll(PDO::FETCH_OBJ);
+                      // $this->die($group);
                     ?>
 
                     <div class="col-md-4">
                       <div class="card" style="width: 12rem; margin-bottom: 20px">
                         <div class="card-header">
-                          Group <?= $key->group_name ?>
+                          Group <?= $key->group_name ?> (<?= $key->animal ?>)
                         </div>
                         <ul class="list-group list-group-flush">
                           <?php foreach ($group as $value): ?>
 
-                            <?php if ($value->total_qurban > 1): ?>
-                              <?php
-                                for ($i=0; $i < $value->total_qurban; $i++) {
-                                  ?>
-                                    <li class="list-group-item"><?= $value->name ?></li>
-                                  <?php
-                                }
-                              ?>
-                            <?php else: ?>
-                              <li class="list-group-item"><?= $value->name ?></li>
-                            <?php endif; ?>
+                            <li class="list-group-item"><?= $value->serial_number ?>. <?= $value->name ?></li>
 
                           <?php endforeach; ?>
                         </ul>

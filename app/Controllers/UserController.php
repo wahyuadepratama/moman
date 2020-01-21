@@ -355,12 +355,17 @@ class UserController extends Controller{
   public function historyQurban()
   {
     $this->authJamaah();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_detail.*, worship_place.name as mosque, qurban_participant.name, qurban.animal_price
-                                      FROM qurban_detail INNER JOIN qurban ON qurban.worship_place_id=qurban_detail.worship_place_id
-                                      AND qurban.year=qurban_detail.year
-                                      INNER JOIN worship_place ON qurban_detail.worship_place_id = worship_place.id
-                                      INNER JOIN qurban_participant ON qurban_participant.id=qurban_detail.participant_id
-                                      WHERE qurban_participant.jamaah_id = :jamaah_id ORDER BY qurban_detail.datetime DESC");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_order.*, worship_place.name, qurban.animal_price, worship_place.id
+                                      as worship_id FROM qurban_order
+                                      INNER JOIN qurban_detail ON qurban_detail.jamaah_id=qurban_order.jamaah_id
+                                      AND qurban_detail.datetime=qurban_order.datetime
+                                      INNER JOIN worship_place ON worship_place.id=qurban_detail.worship_place_id
+                                      INNER JOIN qurban_group ON qurban_group.year=qurban_detail.year
+                                      AND qurban_group.worship_place_id=qurban_detail.worship_place_id
+                                      AND qurban_group.group_name=qurban_detail.group_name
+                                      INNER JOIN qurban ON qurban_group.year=qurban.year
+                                      AND qurban_group.worship_place_id=qurban.worship_place_id
+                                      WHERE qurban_order.jamaah_id = :jamaah_id ORDER BY qurban_order.datetime");
     $stmt->execute(['jamaah_id' => $_SESSION['user']->id]);
     $data = $stmt->fetchAll(PDO::FETCH_OBJ);    
 

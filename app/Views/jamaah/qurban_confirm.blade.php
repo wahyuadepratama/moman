@@ -36,97 +36,69 @@
                   <div class="row">
                     <div class="col-md-12">
                       <div class="container">
-                        <h4 class="float-left">Qurban Transaction: #<?= $qurban->id ?></h4>
-                        <h4 class="float-right"><?php $date = new DateTime($qurban->datetime); echo $date->format('j F Y, g:i a'); ?></h4>
+                        <?php $date = new DateTime($qurban->datetime); ?>
+                        <h4 class="float-left">Qurban Transaction: #<?= $qurban->jamaah_id . $date->format('jmYGis'); ?></h4>
+
                       </div>
                     </div>
                     <div class="col-md-12" style="margin-top: 10px">
                       <div class="container">
-                        <?php if ($qurban->animal == ""): ?>
-                          <table class="table">
-                            <tr>
-                              <td>Animal</td>
-                              <td>:</td>
-                              <td>
-                                <?= $qurban->total_qurban ?> Goat (Rp <?= number_format(($qurban->total_qurban * $qurban->animal_price),0,',','.') ?>)
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Payment Information</td>
-                              <td>:</td>
-                              <td>
-                                Transfer Qurban Fund via <?= $account->mosque ?> Stewardship Bank Account<br><br>
-                                <b><?= $account->bank ?> a/n <?= $account->owner ?> (<?= $account->account_number ?>)</b>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Confirmation</td>
-                              <td>:</td>
-                              <td>
-                                After making a payment, please confirm immediately following to:<br><br>
-                                <b><?= $account->whatsapp ?> (SMS or Whatsapp)</b>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Payment History</td>
-                              <td>:</td>
-                              <td>
-                                <?php foreach ($payment as $pay): ?>
-                                  <li>
-                                    Rp <?= number_format(($pay->fund),0,',','.') ?>
-                                    (<?php $date = new DateTime($pay->datetime); echo $date->format('j F Y, g:i a'); ?>)
-                                  </li><br>
-                                <?php endforeach; ?>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Status</td>
-                              <td>:</td>
-                              <td>
-                                <?php if ($qurban->payment_completed == true): ?>
-                                  <div class="text-success" name="button"> <b>Payment Completed</b> </div>
-                                <?php else: ?>
-                                  <div class="text-danger"> <b>Payment Incomplete</b> </div>
-                                <?php endif; ?>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Invoice</td>
-                              <td>:</td>
-                              <td>
-                                <a href="<?php $this->url('jamaah/qurban') ?>" class="btn btn-sm btn-success">Check Invoice Payment</a>
-                              </td>
-                            </tr>
-                          </table>
-                        <?php else: ?>
-                          <table class="table">
-                            <tr>
-                              <td>Animal</td>
-                              <td>:</td>
-                              <td>
-                                <?php if ($qurban->animal == 'cow'): ?>
-                                  1 <?= $qurban->animal ?>
-                                <?php else: ?>
-                                  <?= $qurban->total_qurban ?> <?= $qurban->animal ?>
-                                <?php endif; ?>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>Information</td>
-                              <td>:</td>
-                              <td>
-                                Please deliver your qurban animals to the mosque stewardship or qurban committe
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>History</td>
-                              <td>:</td>
-                              <td>
-                                <a href="<?php $this->url('jamaah/qurban') ?>" class="btn btn-sm btn-success">Check History</a>
-                              </td>
-                            </tr>
-                          </table>
-                        <?php endif; ?>
+                        <table class="table">
+                          <tr>
+                            <td>Animal</td>
+                            <td>:</td>
+                            <td>
+                              <?= count($detail) ?> <?= $animal->animal ?>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Payment Information</td>
+                            <td>:</td>
+                            <td>
+                              Transfer Qurban Fund via <?= $account->mosque ?> Stewardship Bank Account<br><br>
+                              <b><?= $account->bank ?> a/n <?= $account->owner ?> (<?= $account->account_number ?>)</b>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Confirmation</td>
+                            <td>:</td>
+                            <td>
+                              After making a payment, please confirm immediately following to:<br><br>
+                              <b><?= $account->whatsapp ?> (SMS or Whatsapp)</b>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Payment History</td>
+                            <td>:</td>
+                            <td>
+                              <?php if ($qurban->uang_muka): ?>
+                                <li>Uang Muka : Rp <?= number_format(($quban->uang_muka),0,',','.') ?></li>
+                                <li>Uang Pelunasan : Rp <?= number_format(($quban->uang_pelunasan),0,',','.') ?></li>
+                              <?php else: ?>
+                                Belum ada pembayaran!
+                              <?php endif; ?>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Status</td>
+                            <td>:</td>
+                            <td>
+                              <?php if ($qurban->payment_completed == true): ?>
+                                <div class="text-success" name="button"> <b>Payment Completed</b> </div>
+                              <?php else: ?>
+                                <div class="text-danger"> <b>Payment Incomplete</b> </div>
+                              <?php endif; ?>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Invoice</td>
+                            <td>:</td>
+                            <td>
+                              <a href="<?php $this->url('jamaah/qurban') ?>" class="btn btn-sm btn-success">Check Invoice Payment</a>
+                            </td>
+                          </tr>
+                        </table>
+
                       </div>
 
                     </div>
