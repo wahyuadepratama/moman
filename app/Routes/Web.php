@@ -33,18 +33,6 @@ Route::web('maps/filter/event', 'MapsController', 'filterEvent');
 // __________________________________________ Guest __________________________________________
 Route::web('/', 'UserController', 'index');
 
-Route::web('donation', 'DonationController', 'donation');
-Route::web('donation/detail', 'DonationController', 'donationDetail');
-
-Route::web('donation/orphans', 'DonationController', 'orphans');
-Route::web('donation/orphans/detail', 'DonationController', 'orphanDetail');
-
-Route::web('donation/poor', 'DonationController', 'poor');
-Route::web('donation/poor/detail', 'DonationController', 'poorDetail');
-
-Route::web('donation/tpa', 'DonationController', 'tpa');
-Route::web('donation/tpa/detail', 'DonationController', 'tpaDetail');
-
 Route::web('qurban', 'QurbanController', 'index');
 Route::web('qurban/detail', 'QurbanController', 'show');
 
@@ -55,15 +43,7 @@ Route::web('jamaah/avatar/store', 'UserController', 'storeAvatarJamaah');
 Route::web('jamaah/password/update', 'UserController', 'updatePasswordJamaah');
 Route::web('jamaah/profile/update', 'UserController', 'updateProfileJamaah');
 
-Route::web('donation/detail/store', 'DonationController', 'storeDonation');
-Route::web('orphan/detail/store', 'DonationController', 'storeOrphan');
-Route::web('poor/detail/store', 'DonationController', 'storePoor');
-Route::web('tpa/detail/store', 'DonationController', 'storeTpa');
-
 Route::web('qurban/store', 'QurbanController', 'store');
-
-Route::web('jamaah/history', 'UserController', 'history');
-Route::web('jamaah/checking', 'DonationController', 'checkDonation');
 
 Route::web('jamaah/qurban', 'UserController', 'historyQurban');
 Route::web('jamaah/qurban/checking', 'QurbanController', 'checkQurban');
@@ -76,33 +56,16 @@ Route::web('stewardship/account/update', 'UserController', 'updateAccountSteward
 Route::web('stewardship/account/store', 'UserController', 'storeAccountStewardship');
 Route::web('stewardship/account/destroy', 'UserController', 'destroyAccountStewardship');
 
-Route::web('stewardship/donation/project', 'DonationController', 'projectStewardship');
-Route::web('stewardship/donation/project/store', 'DonationController', 'storeProjectStewardship');
-Route::web('stewardship/donation/project/progress', 'DonationController', 'updateProjectStewardship');
-Route::web('stewardship/donation/project/close', 'DonationController', 'closeProjectStewardship');
-
-Route::web('stewardship/donation/transaction', 'DonationController', 'transactionStewardship');
-Route::web('stewardship/donation/transaction/confirm', 'DonationController', 'confirmTransactionStewardship');
-Route::web('stewardship/donation/transaction/store', 'DonationController', 'storeAllInfaq');
-
-Route::web('stewardship/donation/payment', 'FinancialController', 'indexPayment');
-Route::web('stewardship/donation/payment/project/store', 'FinancialController', 'storeProject');
-Route::web('stewardship/donation/payment/orphans/store', 'FinancialController', 'storeOrphans');
-Route::web('stewardship/donation/payment/poor/store', 'FinancialController', 'storePoor');
-Route::web('stewardship/donation/payment/tpa/store', 'FinancialController', 'storeTpa');
-Route::web('stewardship/donation/payment/event/store', 'FinancialController', 'storeEvent');
-Route::web('stewardship/donation/payment/cash/store', 'FinancialController', 'storeCashMosque');
-
 Route::web('stewardship/qurban', 'QurbanController', 'animalStewardship');
 Route::web('stewardship/qurban/store', 'QurbanController', 'storeAnimalStewardship');
 Route::web('stewardship/qurban/destroy', 'QurbanController', 'destroyAnimalStewardship');
 
 Route::web('stewardship/qur/detail', 'QurbanController', 'transactionStewardship');
 Route::web('stewardship/qur/confirm', 'QurbanController', 'confirmTransactionStewardship');
-Route::web('stewardship/qur/close', 'QurbanController', 'closeTransactionStewardship');
 
 Route::web('stewardship/qurb/group', 'QurbanController', 'indexGroupAnimalStewardship');
 Route::web('stewardship/qurb/group/change', 'QurbanController', 'changeGroupAnimalStewardship');
+Route::web('stewardship/qurb/animal/change', 'QurbanController', 'changeAnimalStewardship');
 
 Route::web('stewardship/mosque/event', 'EventController', 'index');
 Route::web('stewardship/mosque/event/store', 'EventController', 'store');
@@ -119,31 +82,11 @@ Route::web('stewardship/mosque/facility/store', 'FacilityController', 'storeFaci
 Route::web('stewardship/mosque/facility/update', 'FacilityController', 'updateFacilityStewardship');
 Route::web('stewardship/mosque/facility/destroy', 'FacilityController', 'destroyFacilityStewardship');
 
-Route::web('stewardship/recipient/poor', 'RecipientController', 'indexPoor');
-Route::web('stewardship/recipient/poor/store', 'RecipientController', 'storePoor');
-Route::web('stewardship/recipient/poor/update', 'RecipientController', 'updatePoor');
-
-Route::web('stewardship/recipient/tpa', 'RecipientController', 'indexTpa');
-Route::web('stewardship/recipient/tpa/store', 'RecipientController', 'storeTpa');
-Route::web('stewardship/recipient/tpa/update', 'RecipientController', 'updateTpa');
-
-Route::web('stewardship/recipient/orphanage', 'RecipientController', 'indexOrphanage');
-Route::web('stewardship/recipient/orphanage/store', 'RecipientController', 'storeOrphanage');
-Route::web('stewardship/recipient/orphanage/update', 'RecipientController', 'updateOrphanage');
-
-Route::web('stewardship/recipient/store', 'RecipientController', 'indexStore');
-Route::web('stewardship/recipient/store/store', 'RecipientController', 'storeStore');
-Route::web('stewardship/recipient/store/update', 'RecipientController', 'updateStore');
-
-Route::web('stewardship/recipient/builder', 'RecipientController', 'indexBuilder');
-Route::web('stewardship/recipient/builder/store', 'RecipientController', 'storeBuilder');
-Route::web('stewardship/recipient/builder/update', 'RecipientController', 'updateBuilder');
-
 Route::web('stewardship/recipient/ustad', 'RecipientController', 'indexUstad');
 Route::web('stewardship/recipient/ustad/store', 'RecipientController', 'storeUstad');
 Route::web('stewardship/recipient/ustad/update', 'RecipientController', 'updateUstad');
 
-Route::web('stewardship/report', 'FinancialController', 'report');
+Route::web('stewardship/report', 'QurbanController', 'report');
 
 // __________________________________________ Admin __________________________________________
 Route::web('admin/dashboard', 'UserController', 'dashboardAdmin');

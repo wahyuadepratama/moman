@@ -49,9 +49,6 @@
                         <a class="nav-link active" href="#" onclick="changeToEvent()" id="navEvent">Information</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="changeToDonation()" id="navDonation">Donation's Report</a>
-                      </li>
-                      <li class="nav-item">
                         <a class="nav-link" href="#" onclick="changeToQurban()" id="navQurban">Qurban's Report</a>
                       </li>
                     </ul>
@@ -59,47 +56,24 @@
                     <script type="text/javascript">
                       function changeToEvent(){
                           var x = document.getElementById("event");
-                          var y = document.getElementById("donation");
                           var z = document.getElementById("qurban");
                           x.style.display = "block";
-                          y.style.display = "none";
                           z.style.display = "none";
 
                           var a = document.getElementById("navEvent");
-                          var b = document.getElementById("navDonation");
                           var c = document.getElementById("navQurban");
                           a.classList.add("active");
-                          b.classList.remove("active");
-                          c.classList.remove("active");
-                      }
-                      function changeToDonation(){
-                          var x = document.getElementById("event");
-                          var y = document.getElementById("donation");
-                          var z = document.getElementById("qurban");
-                          x.style.display = "none";
-                          y.style.display = "block";
-                          z.style.display = "none";
-
-                          var a = document.getElementById("navEvent");
-                          var b = document.getElementById("navDonation");
-                          var c = document.getElementById("navQurban");
-                          a.classList.remove("active");
-                          b.classList.add("active");
                           c.classList.remove("active");
                       }
                       function changeToQurban(){
                           var x = document.getElementById("event");
-                          var y = document.getElementById("donation");
                           var z = document.getElementById("qurban");
                           x.style.display = "none";
-                          y.style.display = "none";
                           z.style.display = "block";
 
                           var a = document.getElementById("navEvent");
-                          var b = document.getElementById("navDonation");
                           var c = document.getElementById("navQurban");
                           a.classList.remove("active");
-                          b.classList.remove("active");
                           c.classList.add("active");
                       }
                     </script>
@@ -138,15 +112,13 @@
                             <th>Event</th>
                             <th>Description</th>
                             <th>Schedule</th>
-                            <th>Status</th>
                             <th>Ustad/Pengisi Acara</th>
                           </tr>
-                          <?php foreach ($q->event as $f): ?>
+                          <?php foreach ($event as $f): ?>
                             <tr>
                               <td><?= $f->name ?></td>
                               <td><?= $f->description ?></td>
-                              <td><?= date('d M Y', strtotime($f->date)) ?></td>
-                              <td><?= $f->status ?></td>
+                              <td><?= date('d M Y', strtotime($f->date))  ?> <?= date('H:i:s', strtotime($f->time)) ?></td>
                               <td><?= $f->ustad ?></td>
                             </tr>
                           <?php endforeach; ?>
@@ -160,7 +132,7 @@
                             <th>Condition</th>
                             <th>Last Updated</th>
                           </tr>
-                          <?php foreach ($q->facility as $f): ?>
+                          <?php foreach ($facility as $f): ?>
                             <tr>
                               <td><?= $f->name ?></td>
                               <td><?= $f->total ?></td>
@@ -172,221 +144,83 @@
                       </div>
                     </div>
 
-                    <div class="col-md-12 table-responsive" style="text-align:center;margin-top:2%; display:none" id="donation">
-                      <style media="screen">
-                        table.resize-font tr th { font-size: 13px; }
-                        table.resize-font tr td { font-size: 13px; }
-                      </style>
-                      <h4 style="display:none;text-align:center;margin:5%" id='title'>Report <?= $_GET['type'] ?> <?= $_SESSION['user']->name ?> on <?= $d ?> <?= $_GET['year'] ?></h4>
-                      <table class="table resize-font">
-                        <tr style="background-color:#ebedf2">
-                          <th>No</th>
-                          <th>Date</th>
-                          <th>Detail</th>
-                          <th>Description</th>
-                          <th>Cash In</th>
-                          <th>Cash Out</th>
-                        </tr>
-                        <?php $n = 1; $in=0; $out=0; ?>
-                        <?php foreach ($allReport as $ar): ?>
+                    <div class="col-md-12" id="qurban" style="display:none">
 
-                        <?php
-                          foreach ($cash_in as $key) if ($key->id == $ar->id) $c = $key;
-                          foreach ($cash_out as $key) if ($key->id == $ar->id) $o = $key;
-                          foreach ($jamaah as $key) if ($key->id == $c->jamaah_id) $j = $key;
-                        ?>
+                      <form action="<?php $this->url('jamaah/about') ?>" method="get" style="margin-top: 50px">
+                        <div class="row" style="margin-top:0.5%;margin-bottom:3%">
+                          <div class="col-md-2">
+                            <select class="form-control" style="color:black" name="year">
+                              <?php foreach ($year as $key): ?>
+                                <option value="<?= $key->year ?>"><?= $key->year ?></option>
+                              <?php endforeach; ?>
+                            </select>
+                          </div>
+                          <div class="col-md-2">
+                            <input type="submit" class="btn btn-sm btn-danger form-control" value="Filter">
+                          </div>
+                        </div>
+                      </form>
 
-                        <tr>
-                          <td><?= $n ?></td>
-                          <td>
-                            <?php
-                              $date = new DateTime($ar->datetime);
-                              echo $date->format('l, j F Y');
-                            ?>
-                          </td>
-                          <td>
-
-                            <!-- Status in from cash in -->
-                            <?php if ($ar->status_in == 'transfer jamaah'): ?>
-                              <?php
-                                if ($ar->status_out == 'project') {
-                                  foreach ($project as $key) if ($key->id == $c->project_id) $pr = $key;
-                                  echo 'Infaq Mosque from '; echo ($c->public == 'true') ? $j->username : 'Hamba Allah';
-                                }elseif($ar->status_out == 'tpa'){
-                                  echo 'Infaq TPA/MDA from '; echo ($c->public == 'true') ? $j->username : 'Hamba Allah';
-                                }elseif($ar->status_out == 'orphanage'){
-                                  echo 'Infaq Orphans from '; echo ($c->public == 'true') ? $j->username : 'Hamba Allah';
-                                }elseif($ar->status_out == 'poor'){
-                                  echo 'Infaq for Poor from '; echo ($c->public == 'true') ? $j->username : 'Hamba Allah';
-                                }
-                              ?>
-                            <?php endif; ?>
-                            <?php if ($ar->status_in == 'cash jamaah'): ?>
-                              <?php
-                                if ($ar->status_out == 'project') {
-                                  echo 'Infaq for Mosque ('. $ar->description .')';
-                                }elseif($ar->status_out == 'tpa'){
-                                  echo 'Infaq for TPA/MDA ('. $ar->description .')';
-                                }elseif($ar->status_out == 'orphanage'){
-                                  echo 'Infaq for Orphans ('. $ar->description .')';
-                                }elseif($ar->status_out == 'poor'){
-                                  echo 'Infaq for Poor ('. $ar->description .')';
-                                }
-                              ?>
-                            <?php endif; ?>
-
-                            <?php if ($ar->status_in == 'infaq box'): ?>
-                              <?php
-                                if ($ar->status_out == 'event') {
-                                  echo 'Infaq from Event';
-                                }elseif($ar->status_out == 'cash'){
-                                  echo 'Infaq Box';
-                                }
-                              ?>
-                            <?php endif; ?>
-                            <!-- End of status in from cash in -->
-
-                            <!-- Status out from cash out -->
-                            <?php if ($ar->status_out == 'ustad payment'): ?>
-                              <?php foreach ($ustad as $key) if ($key->id == $o->ustad_id) $u = $key; ?>
-                              <?= 'Ustad Payment for '. $u->name ?>
-                            <?php endif; ?>
-
-                            <?php if ($ar->status_out == 'tpa payment'): ?>
-                              <?php foreach ($tpa as $key) if ($key->id == $o->tpa_id) $t = $key; ?>
-                              <?= 'TPA/MDA Payment for '. $t->name ?>
-                            <?php endif; ?>
-
-                            <?php if ($ar->status_out == 'orphanage payment'): ?>
-                              <?php foreach ($orphan as $key) if ($key->id == $o->orphanage_id) $or = $key; ?>
-                              <?= 'Orphans Payment for '. $or->name ?>
-                            <?php endif; ?>
-
-                            <?php if ($ar->status_out == 'poor payment'): ?>
-                              <?php foreach ($poor as $key) if ($key->id == $o->poor_id) $p = $key; ?>
-                              <?= 'Poor Payment for '. $p->name ?>
-                            <?php endif; ?>
-
-                            <?php if ($ar->status_out == 'builder payment'): ?>
-                              <?= 'Builder Payment' ?>
-                            <?php endif; ?>
-
-                            <?php if ($ar->status_out == 'store payment'): ?>
-                              <?php foreach ($store as $key) if ($key->id == $o->store_id) $s = $key; ?>
-                              <?= 'Store Payment at '. $s->name ?>
-                            <?php endif; ?>
-
-                            <?php if ($ar->status_out == 'stewardship payment'): ?>
-                              <?= 'Stewardship Payment' ?>
-                            <?php endif; ?>
-                            <!-- End of status out from cash out -->
-
-                          </td>
-                          <td>
-                            <?php if ($ar->status_out == 'store payment'): ?>
-                              <?= $ar->description ?>
-                            <?php endif; ?>
-                            <?php if ($ar->status_in == 'infaq box'): ?>
-                              <?php
-                                if ($ar->status_out == 'event') {
-                                  echo $ar->description;
-                                }elseif($ar->status_out == 'cash'){
-                                  echo $ar->description;
-                                }
-                              ?>
-                            <?php endif; ?>
-                            <?php if ($ar->status_in == 'transfer jamaah'): ?>
-                              <?php if ($ar->status_out == 'project'): ?>
-                                For Project: "<?= $pr->name ?>"
-                              <?php endif; ?>
-                            <?php endif; ?>
-                          </td>
-
-                          <?php if ($ar->status_in == 'transfer jamaah' || $ar->status_in == 'cash jamaah' || $ar->status_in == 'infaq box'): ?>
-
-                            <td> Rp <?= number_format(($ar->fund),0,',','.') ?> </td>
-                            <td> - </td>
-                            <?php $in = $in + $ar->fund ?>
-                          <?php else: ?>
-
-                            <td> - </td>
-                            <td> Rp <?= number_format(($ar->fund),0,',','.') ?> </td>
-                            <?php $out = $out + $ar->fund ?>
-
-                          <?php endif; ?>
-
-                        </tr>
-                        <?php $n++ ?>
-                        <?php endforeach; ?>
-                        <tr style="background-color:#ebedf2">
-                          <td colspan="4">Total</td>
-                          <td>Rp <?= number_format(($in),0,',','.') ?></td>
-                          <td>Rp <?= number_format(($out),0,',','.') ?></td>
-                        </tr>
-                      </table>
-                    </div>
-
-                    <div class="col-md-12" id="qurban">
-
-                      <div class="col-md-6" style="margin-bottom: 15px">
-                        <table class="table">
-                          <tr>
-                            <td>Total qurban funds</td>
-                            <td>:</td>
-                            <td>Rp <?= number_format($fund,0,',','.') ?></td>
-                          </tr>
-                          <tr>
-                            <td>Goats from jamaah</td>
-                            <td>:</td>
-                            <td><?= $goat->count ?></td>
-                          </tr>
-                          <tr>
-                            <td>Cows from jamaah</td>
-                            <td>:</td>
-                            <td><?= $cow->count ?></td>
-                          </tr>
-                        </table>
+                      <div class="row" style="margin-top: 50px">
+                        <div class="col-md-6" style="margin-bottom: 15px">
+                          <table class="table">
+                            <tr>
+                              <td>Funds Raised</td>
+                              <td>:</td>
+                              <td>Rp <?= number_format($fundRaised,0,',','.') ?></td>
+                            </tr>
+                            <tr>
+                              <td>Total Goat</td>
+                              <td>:</td>
+                              <td><?= $goat ?> animals</td>
+                            </tr>
+                            <tr>
+                              <td>Total Cow</td>
+                              <td>:</td>
+                              <td><?= $cow ?> animals</td>
+                            </tr>
+                            <tr>
+                              <td>Participants</td>
+                              <td>:</td>
+                              <td><?= $participant ?> jamaah</td>
+                            </tr>
+                          </table>
+                        </div>
                       </div>
 
-                      <div class="row">
+                      <div class="row" style="margin-top: 50px">
 
-                          <?php foreach ($group as $key): ?>
+                        <?php foreach ($group as $key): ?>
 
-                            <?php
-                              $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_detail.*, qurban_participant.*
-                                                                FROM qurban_detail INNER JOIN qurban_participant ON
-                                                                qurban_participant.id = qurban_detail.participant_id
-                                                                WHERE worship_place_id=:id AND year=:y
-                                                                AND group_name=:grup ORDER BY datetime");
-                              $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $year, 'grup' => $key->group_name]);
-                              $group = $stmt->fetchAll(PDO::FETCH_OBJ);
-                            ?>
+                          <?php
+                            $stmt = $GLOBALS['pdo']->prepare("SELECT name, serial_number FROM qurban_detail INNER JOIN qurban_order
+                                                              ON qurban_order.jamaah_id=qurban_detail.jamaah_id
+                                                              AND qurban_order.datetime=qurban_detail.datetime
+                                                              INNER JOIN jamaah ON jamaah.id=qurban_order.jamaah_id
+                                                              WHERE qurban_detail.worship_place_id=:id AND qurban_detail.year=:y
+                                                              AND qurban_detail.group_name=:grup ORDER BY qurban_detail.serial_number ASC");
+                            $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $_GET['year'], 'grup' => $key->group_name]);
+                            $group = $stmt->fetchAll(PDO::FETCH_OBJ);
+                            // $this->die($group);
+                          ?>
 
-                            <div class="col-md-3">
-                              <div class="card" style="width: 14rem; margin-bottom: 20px">
-                                <div class="card-header">
-                                  Group <?= $key->group_name ?>
-                                </div>
-                                <ul class="list-group list-group-flush">
-                                  <?php foreach ($group as $value): ?>
-
-                                    <?php if ($value->total_qurban > 1): ?>
-                                      <?php
-                                        for ($i=0; $i < $value->total_qurban; $i++) {
-                                          ?>
-                                            <li class="list-group-item"><?= $value->name ?></li>
-                                          <?php
-                                        }
-                                      ?>
-                                    <?php else: ?>
-                                      <li class="list-group-item"><?= $value->name ?></li>
-                                    <?php endif; ?>
-
-                                  <?php endforeach; ?>
-                                </ul>
+                          <div class="col-md-3">
+                            <div class="card" style="width: 12rem; margin-bottom: 20px">
+                              <div class="card-header">
+                                Group <?= $key->group_name ?> (<?= $key->animal ?>)
                               </div>
+                              <ul class="list-group list-group-flush">
+                                <?php if ($group): ?>
+                                  <?php foreach ($group as $value): ?>
+                                    <li class="list-group-item"><?= $value->serial_number ?>. <?= $value->name ?></li>
+                                  <?php endforeach; ?>
+                                <?php else: ?>
+                                  <li class="list-group-item">Empty!</li>
+                                <?php endif; ?>
+                              </ul>
                             </div>
-                          <?php endforeach; ?>
+                          </div>
+                        <?php endforeach; ?>
 
                       </div>
                     </div>

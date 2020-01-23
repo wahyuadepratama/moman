@@ -49,67 +49,22 @@
               </div>
             <?php endif; ?>
 
-            <div class="col-md-4 stretch-card grid-margin">
-              <div class="card bg-gradient-primary card-img-holder text-white">
-                <div class="card-body">
-                  <img src="<?php $this->url('images/circle.svg') ?>" class="card-img-absolute" alt="circle-image"/>
-                  <h4 class="font-weight-bold mb-3">
-                    Total Jamaah
-                  </h4>
-                  <h4 class="text-right">
-                    <?php
-                      $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM jamaah WHERE worship_place_id=:id");
-                      $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
-                      echo $c = $stmt->fetch()['count'] . ' account';
-                    ?>
-                  </h4><br>
-                  <h4 class="font-weight-bold mb-3">
-                    Waiting Donation Status
-                  </h4>
-                  <h4 class="text-right">
-                    <?php
-                      $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM cash_in WHERE worship_place_id=:id AND confirmation='false'");
-                      $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
-                      echo $h = $stmt->fetch()['count'] . ' transaction';
-                    ?>
-                  </h4><br>
-                  <h4 class="font-weight-bold mb-3">
-                    Waiting Qurban Status
-                  </h4>
-                  <h4 class="text-right">
-                    <?php
-                      $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM detail_qurban WHERE worship_place_id=:id AND confirmation='false'");
-                      $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
-                      echo $h = $stmt->fetch()['count'] . ' transaction';
-                    ?>
-                  </h4>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-8 grid-margin">
+            <div class="col-md-6 grid-margin">
               <div class="card">
                 <div class="card-body">
                   <div class="row">
                     <div class="col-md-12 table-responsive" style="margin-top: 3%">
                       <table class="table">
                         <tr>
-                          <td>Show Period</td>
+                          <td>Stewardship at</td>
+                          <td>:</td>
+                          <td><?= $_SESSION['user']->name ?></td>
+                        </tr>
+                        <tr>
+                          <td>Stewardship Period</td>
                           <td>:</td>
                           <td>
-                            <select class="form-control" onchange="changePeriod(this)" style="color: black">
-                              <?php
-                                $period = $GLOBALS['pdo']->prepare("SELECT period FROM stewardship WHERE jamaah_id=:id");
-                                $period->execute(['id' => $_SESSION['user']->id]);
-                                $period = $period->fetchAll(PDO::FETCH_OBJ);
-                              ?>
-                              <option value="<?= $m->period ?>">Period <?= $m->period ?></option>
-                              <?php foreach ($period as $key): ?>
-                                <?php if ($key->period != $m->period): ?>
-                                  <option value="<?= $key->period ?>">Period <?= $key->period ?></option>
-                                <?php endif; ?>
-                              <?php endforeach; ?>
-                            </select>
+                            <?= $m->period ?>
                           </td>
                         </tr>
                         <tr>
@@ -118,19 +73,9 @@
                           <td><?= $m->name ?></td>
                         </tr>
                         <tr>
-                          <td>Phone</td>
-                          <td>:</td>
-                          <td><?= $_SESSION['user']->phone ?></td>
-                        </tr>
-                        <tr>
                           <td>WhatsApp</td>
                           <td>:</td>
                           <td><?= $m->whatsapp ?></td>
-                        </tr>
-                        <tr>
-                          <td>Stewardship at</td>
-                          <td>:</td>
-                          <td><?= $_SESSION['user']->name ?></td>
                         </tr>
                         <tr>
                           <td style="vertical-align: top">Account Bank</td>
@@ -142,9 +87,36 @@
                                 $account->execute(['stewardship_id' => $_SESSION['user']->id]);
                                 $account = $account->fetchAll(PDO::FETCH_OBJ);
                               ?>
-                              <?php foreach ($account as $a): ?>
-                                <li><?= $a->bank ?> (<?= $a->account_number ?>) a/n <?= $a->owner ?></li>
-                              <?php endforeach; ?>
+                              <?php if ($account): ?>
+                                <?php foreach ($account as $a): ?>
+                                  <li><?= $a->bank ?> (<?= $a->account_number ?>) a/n <?= $a->owner ?></li>
+                                <?php endforeach; ?>
+                              <?php else: ?>
+                                <b>No Bank Account Yet!</b>
+                              <?php endif; ?>
+                            </ul>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="vertical-align: top">Stewardships</td>
+                          <td style="vertical-align: top">:</td>
+                          <td>
+                            <ul>
+                              <?php
+                                $account = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship INNER JOIN jamaah ON
+                                                                    jamaah.id=stewardship.jamaah_id
+                                                                    WHERE jamaah.worship_place_id=:worship_id
+                                                                    AND stewardship.account_status='true'");
+                                $account->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
+                                $account = $account->fetchAll(PDO::FETCH_OBJ);
+                              ?>
+                              <?php if ($account): ?>
+                                <?php foreach ($account as $a): ?>
+                                  <li><?= $a->name ?> (<?= $a->period ?>)</li>
+                                <?php endforeach; ?>
+                              <?php else: ?>
+                                <b>There are no other accounts yet!</b>
+                              <?php endif; ?>
                             </ul>
                           </td>
                         </tr>
@@ -179,6 +151,12 @@
                                           $type = $type->fetchAll(PDO::FETCH_OBJ);
                                         ?>
                                         <?php foreach ($type as $t): ?>
+                                          <?php if ($m->type_of_work_id == $t->id): ?>
+                                            <option value="<?= $t->id ?>"><?= $t->name ?></option>
+                                          <?php endif; ?>
+                                        <?php endforeach; ?>
+
+                                        <?php foreach ($type as $t): ?>
                                           <option value="<?= $t->id ?>"><?= $t->name ?></option>
                                         <?php endforeach; ?>
                                       </select>
@@ -212,18 +190,22 @@
                                       <input type="text" name="owner" class="form-control" placeholder="Owner" required>
                                       <input type="text" name="account_number" class="form-control" placeholder="No Rek " required>
                                       <div class="card" style="margin-top:2%;padding-top:2%;padding:5%">
-                                        <?php $no = 1; ?>
-                                        <?php foreach ($account as $a): ?>
-                                          <div class="row">
-                                            <div class="col-md-10">
-                                              <?= $no.'. '. $a->bank ?> (<?= $a->account_number ?>) a/n <?= $a->owner ?>
+                                        <?php if ($account): ?>
+                                          <?php $no = 1; ?>
+                                          <?php foreach ($account as $a): ?>
+                                            <div class="row">
+                                              <div class="col-md-10">
+                                                <?= $no.'. '. $a->bank ?> (<?= $a->account_number ?>) a/n <?= $a->owner ?>
+                                              </div>
+                                              <div class="col-md-2">
+                                                <h6> <a onclick="confirm('<?php $this->url('stewardship/account/destroy?stewardship='. $a->stewardship_id.'&period='. $a->stewardship_period.'&account='. $a->account_number) ?>')" href="#" > <i class="mdi mdi-delete text-danger"></i> </a> </h6>
+                                              </div>
                                             </div>
-                                            <div class="col-md-2">
-                                              <h6> <a onclick="confirm('<?php $this->url('stewardship/account/destroy?stewardship='. $a->stewardship_id.'&period='. $a->stewardship_period.'&account='. $a->account_number) ?>')" href="#" > <i class="mdi mdi-delete text-danger"></i> </a> </h6>
-                                            </div>
-                                          </div>
-                                          <?php $no++ ?>
-                                        <?php endforeach; ?>
+                                            <?php $no++ ?>
+                                          <?php endforeach; ?>
+                                        <?php else: ?>
+                                          <b>No Bank Account Yet!</b>
+                                        <?php endif; ?>
                                       </div>
                                     </div>
                                     <div class="modal-footer">
@@ -237,11 +219,15 @@
                             <!-- End Modal -->
                           </td>
                         </tr>
+
                       </table>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+            <div class="col-md-6">
+              <img src="<?php $this->url('images/mosque/'. $gallery) ?>" class="img-responsive" width="500px">
             </div>
 
           </div>

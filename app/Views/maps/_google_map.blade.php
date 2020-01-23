@@ -188,7 +188,15 @@
                 var total = row.total;
                 var updated = row.updated_at;
                 var currentDate = new Date(updated);
-                isi = isi+"<tr><td style='font-size:12px'>"+name+"</td><td style='font-size:12px'>"+condition+"</td><td style='font-size:12px'> "+total+" </td><td style='font-size:12px'> "+currentDate+"</td></tr>";
+
+                var year = currentDate.getFullYear();
+                var month = currentDate.getMonth() + 1;
+                var day = currentDate.getDate();
+                var hours = currentDate.getHours();
+                var minutes = currentDate.getMinutes();
+                var seconds = currentDate.getSeconds();
+
+                isi = isi+"<tr><td style='font-size:12px'>"+name+"</td><td style='font-size:12px'>"+condition+"</td><td style='font-size:12px'> "+total+" </td><td style='font-size:12px'> "+year + "-" + addZero(month) + "-" + addZero(day) + " " + addZero(hours) + ":" + addZero(minutes) + ":" + addZero(seconds)+"</td></tr>";
               }//end for
               $('#infoFacility').append(isi);
 
@@ -202,10 +210,11 @@
                 var id_fas = row.id;
                 var event = row.name;
                 var description = row.description;
-                var schedule = row.schedule;
+                var date = row.date;
+                var time = row.time;
                 var ustad = row.ustad;
                 var status = row.status;
-                isi = isi+"<tr><td style='font-size:12px'>"+event+"</td><td style='font-size:12px'>"+description+"</td><td style='font-size:12px'> "+schedule+" </td><td style='font-size:12px'> "+ustad+"</td><td style='font-size:12px'>"+status+"</td></tr>";
+                isi = isi+"<tr><td style='font-size:12px'>"+event+"</td><td style='font-size:12px'>"+description+"</td><td style='font-size:12px'> "+date+" "+time+" </td><td style='font-size:12px'> "+ustad+"</td><td style='font-size:12px'>"+status+"</td></tr>";
               }//end for
               $('#infoEvent').append(isi);
           }});
@@ -657,6 +666,14 @@
       pushData(rows);
     }});
 
+  }
+
+  // ------------------------- For month
+  function addZero(i) {
+    if (i < 10) {
+      i = "0" + i
+    };
+    return i;
   }
 
 </script>

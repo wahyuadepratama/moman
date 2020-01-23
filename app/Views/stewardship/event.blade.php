@@ -81,18 +81,23 @@
                       <table class="table" id="data">
                         <thead style="text-align:center">
                           <tr>
+                            <th>No</th>
                             <th>Name</th>
                             <th>Description</th>
+                            <th>Last Edited</th>
                             <th>Action</th>
                           </tr>
                         </thead>
                         <tbody style="text-align:center">
+                          <?php $no=1 ?>
                           <?php foreach ($event as $p): ?>
                             <tr>
+                              <td><?= $no++ ?></td>
                               <td><?= $p->name ?></td>
                               <td><?= $p->description ?></td>
+                              <td><?= $p->last_editor ?></td>
                               <td>
-                                <a href="#" data-toggle="modal" data-target="#edit_event<?= $p->id ?>" class="btn btn-sm btn-success">Edit</a>                                
+                                <a href="#" data-toggle="modal" data-target="#edit_event<?= $p->id ?>" class="btn btn-sm btn-success">Edit</a>
                                 <!-- Modal Avatar -->
                                 <div class="modal fade" id="edit_event<?= $p->id ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
                                   <div class="modal-dialog" role="document">
@@ -160,7 +165,8 @@
             "lengthMenu": '_MENU_ ',
                 "search": '',
                 "searchPlaceholder": "search"
-        }
+        },
+        "paging": false
     });
     } );
 

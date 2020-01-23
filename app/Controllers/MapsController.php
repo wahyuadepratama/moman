@@ -69,16 +69,16 @@ class MapsController extends Controller{
       $f =  $stmt->fetchAll(PDO::FETCH_OBJ);
 
       // $this->authStewardship();
-      $stmt = $GLOBALS['pdo']->prepare("SELECT ustad.name as ustad, event.*, ustad_payment.* FROM ustad_payment
-                                        INNER JOIN ustad ON ustad_payment.ustad_id = ustad.id
-                                        INNER JOIN event ON ustad_payment.event_id = event.id
-                                        WHERE event.worship_place_id=:id");
+      $stmt = $GLOBALS['pdo']->prepare("SELECT ustad.name as ustad, event.*, schedule.* FROM schedule
+                                        INNER JOIN ustad ON schedule.ustad_id = ustad.id
+                                        INNER JOIN event ON schedule.event_id = event.id
+                                        WHERE schedule.worship_place_id=:id");
       $stmt->execute(['id' => $id]);
       $e =  $stmt->fetchAll(PDO::FETCH_OBJ);
 
       if (!empty($e)) {
         foreach ($e as $key) {
-          $date = new DateTime($key->schedule);
+          $date = new DateTime($key->date);
           $now = new DateTime();
           if($date < $now) {
             $key->status = 'past';
@@ -301,9 +301,9 @@ class MapsController extends Controller{
     if (isset($_GET['date'])) {
       $dates = date("Y-m-d", strtotime($_GET['date']));
       $stmt = $GLOBALS['pdo']->prepare("SELECT distinct a.id, a.name, a.address, a.capacity,ST_X(ST_Centroid(a.geom)) AS longitude,
-                                        ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a INNER JOIN event ON event.worship_place_id=a.id
-                                        INNER JOIN ustad_payment ON ustad_payment.event_id=event.id
-                                        WHERE ustad_payment.schedule >= :dates");
+                                        ST_Y(ST_CENTROID(a.geom)) As latitude FROM worship_place as a INNER JOIN schedule
+                                        ON schedule.worship_place_id=a.id
+                                        WHERE schedule.date >= :dates");
       $stmt->execute(['dates' => $dates]);
       $data = $stmt->fetchAll(PDO::FETCH_OBJ);
       echo json_encode($data);
@@ -324,7 +324,7 @@ class MapsController extends Controller{
                                       detail_condition.worship_place_id=a.id WHERE facility_id IN (". $str .")");
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_OBJ);
-    
+
     echo json_encode($result);
   }
 

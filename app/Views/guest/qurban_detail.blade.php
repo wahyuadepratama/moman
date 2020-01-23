@@ -175,11 +175,13 @@
                           Group <?= $key->group_name ?> (<?= $key->animal ?>)
                         </div>
                         <ul class="list-group list-group-flush">
-                          <?php foreach ($group as $value): ?>
-
-                            <li class="list-group-item"><?= $value->serial_number ?>. <?= $value->name ?></li>
-
-                          <?php endforeach; ?>
+                          <?php if ($group): ?>
+                            <?php foreach ($group as $value): ?>
+                              <li class="list-group-item"><?= $value->serial_number ?>. <?= $value->name ?></li>
+                            <?php endforeach; ?>
+                          <?php else: ?>
+                            <li class="list-group-item">Empty!</li>
+                          <?php endif; ?>
                         </ul>
                       </div>
                     </div>

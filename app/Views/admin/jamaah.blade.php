@@ -97,7 +97,7 @@
                                                   <option value="<?= $t->id ?>"><?= $t->name ?></option>
                                                 <?php endforeach; ?>
                                               </select>
-                                              <input type="text" name="whatsapp" class="form-control" placeholder="Whatsapp" value="<?= $value->phone ?>">
+                                              <input type="text" name="whatsapp" class="form-control" placeholder="Whatsapp number">
                                               <input type="text" name="period" class="form-control" placeholder="2019-2020" maxlength="9">
                                             </div>
                                             <div class="modal-footer">
@@ -151,7 +151,7 @@
   // } );
     $(document).ready(function() {
       $('#data').DataTable({
-        "pageLength" : "100",
+        "paging": false,
         "dom": '<"clear"f><"clear">',
         "language": {
             "lengthMenu": '_MENU_ ',

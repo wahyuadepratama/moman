@@ -73,7 +73,7 @@
                                 <td> <?= $value->username  ?> </td>
                                 <td> <img src="<?php $this->url('images/avatar/'. $value->avatar) ?>" width="100px"> </td>
                                 <td> <?= $value->phone ?> </td>
-                              </tr>                              
+                              </tr>
                             <?php endforeach; ?>
                           <?php endif; ?>
                         </tbody>
@@ -119,7 +119,8 @@
             "lengthMenu": '_MENU_ ',
                 "search": '',
                 "searchPlaceholder": "search"
-        }
+        },
+        "paging": false
     });
     } );
   </script>

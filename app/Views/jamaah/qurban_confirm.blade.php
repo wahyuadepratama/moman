@@ -68,12 +68,19 @@
                             </td>
                           </tr>
                           <tr>
+                            <td>Total Payment</td>
+                            <td>:</td>
+                            <td>
+                              Rp <?= number_format((count($detail) * $animal->animal_price),0,',','.') ?>
+                            </td>
+                          </tr>
+                          <tr>
                             <td>Payment History</td>
                             <td>:</td>
                             <td>
                               <?php if ($qurban->uang_muka): ?>
-                                <li>Uang Muka : Rp <?= number_format(($quban->uang_muka),0,',','.') ?></li>
-                                <li>Uang Pelunasan : Rp <?= number_format(($quban->uang_pelunasan),0,',','.') ?></li>
+                                <li>Uang Muka : Rp <?= number_format(($qurban->uang_muka),0,',','.') ?></li>
+                                <li>Uang Pelunasan : Rp <?= number_format(($qurban->uang_pelunasan),0,',','.') ?></li>
                               <?php else: ?>
                                 Belum ada pembayaran!
                               <?php endif; ?>

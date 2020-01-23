@@ -90,9 +90,10 @@
                           <th>Action</th>
                         </tr>
                         <?php if (isset($facility)): ?>
+                          <?php $no=1 ?>
                           <?php foreach ($facility as $value): ?>
                             <tr>
-                              <td><?= $value['id'] ?></td>
+                              <td><?= $no++ ?></td>
                               <td><?= $value['name'] ?></td>
                               <td>
                                 <a href="#" onclick="confirm('<?php $this->url('admin/facility-type/destroy?id=' . $value['id']) ?>')" class="btn btn-sm btn-danger">Delete</a>

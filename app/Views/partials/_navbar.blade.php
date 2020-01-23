@@ -29,35 +29,7 @@ function activeNav($currect_page){
           <h5>Maps</h5>
         </a>
       </li>
-    </ul>
-    <ul class="navbar-nav">
-      <li class="nav-item dropdown d-none d-lg-block full-screen-link" <?php activeNav('donation');
-      activeNav('donation/detail'); activeNav('donation/orphans'); activeNav('donation/orphans/detail');
-      activeNav('donation/poor'); activeNav('donation/poor/detail'); ?>>
-        <a class="nav-link" href="<?php $this->url('donation') ?>" href="#" data-toggle="dropdown" aria-expanded="false">
-          <h5>Donation</h5>
-        </a>
-        <div class="dropdown-menu navbar-dropdown" aria-labelledby="1">
-          <a class="dropdown-item" href="<?php $this->url('donation') ?>">
-            <i class="mdi mdi-home-variant mr-2 text-success"></i>
-            Mosque
-          </a>
-          <a class="dropdown-item" href="<?php $this->url('donation/orphans') ?>">
-            <i class="mdi mdi-human-child mr-2 text-success"></i>
-             Orphans
-          </a>
-          <a class="dropdown-item" href="<?php $this->url('donation/tpa') ?>">
-            <i class="mdi mdi-account-multiple-outline mr-2 text-success"></i>
-            TPA / MDA
-          </a>
-          <a class="dropdown-item" href="<?php $this->url('donation/poor') ?>">
-            <i class="mdi mdi-heart-outline mr-2 text-success"></i>
-            Poor
-          </a>
-
-        </div>
-      </li>
-    </ul>
+    </ul>    
     <ul class="navbar-nav">
       <li class="nav-item d-none d-lg-block full-screen-link" <?php activeNav('qurban') ?>>
         <a class="nav-link" href="<?php $this->url('qurban') ?>">

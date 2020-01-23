@@ -54,7 +54,7 @@
                       <table class="table" id="data">
                         <thead style="text-align:center">
                           <tr>
-                            <th>ID</th>
+                            <th>No Trx</th>
                             <th>Datetime</th>
                             <th>Jamaah Name</th>
                             <th>Status</th>
@@ -63,8 +63,15 @@
                         </thead>
                         <tbody>
                           <?php foreach ($trans as $h): ?>
+
+                            <?php
+                              $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM qurban_detail WHERE jamaah_id=:j AND datetime=:dates");
+                              $stmt->execute(['j' => $h->jamaah_id, 'dates' => $h->datetime]);
+                              $count = $stmt->fetch(PDO::FETCH_OBJ);
+                            ?>
+
                             <tr>
-                              <td>#<?php $date = new DateTime($h->datetime); ?>#<?= $h->jamaah_id . $date->format('jmYGis'); ?></td>
+                              <td>#<?php $date = new DateTime($h->datetime); ?><?= $h->jamaah_id . $date->format('jmYGis'); ?></td>
                               <td><?php $date = new DateTime($h->datetime); echo $date->format('j F Y, g:i a'); ?></td>
                               <td><?= $h->jamaah_name ?></td>
                               <td>
@@ -108,23 +115,30 @@
                                                 </tr>
 
                                                 <tr class="heading">
-                                                    <td>Animal</td>
+                                                    <td>Total Animal</td>
                                                     <td>
-                                                      <?= $h->animal ?>
+                                                      <?= $count->count ?> Slot
                                                     </td>
                                                 </tr>
 
                                                   <tr class="details">
+                                                      <td>Total Qurban</td>
+                                                      <td>
+                                                          Rp <?= number_format(($h->animal_price * $count->count),0,',','.') ?>
+                                                      </td>
+                                                  </tr>
+
+                                                  <tr class="details" style="color:green">
                                                       <td>Paid</td>
                                                       <td>
                                                           Rp <?= number_format(($h->uang_muka + $h->uang_pelunasan),0,',','.') ?>
                                                       </td>
                                                   </tr>
 
-                                                  <tr class="details">
+                                                  <tr class="details" style="color: red">
                                                     <td>Unpaid</td>
                                                     <td>
-                                                      Rp <?= number_format(($h->animal_price - ($h->uang_muka + $h->uang_pelunasan)),0,',','.') ?>
+                                                      Rp <?= number_format((($h->animal_price*$count->count) - ($h->uang_muka + $h->uang_pelunasan)),0,',','.') ?>
                                                     </td>
                                                   </tr>
 
@@ -136,12 +150,25 @@
                                                   <tr class="details">
                                                     <td style="vertical-align:top">Fund</td>
                                                     <td>
-                                                      <input type="text" name="fund" value="" class="form-control">
-                                                      <input type="hidden" name="worship" value="<?= $h->worship_place_id ?>">
-                                                      <input type="hidden" name="year" value="<?= $h->year ?>">
-                                                      <input type="hidden" name="group" value="<?= $h->group_name ?>">
-                                                      <input type="hidden" name="serial" value="<?= $h->serial_number ?>">
-                                                      <input type="hidden" name="unpaid" value="<?= $h->animal_price - ($h->uang_muka + $h->uang_pelunasan) ?>">
+                                                      <input type="text" name="fund" value="" class="form-control" required id="rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>">
+                                                      <script type="text/javascript">
+
+                                                        var rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?> = document.getElementById('rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>');
+                                                        rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>.addEventListener('keyup', function(e){
+                                                          // tambahkan 'Rp.' pada saat form di ketik
+                                                          // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
+                                                          rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>.value = formatRupiah(this.value, 'Rp. ');
+                                                        });
+
+                                                        rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>.addEventListener('keyup', function(e){
+                                                          rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>.value = formatRupiah(this.value, 'Rp. ');
+                                                        });
+                                                      </script>
+                                                      <input type="hidden" name="jamaah" value="<?= $h->jamaah_id ?>">
+                                                      <input type="hidden" name="datetime" value="<?= $h->datetime ?>">
+                                                      <input type="hidden" name="uang_muka" value="<?= $h->uang_muka ?>">
+                                                      <input type="hidden" name="uang_pelunasan" value="<?= $h->uang_pelunasan ?>">
+                                                      <input type="hidden" name="unpaid" value="<?= $h->animal_price*$count->count - ($h->uang_muka + $h->uang_pelunasan) ?>">
                                                     </td>
                                                   </tr>
 
@@ -150,8 +177,6 @@
                                         </div>
                                         <div class="modal-footer">
                                           <?php if (!$h->payment_completed): ?>
-                                            <a onclick="notif('<?php $this->url('/stewardship/qur/close?id='. $h->id) ?>', 'Are you sure?', 'Your paid fund will be lost!', 'warning', 'Yes, paid fund will be returned')"
-                                              class="btn btn-sm btn-danger">Cancel Trx</a>
                                             <input type="submit" class="btn btn-sm btn-success" value="Confirmation">
                                           <?php endif; ?>
                                           <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Close</button>
@@ -164,6 +189,7 @@
 
                               </td>
                             </tr>
+
                           <?php endforeach; ?>
                         </tbody>
                       </table>
@@ -192,6 +218,25 @@
   <?php $this->include('partials/_plugin'); ?>
 
   <!-- Custom js for this page-->
+  <script type="text/javascript">
+    /* Fungsi formatRupiah */
+    function formatRupiah(angka, prefix){
+      var number_string = angka.replace(/[^,\d]/g, '').toString(),
+      split   		= number_string.split(','),
+      sisa     		= split[0].length % 3,
+      rupiah     		= split[0].substr(0, sisa),
+      ribuan     		= split[0].substr(sisa).match(/\d{3}/gi);
+
+      // tambahkan titik jika yang di input sudah menjadi angka ribuan
+      if(ribuan){
+        separator = sisa ? '.' : '';
+        rupiah += separator + ribuan.join('.');
+      }
+
+      rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+      return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+    }
+  </script>
   <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" charset="utf-8"></script>
   <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" charset="utf-8"></script>
   <script type="text/javascript">

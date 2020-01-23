@@ -55,13 +55,14 @@ class QurbanController extends Controller{
                                       WHERE worship_place_id=:id AND year=:year AND group_name=:grup");
     $stmt->execute(['id' => $worship_id, 'year' => $_POST['year'], 'grup' => $_POST['group_name']]);
     $avai = $stmt->fetch(PDO::FETCH_OBJ);
+
     if ($avai->available == 0) {
-      $available = 7;
+      $avai->available = 7;
     }
     // end check group available
 
     // -------------------------------- Checking total cannot bigger tahn available
-    if ($_POST['total_qurban'] > $available) {
+    if ($_POST['total_qurban'] > $avai->available) {
       $this->flash('Group full ! Max 7, Please choose another group..');
       return $this->redirect('qurban/detail?id='. $_GET['id'].'&mosque='.$_GET['mosque']. '&year='. $_GET['year']);
     }
@@ -88,7 +89,7 @@ class QurbanController extends Controller{
     // end insert qurban_order
 
     // Get last data
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM qurban_order ORDER BY datetime DESC");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM qurban_order ORDER BY datetime ASC");
     $stmt->execute();
     $lastInput = $stmt->fetch(PDO::FETCH_OBJ);
     // end get data
@@ -128,10 +129,12 @@ class QurbanController extends Controller{
     $stmt->execute(['datetimes' => $this->decrypt($_GET['datetime'])]);
     $detail = $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT animal FROM qurban_detail INNER JOIN qurban_group
+    $stmt = $GLOBALS['pdo']->prepare("SELECT animal, animal_price FROM qurban_detail INNER JOIN qurban_group
                                       ON qurban_detail.worship_place_id=qurban_group.worship_place_id
                                       AND qurban_detail.year=qurban_group.year
                                       AND qurban_detail.group_name=qurban_group.group_name
+                                      INNER JOIN qurban ON qurban.worship_place_id=qurban_group.worship_place_id
+                                      AND qurban.year=qurban_group.year
                                       WHERE datetime=:datetimes");
     $stmt->execute(['datetimes' => $this->decrypt($_GET['datetime'])]);
     $animal = $stmt->fetch(PDO::FETCH_OBJ);
@@ -177,10 +180,17 @@ class QurbanController extends Controller{
     $stmt->execute(['worship'=> $_SESSION['user']->worship_place_id, 'year' => $year, 'price' => $_POST['animal_price'],
                     'deadline' => $_POST['deadline_payment'], 'description' => $_POST['description']]);
 
-    if($stmt->fetch(PDO::FETCH_OBJ))
-      $this->flash('New Qurban Type has been added!');
-    else
+    if($stmt->fetch(PDO::FETCH_OBJ)){
+      for ($i=1; $i <= $_POST['group_max']; $i++) {
+        $stmt = $GLOBALS['pdo']->prepare("INSERT INTO qurban_group(group_name, worship_place_id, year, animal)
+                                          VALUES(:grup, :worship, :year, :animal)");
+        $stmt->execute(['grup' => sprintf('%02d', $i), 'worship'=> $_SESSION['user']->worship_place_id, 'year' => $year,
+                        'animal' => 'Goat']);
+      }
+      $this->flash('New Qurban data has been added!');
+    }else{
       $this->flash('Duplicate Data!');
+    }
 
     return $this->redirect('stewardship/qurban');
   }
@@ -200,18 +210,13 @@ class QurbanController extends Controller{
   {
     $this->authStewardship();
     $this->authJamaah();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_order.*, worship_place.name, jamaah.name as jamaah_name, worship_place.id
-                                      as worship_id, qurban_group.animal, qurban.animal_price FROM qurban_order
-                                      INNER JOIN qurban_detail ON qurban_detail.jamaah_id=qurban_order.jamaah_id
-                                      AND qurban_detail.datetime=qurban_order.datetime
-                                      INNER JOIN worship_place ON worship_place.id=qurban_detail.worship_place_id
-                                      INNER JOIN qurban_group ON qurban_group.year=qurban_detail.year
-                                      AND qurban_group.worship_place_id=qurban_detail.worship_place_id
-                                      AND qurban_group.group_name=qurban_detail.group_name
-                                      INNER JOIN qurban ON qurban_group.year=qurban.year
-                                      AND qurban_group.worship_place_id=qurban.worship_place_id
-                                      INNER JOIN jamaah ON qurban_order.jamaah_id=jamaah.id
-                                      WHERE jamaah.worship_place_id = :id ORDER BY qurban_order.datetime");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_order.*, jamaah.name as jamaah_name,
+                                      worship_place.name, qurban.year, qurban.animal_price FROM qurban_order
+                                      INNER JOIN jamaah ON jamaah.id=qurban_order.jamaah_id
+                                      INNER JOIN worship_place ON jamaah.worship_place_id=worship_place.id
+                                      INNER JOIN qurban ON qurban.worship_place_id=worship_place.id
+                                      WHERE qurban_order.jamaah_id IN
+                                      (SELECT jamaah_id FROM qurban_detail WHERE qurban_detail.worship_place_id = :id)");
     $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
     $data = $stmt->fetchAll(PDO::FETCH_OBJ);
 
@@ -223,40 +228,51 @@ class QurbanController extends Controller{
     $this->authStewardship();
     $this->check_csrf($_POST);
 
+    $_POST['fund'] = substr($_POST['fund'], 4);
+    $_POST['fund'] = str_replace(".", "", $_POST['fund']);
+
     if ($_POST['unpaid'] < $_POST['fund']) {
       $this->flash('Too much payment!');
       return $this->redirect('stewardship/qur/detail');
     }
 
-    $stmt = $GLOBALS['pdo']->prepare('INSERT INTO qurban_payment(worship_place_id, year, group_name, serial_number, datetime, fund, status_confirmed, description)
-                                      VALUES(:worship, :year, :grup, :serial_number, now(), :fund, :status, :description)');
-    $stmt->execute(['worship' => $_POST['worship'],
-                    'year' => $_POST['year'],
-                    'group_name' => $_POST['group'],
-                    'serial_number' => $_POST['serial'],
-                    'fund' => $_POST['fund'],
-                    'status' => 'true',
-                    'description' => $_POST['description']]);
+    if ($_POST['uang_muka'] == "0") {
+
+      if ($_POST['unpaid'] == $_POST['fund']) {
+        $stmt = $GLOBALS['pdo']->prepare("UPDATE qurban_order SET uang_muka=:lunas, payment_completed='true'
+                                          WHERE jamaah_id=:jamaah AND datetime=:dates");
+        $stmt->execute(['lunas' => $_POST['fund'],
+                        'jamaah' => $_POST['jamaah'],
+                        'dates' => $_POST['datetime']]);
+      }else{
+        $stmt = $GLOBALS['pdo']->prepare('UPDATE qurban_order SET uang_muka=:muka WHERE jamaah_id=:jamaah AND datetime=:dates');
+        $stmt->execute(['muka' => $_POST['fund'],
+                        'jamaah' => $_POST['jamaah'],
+                        'dates' => $_POST['datetime']]);
+      }
+
+    }else{
+
+      if ($_POST['unpaid'] != $_POST['fund']) {
+        $this->flash('Need more fund to pay off this transaction!');
+        return $this->redirect('stewardship/qur/detail');
+      }
+
+      $stmt = $GLOBALS['pdo']->prepare("UPDATE qurban_order SET uang_pelunasan=:lunas, payment_completed='true'
+                                        WHERE jamaah_id=:jamaah AND datetime=:dates");
+      $stmt->execute(['lunas' => $_POST['fund'],
+                      'jamaah' => $_POST['jamaah'],
+                      'dates' => $_POST['datetime']]);
+    }
 
     $this->flash('Confirmation Success!');
-    return $this->redirect('stewardship/qur/detail');
-  }
-
-  public function closeTransactionStewardship()
-  {
-    $this->authStewardship();
-
-    $stmt = $GLOBALS['pdo']->prepare('DELETE FROM qurban_detail WHERE id=:trx');
-    $stmt->execute(['trx' => $_GET['id']]);
-
-    $this->flash('Cancel Transaction Success!');
     return $this->redirect('stewardship/qur/detail');
   }
 
   public function indexGroupAnimalStewardship()
   {
     $this->authStewardship();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT group_name FROM qurban_group WHERE worship_place_id=:id AND year=:y ORDER BY group_name");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT group_name, animal FROM qurban_group WHERE worship_place_id=:id AND year=:y ORDER BY group_name");
     $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year']]);
     $group = $stmt->fetchAll(PDO::FETCH_OBJ);
 
@@ -301,6 +317,71 @@ class QurbanController extends Controller{
 
     $this->flash('User successfully moved to group '. $_POST['group_name'] .'!');
     return $this->redirect('stewardship/qurb/group?worship='. $_GET['worship'] .'&year='. $_GET['year']);
+  }
+
+  public function changeAnimalStewardship()
+  {
+    $this->authStewardship();
+
+    $stmt = $GLOBALS['pdo']->prepare('UPDATE qurban_group SET animal=:animal WHERE worship_place_id=:id
+                                      AND year=:year AND group_name=:grup');
+    $stmt->execute(['animal' => $_POST['animal_name'], 'id' => $_GET['worship'], 'year' => $_GET['year'], 'grup' => $_GET['group']]);
+
+    $this->flash('Animal successfully changed!');
+    return $this->redirect('stewardship/qurb/group?worship='. $_GET['worship'] .'&year='. $_GET['year']);
+  }
+
+  public function report()
+  {
+    $this->authStewardship();
+
+    if (!isset($_GET['worship'])) {
+      $_GET['worship'] = $_SESSION['user']->worship_place_id;
+    }
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT SUM(uang_muka) as uang_muka, SUM(uang_pelunasan) as pelunasan
+                                      FROM qurban_order WHERE jamaah_id IN
+                                      (SELECT jamaah_id FROM qurban_detail WHERE worship_place_id=:id
+                                      AND year=:y)");
+    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year']]);
+    $fundRaised = $stmt->fetch(PDO::FETCH_OBJ);
+    $fundRaised = $fundRaised->uang_muka + $fundRaised->pelunasan;
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM qurban_detail INNER JOIN qurban_group
+                                      ON qurban_group.worship_place_id=qurban_detail.worship_place_id
+                                      AND qurban_group.year=qurban_detail.year
+                                      AND qurban_group.group_name=qurban_detail.group_name
+                                      WHERE qurban_detail.worship_place_id=:id
+                                      AND qurban_detail.year=:y AND qurban_group.animal=:animal");
+    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year'], 'animal' => 'Goat']);
+    $goat = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM qurban_group
+                                      WHERE worship_place_id=:id AND year=:y AND animal=:animal");
+    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year'], 'animal' => 'Cow']);
+    $cow = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*)
+                                      FROM qurban_order WHERE jamaah_id IN
+                                      (SELECT jamaah_id FROM qurban_detail WHERE worship_place_id=:id
+                                      AND year=:y)");
+    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year']]);
+    $participant = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT group_name, animal FROM qurban_group WHERE worship_place_id=:id AND year=:y ORDER BY group_name");
+    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year']]);
+    $group = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT year FROM qurban WHERE worship_place_id=:id");
+    $stmt->execute(['id'=> $_GET['worship']]);
+    $year = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    return $this->view('stewardship/report', ['group' => $group,
+                                              'year' => $year,
+                                              'fundRaised' => $fundRaised,
+                                              'goat' => $goat->count,
+                                              'cow' => $cow->count,
+                                              'participant' => $participant->count]);
   }
 
 }

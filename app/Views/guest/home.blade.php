@@ -52,8 +52,7 @@
             <div class="collapse navbar-collapse" id="primary_menu">
                 <ul class="nav navbar-nav mainmenu" style="text-align: right">
                     <li class="active"><a href="<?php $this->url('') ?>">Home</a></li>
-                    <li><a href="<?php $this->url('maps') ?>">Maps</a></li>
-                    <li><a href="<?php $this->url('donation') ?>">Donation</a></li>
+                    <li><a href="<?php $this->url('maps') ?>">Maps</a></li>                    
                     <li><a href="<?php $this->url('qurban') ?>">Qurban</a></li>
                     <?php if (isset($_SESSION['jamaah'])): ?>
                       <?php if ($_SESSION['jamaah'] === true): ?>
@@ -123,8 +122,8 @@
                         <div class="box-icon">
                             <i class="lnr lnr-users"></i>
                         </div>
-                        <h4>Trusted Donation</h4>
-                        <p>You can make donations to any mosque. You can even check the location and all the progress of donations in the mosque.</p>
+                        <h4>Trusted Qurban</h4>
+                        <p>You can make qurban to any mosque. You can even check the location and all the progress of donations in the mosque.</p>
                     </div>
                     <div class="space-50"></div>
                     <div class="service-box wow fadeInUp" data-wow-delay="0.2s">

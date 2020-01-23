@@ -140,42 +140,6 @@
 
     <?php } ?>
 
-    <?php if ($this->check('donation') == true || $this->check('donation/detail') == true ||
-              $this->check('donation/orphans') == true || $this->check('donation/orphans/detail') == true ||
-              $this->check('donation/poor') == true || $this->check('donation/poor/detail') == true): ?>
-
-      <li class="nav-item sidebar-actions">
-        <span class="nav-link">
-          <div class="border-bottom">
-            <h6 class="font-weight-normal mb-2"><b>Donation</b></h6>
-          </div>
-
-          <li class="nav-item <?php $this->active('donation'); $this->active('donation/detail') ?>">
-            <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('donation') ?>'">
-              <span class="menu-title">Mosque Construction</span>
-              <i class="mdi mdi mdi-home-variant menu-icon"></i>
-            </a>
-          </li>
-
-          <li class="nav-item <?php $this->active('donation/orphans'); $this->active('donation/orphans/detail');?>">
-            <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('donation/orphans') ?>'">
-              <span class="menu-title">Orphans</span>
-              <i class="mdi mdi-human-child menu-icon"></i>
-            </a>
-          </li>
-
-          <li class="nav-item <?php $this->active('donation/poor'); $this->active('donation/poor/detail');?>">
-            <a class="nav-link" href="#" onclick="location.href = '<?php $this->url('donation/poor') ?>'">
-              <span class="menu-title">Poor</span>
-              <i class="mdi mdi-heart-outline menu-icon"></i>
-            </a>
-          </li>
-
-        </span>
-      </li>
-
-    <?php endif; ?>
-
     <?php if ($this->check('qurban') == true || $this->check('qurban/detail') == true): ?>
 
       <li class="nav-item sidebar-actions">

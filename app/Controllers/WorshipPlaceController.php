@@ -133,6 +133,7 @@ class WorshipPlaceController extends Controller{
   public function about()
   {
     $this->authJamaah();
+
     $id = $_SESSION['user']->worship_place_id;
     $stmt = $GLOBALS['pdo']->prepare("SELECT a.id, a.name, a.address, a.capacity, a.park_area_size,
                                       ST_X(ST_Centroid(geom)) AS lang, ST_Y(ST_CENTROID(geom)) As lat
@@ -140,19 +141,6 @@ class WorshipPlaceController extends Controller{
     $stmt->execute(['id' => $id]);
     $data = $stmt->fetch(PDO::FETCH_OBJ);
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT image FROM gallery WHERE worship_place_id=:id");
-    $stmt->execute(['id' => $id]);
-    $g =  $stmt->fetch(PDO::FETCH_OBJ);
-
-    // $this->authStewardship();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM detail_condition
-                                      INNER JOIN facility ON detail_condition.facility_id = facility.id
-                                      INNER JOIN facility_condition ON detail_condition.facility_condition_id = facility_condition.id
-                                      WHERE worship_place_id=:id ORDER BY detail_condition.updated_at DESC");
-    $stmt->execute(['id' => $id]);
-    $f =  $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    // $this->authStewardship();
     $stmt = $GLOBALS['pdo']->prepare("SELECT ustad.name as ustad, event.*, schedule.* FROM schedule
                                       INNER JOIN ustad ON schedule.ustad_id = ustad.id
                                       INNER JOIN event ON schedule.event_id = event.id
@@ -160,132 +148,62 @@ class WorshipPlaceController extends Controller{
     $stmt->execute(['id' => $id]);
     $e =  $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    if (!empty($e)) {
-      foreach ($e as $key) {
-        $date = new DateTime($key->date);
-        $now = new DateTime();
-        if($date < $now) {
-          $key->status = 'past';
-        }else {
-          $key->status = 'ongoing';
-        }
-      }
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM detail_condition
+                                      INNER JOIN facility ON detail_condition.facility_id = facility.id
+                                      INNER JOIN facility_condition ON detail_condition.facility_condition_id = facility_condition.id
+                                      WHERE worship_place_id=:id ORDER BY detail_condition.updated_at DESC");
+    $stmt->execute(['id' => $id]);
+    $f =  $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    if (!isset($_GET['worship'])) {
+      $_GET['worship'] = $_SESSION['user']->worship_place_id;
     }
 
-    $data->image = 'images/mosque/'. $g->image;
-    $data->facility = $f;
-    $data->event = $e;
+    $stmt = $GLOBALS['pdo']->prepare("SELECT SUM(uang_muka) as uang_muka, SUM(uang_pelunasan) as pelunasan
+                                      FROM qurban_order WHERE jamaah_id IN
+                                      (SELECT jamaah_id FROM qurban_detail WHERE worship_place_id=:id
+                                      AND year=:y)");
+    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year']]);
+    $fundRaised = $stmt->fetch(PDO::FETCH_OBJ);
+    $fundRaised = $fundRaised->uang_muka + $fundRaised->pelunasan;
 
-
-    $stmt = $GLOBALS['pdo']->prepare("(SELECT id, status_in, status_out, datetime, description, fund
-                                      FROM cash_in WHERE worship_place_id=:id
-                                      AND status_in != 'orphan balance' AND status_in != 'project balance' AND status_in != 'poor balance'
-                                      AND status_in != 'event balance' AND status_in != 'tpa balance'
-                                      AND EXTRACT(YEAR FROM datetime)=:y
-                                      AND EXTRACT(MONTH FROM datetime)=:m AND confirmation='true' ORDER BY datetime)
-                                      UNION ALL (SELECT id, status_in, status_out, datetime, description, fund
-                                      FROM cash_out WHERE worship_place_id=:id
-                                      AND status_in != 'orphan balance' AND status_in != 'project balance' AND status_in != 'poor balance'
-                                      AND status_in != 'event balance' AND status_in != 'tpa balance'
-                                      AND EXTRACT(YEAR FROM datetime)=:y
-                                      AND EXTRACT(MONTH FROM datetime)=:m ORDER BY datetime) ORDER BY datetime");
-    $stmt->execute(['id' => $_SESSION['user']->worship_place_id, 'y' => date('Y'), 'm' => date('m')]);
-    $reportDonation = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.* FROM jamaah");
-    $stmt->execute();
-    $jamaah = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM tpa");
-    $stmt->execute();
-    $tpa = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM orphanage");
-    $stmt->execute();
-    $orphan = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM store");
-    $stmt->execute();
-    $store = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM poor");
-    $stmt->execute();
-    $poor = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM ustad");
-    $stmt->execute();
-    $ustad = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM builder");
-    $stmt->execute();
-    $builder = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship");
-    $stmt->execute();
-    $stewardship = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM project WHERE worship_place_id=:id");
-    $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
-    $project = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM cash_in WHERE worship_place_id=:worship_id");
-    $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
-    $cash_in = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM cash_out WHERE worship_place_id=:worship_id");
-    $stmt->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
-    $cash_out = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    // fetch qurban report this year
-    $stmt = $GLOBALS['pdo']->prepare("SELECT wp.id, wp.name, qurban.year FROM qurban
-                                      INNER JOIN worship_place as wp ON wp.id = qurban.worship_place_id
-                                      WHERE qurban.deadline_payment > now() AND qurban.worship_place_id=:id LIMIT 1");
-    $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
-    $r = $stmt->fetch(PDO::FETCH_OBJ);
-    // end fetch qurban report
-
-    // qurban data
-    $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT group_name FROM qurban_detail WHERE worship_place_id=:id AND year=:y ORDER BY group_name");
-    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $r->year]);
-    $group = $stmt->fetchAll(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT SUM(total_qurban) FROM qurban_detail WHERE worship_place_id=:id AND year=:y AND animal=:animal");
-    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $r->year, 'animal' => '']);
-    $total_qurban = $stmt->fetch(PDO::FETCH_OBJ);
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM qurban WHERE worship_place_id=:id AND year=:y");
-    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $r->year]);
-    $qurban = $stmt->fetch(PDO::FETCH_OBJ);
-
-    $fundQurban =  $total_qurban->sum * $qurban->animal_price;
-
-    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(id) FROM qurban_detail WHERE worship_place_id=:id AND year=:y AND animal=:animal");
-    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $r->year, 'animal' => 'goat']);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM qurban_detail INNER JOIN qurban_group
+                                      ON qurban_group.worship_place_id=qurban_detail.worship_place_id
+                                      AND qurban_group.year=qurban_detail.year
+                                      AND qurban_group.group_name=qurban_detail.group_name
+                                      WHERE qurban_detail.worship_place_id=:id
+                                      AND qurban_detail.year=:y AND qurban_group.animal=:animal");
+    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year'], 'animal' => 'Goat']);
     $goat = $stmt->fetch(PDO::FETCH_OBJ);
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(id) FROM qurban_detail WHERE worship_place_id=:id AND year=:y AND animal=:animal");
-    $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $r->year, 'animal' => 'cow']);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM qurban_group
+                                      WHERE worship_place_id=:id AND year=:y AND animal=:animal");
+    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year'], 'animal' => 'Cow']);
     $cow = $stmt->fetch(PDO::FETCH_OBJ);
-    // end qurban data group
 
-    return $this->view('jamaah/report', ['q' => $data,
-                       'allReport' => $reportDonation,
-                       'jamaah' => $jamaah,
-                       'tpa' => $tpa,
-                       'orphan' => $orphan,
-                       'store' => $store,
-                       'poor' => $poor,
-                       'ustad' => $ustad,
-                       'builder' => $builder,
-                       'stewardship' => $stewardship,
-                       'project' => $project,
-                       'cash_in' => $cash_in,
-                       'cash_out' => $cash_out,
-                       'year' => $r->year,
-                       'group' => $group,
-                       'fund' => $fundQurban,
-                       'goat' => $goat,
-                       'cow' => $cow
-                      ]);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*)
+                                      FROM qurban_order WHERE jamaah_id IN
+                                      (SELECT jamaah_id FROM qurban_detail WHERE worship_place_id=:id
+                                      AND year=:y)");
+    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year']]);
+    $participant = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT group_name, animal FROM qurban_group WHERE worship_place_id=:id AND year=:y ORDER BY group_name");
+    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year']]);
+    $group = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    $stmt = $GLOBALS['pdo']->prepare("SELECT year FROM qurban WHERE worship_place_id=:id");
+    $stmt->execute(['id'=> $_GET['worship']]);
+    $year = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    return $this->view('jamaah/report', ['group' => $group,
+                                          'year' => $year,
+                                          'fundRaised' => $fundRaised,
+                                          'goat' => $goat->count,
+                                          'cow' => $cow->count,
+                                          'participant' => $participant->count,
+                                          'q' => $data,
+                                          'event' => $e,
+                                          'facility' => $f]);
   }
 }

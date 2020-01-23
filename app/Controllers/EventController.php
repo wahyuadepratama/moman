@@ -20,9 +20,10 @@ class EventController extends Controller{
     $this->authStewardship();
     $this->check_csrf($_POST);
 
-    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO event(name, description)
-                                      VALUES(:name, :description)");
-    $stmt->execute(['name'=> $_POST['name'], 'description' => $_POST['description']]);
+    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO event(name, description, last_editor)
+                                      VALUES(:name, :description, :last)");
+    $stmt->execute(['name'=> $_POST['name'], 'description' => $_POST['description'],
+                    "last" => "Edited by ". $_SESSION['user']->username." at ".date('Y-m-d H:i:s')]);
 
     $this->flash('Add Event Data Successfully!');
     return $this->redirect('stewardship/mosque/event');
@@ -34,8 +35,9 @@ class EventController extends Controller{
       $this->authStewardship();
       $this->check_csrf($_POST);
 
-      $stmt = $GLOBALS['pdo']->prepare("UPDATE event SET name=:name, description=:description WHERE id=:id");
-      $stmt->execute(['name'=> $_POST['name'], 'description' => $_POST['description'], 'id' => $_GET['id']]);
+      $stmt = $GLOBALS['pdo']->prepare("UPDATE event SET name=:name, description=:description, last_editor=:last WHERE id=:id");
+      $stmt->execute(['name'=> $_POST['name'], 'description' => $_POST['description'], 'id' => $_GET['id'],
+                      "last" => "Edited by ". $_SESSION['user']->username." at ".date('Y-m-d H:i:s')]);
 
       $this->flash('Edit Event Data Successfully!');
       return $this->redirect('stewardship/mosque/event');

@@ -58,7 +58,7 @@
                     </div>
                     <div class="modal-body">
                       <label>Deadline Payment</label>
-                      <input name="deadline_payment" id="datepicker" class="form-control"/><br>
+                      <input name="deadline_payment" id="datepicker" class="form-control" required/><br>
                       <script src="https://unpkg.com/gijgo@1.9.13/js/gijgo.min.js" type="text/javascript"></script>
                       <link href="https://unpkg.com/gijgo@1.9.13/css/gijgo.min.css" rel="stylesheet" type="text/css"/>
                       <script>
@@ -69,7 +69,10 @@
                       </script>
 
                       <label>Animal Price (Goat)</label>
-                      <input type="text" name="animal_price" class="form-control" placeholder="Price" id="rupiah"><br>
+                      <input type="text" name="animal_price" class="form-control" placeholder="Price" id="rupiah" required><br>
+
+                      <label>Group Available</label>
+                      <input type="number" name="group_max" value="" placeholder="Ex: 10" class="form-control" required><br>
 
                       <script src="https://cdn.ckeditor.com/4.11.4/standard/ckeditor.js"></script>
                       <label>Description</label>

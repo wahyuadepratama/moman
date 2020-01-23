@@ -38,13 +38,6 @@ function active($currect_page){
           </a>
         </li>
 
-        <li class="nav-item <?php active('history');  $this->active('jamaah/checking')?>">
-          <a class="nav-link" href="<?php $this->url('jamaah/history') ?>">
-            <span class="menu-title">History</span>
-            <i class="mdi mdi-format-list-bulleted menu-icon"></i>
-          </a>
-        </li>
-
         <li class="nav-item <?php active('jamaah/qurban');  $this->active('jamaah/qurban/checking')?>">
           <a class="nav-link" href="<?php $this->url('jamaah/qurban') ?>">
             <span class="menu-title">Qurban</span>
@@ -53,8 +46,8 @@ function active($currect_page){
         </li>
 
         <li class="nav-item <?php active('jamaah/about');  $this->active('jamaah/about')?>">
-          <a class="nav-link" href="<?php $this->url('jamaah/about') ?>">
-            <span class="menu-title">About Mosque</span>
+          <a class="nav-link" href="<?php $this->url('jamaah/about?year='. date('Y')) ?>">
+            <span class="menu-title">Mosque Information</span>
             <i class="mdi mdi-home menu-icon"></i>
           </a>
         </li>

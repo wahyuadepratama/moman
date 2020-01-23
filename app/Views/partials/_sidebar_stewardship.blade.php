@@ -37,35 +37,6 @@ function active($currect_page){
           </a>
         </li>
 
-        <li class="nav-item <?php $this->active('stewardship/donation/dana');?> <?php $this->active('stewardship/donation/transaction');?> <?php $this->active('stewardship/donation/project');?>">
-          <a class="nav-link" data-toggle="collapse" href="#filterDonation" aria-expanded="false" aria-controls="ui-basic">
-            <span class="menu-title">Donation</span>
-            <i class="menu-arrow"></i>
-          </a>
-          <div class="collapse" id="filterDonation">
-            <ul class="nav flex-column sub-menu">
-              <li class="nav-item <?php $this->active('stewardship/donation/project');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/donation/project') ?>">
-                  <span class="menu-title">Project</span>
-                  <i class="mdi mdi-format-list-bulleted menu-icon"></i>
-                </a>
-              </li>
-              <li class="nav-item <?php $this->active('stewardship/donation/transaction');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/donation/transaction') ?>">
-                  <span class="menu-title">Transaction</span>
-                  <i class="mdi mdi-cash-multiple menu-icon"></i>
-                </a>
-              </li>
-              <li class="nav-item <?php $this->active('stewardship/donation/payment');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/donation/payment') ?>">
-                  <span class="menu-title">Payment</span>
-                  <i class="mdi mdi-account-multiple menu-icon"></i>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </li>
-
         <li class="nav-item <?php $this->active('stewardship/qurban');?>">
           <a class="nav-link" data-toggle="collapse" href="#filterQurban" aria-expanded="false" aria-controls="ui-basic">
             <span class="menu-title">Qurban</span>
@@ -75,7 +46,7 @@ function active($currect_page){
             <ul class="nav flex-column sub-menu">
               <li class="nav-item <?php $this->active('stewardship/qurban');?> <?php $this->active('stewardship/qurb/group'); ?>">
                 <a class="nav-link" href="<?php $this->url('stewardship/qurban') ?>">
-                  <span class="menu-title">Information</span>
+                  <span class="menu-title">Management</span>
                   <i class="mdi mdi-format-list-bulleted menu-icon"></i>
                 </a>
               </li>
@@ -92,7 +63,7 @@ function active($currect_page){
         <li class="nav-item <?php $this->active('stewardship/mosque/event');
                                   $this->active('stewardship/mosque/schedule');?>">
           <a class="nav-link" data-toggle="collapse" href="#event" aria-expanded="false" aria-controls="ui-basic">
-            <span class="menu-title">Mosque</span>
+            <span class="menu-title">Mosque Management</span>
             <i class="menu-arrow"></i>
           </a>
           <div class="collapse" id="event">
@@ -125,61 +96,16 @@ function active($currect_page){
           </div>
         </li>
 
-        <li class="nav-item <?php $this->active('stewardship/recipient/poor');
-                                  $this->active('stewardship/recipient/orphanage');
-                                  $this->active('stewardship/recipient/store');
-                                  $this->active('stewardship/recipient/builder');
-                                  $this->active('stewardship/recipient/tpa');
-                                  $this->active('stewardship/recipient/ustad');?> ">
-          <a class="nav-link" data-toggle="collapse" href="#recipient" aria-expanded="false" aria-controls="ui-basic">
-            <span class="menu-title">Recipient Profile</span>
-            <i class="menu-arrow"></i>
+        <li class="nav-item <?php $this->active('stewardship/recipient/ustad');?> ">
+          <a class="nav-link" href="<?php $this->url('stewardship/recipient/ustad') ?>">
+            <span class="menu-title">Data Ustad</span>
+            <i class="mdi mdi-account menu-icon"></i>
           </a>
-          <div class="collapse" id="recipient">
-            <ul class="nav flex-column sub-menu">
-              <li class="nav-item <?php $this->active('stewardship/recipient/ustad');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/recipient/ustad') ?>">
-                  <span class="menu-title">Ustad</span>
-                  <i class="mdi mdi-account menu-icon"></i>
-                </a>
-              </li>
-              <li class="nav-item <?php $this->active('stewardship/recipient/tpa');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/recipient/tpa') ?>">
-                  <span class="menu-title">TPA</span>
-                  <i class="mdi mdi-home menu-icon"></i>
-                </a>
-              </li>
-              <li class="nav-item <?php $this->active('stewardship/recipient/poor');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/recipient/poor') ?>">
-                  <span class="menu-title">Poor</span>
-                  <i class="mdi mdi-account-multiple menu-icon"></i>
-                </a>
-              </li>
-              <li class="nav-item <?php $this->active('stewardship/recipient/orphanage');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/recipient/orphanage') ?>">
-                  <span class="menu-title">Orphanage</span>
-                  <i class="mdi mdi-account-convert menu-icon"></i>
-                </a>
-              </li>
-              <li class="nav-item <?php $this->active('stewardship/recipient/store');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/recipient/store') ?>">
-                  <span class="menu-title">Store</span>
-                  <i class="mdi mdi-store menu-icon"></i>
-                </a>
-              </li>
-              <li class="nav-item <?php $this->active('stewardship/recipient/builder');?>">
-                <a class="nav-link" href="<?php $this->url('stewardship/recipient/builder') ?>">
-                  <span class="menu-title">Builder</span>
-                  <i class="mdi mdi-account-settings-variant menu-icon"></i>
-                </a>
-              </li>
-            </ul>
-          </div>
         </li>
 
         <li class="nav-item <?php $this->active('stewardship/report');?>">
-          <a class="nav-link" href="<?php $this->url('stewardship/report?year='. date('Y') .'&month='. date('m') .'&type=All Donation') ?>">
-            <span class="menu-title">Report</span>
+          <a class="nav-link" href="<?php $this->url('stewardship/report?year='. date('Y')) ?>">
+            <span class="menu-title">Qurban Report</span>
             <i class="mdi mdi-chart-line menu-icon"></i>
           </a>
         </li>

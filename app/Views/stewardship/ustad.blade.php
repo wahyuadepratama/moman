@@ -83,20 +83,23 @@
                       <table class="table" id="data">
                         <thead style="text-align:center">
                           <tr>
-                            <th>ID</th>
+                            <th>No</th>
                             <th>Name</th>
                             <th>Address</th>
                             <th>Phone</th>
+                            <th>Last Edited</th>
                             <th>Action</th>
                           </tr>
                         </thead>
                         <tbody style="text-align:center">
+                          <?php $no=1 ?>
                           <?php foreach ($ustad as $p): ?>
                             <tr>
-                              <td>#<?= $p->id ?></td>
+                              <td><?= $no++ ?></td>
                               <td><?= $p->name ?></td>
                               <td><?= $p->address ?></td>
                               <td><?= $p->phone ?></td>
+                              <td><?= $p->last_editor ?></td>
                               <td>
                                 <a href="#" data-toggle="modal" data-target="#edit_ustad<?= $p->id ?>" class="btn btn-sm btn-success">Edit</a>
                                 <!-- Modal Avatar -->
@@ -167,7 +170,8 @@
             "lengthMenu": '_MENU_ ',
                 "search": '',
                 "searchPlaceholder": "search"
-        }
+        },
+        "paging": false
     });
     } );
 

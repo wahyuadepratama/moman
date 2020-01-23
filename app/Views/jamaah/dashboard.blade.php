@@ -193,6 +193,11 @@
                           <td><?= $_SESSION['user']->jamaah_name ?></td>
                         </tr>
                         <tr>
+                          <td>KTP Number</td>
+                          <td>:</td>
+                          <td><?= $_SESSION['user']->id ?></td>
+                        </tr>
+                        <tr>
                           <td>Username</td>
                           <td>:</td>
                           <td><?= $_SESSION['user']->username ?></td>
@@ -208,7 +213,7 @@
                           <td><?= $_SESSION['user']->address ?></td>
                         </tr>
                         <tr>
-                          <td>Jamaah From</td>
+                          <td>Jamaah at</td>
                           <td>:</td>
                           <td><?= $_SESSION['user']->name ?></td>
                         </tr>

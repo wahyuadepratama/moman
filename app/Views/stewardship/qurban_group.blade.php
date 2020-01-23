@@ -62,7 +62,39 @@
               <div class="col-md-3">
                 <div class="card" style="margin-bottom: 20px">
                   <div class="card-header">
-                    Group <?= $key->group_name ?>
+                    Group <?= $key->group_name ?> (<?= $key->animal ?>)
+                    <button data-toggle="modal" data-target="#change_animal<?= $key->group_name ?>"
+                      class="float-right btn btn-gradient-danger btn-sm">Change</button>
+                      <!-- Modal Avatar -->
+                      <div class="modal fade" id="change_animal<?= $key->group_name ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <form action="<?php $this->url('stewardship/qurb/animal/change?worship='. $_GET['worship'] .'&year='. $_GET['year'].'&group='.$key->group_name) ?>" method="post">
+
+                            <?php $this->csrf_field() ?>
+
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="avatar">Change Animal Group <?= $key->group_name ?></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <label>Select</label>
+                                <select class="form-control" name="animal_name" style="color: black">
+                                  <option value="Cow">Cow</option>
+                                  <option value="Goat">Goat</option>
+                                </select>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success">Change</button>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                      <!-- End Modal -->
                   </div>
                   <ul class="list-group list-group-flush">
                     <?php foreach ($group as $value): ?>

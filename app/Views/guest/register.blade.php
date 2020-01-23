@@ -25,8 +25,14 @@
 
     <?php $this->csrf_field() ?>
 
+    <br><br>
     <img class="mb-2" src="<?php $this->url('images/favicon.png') ?>" alt="" width="72" height="72" style="margin-top:25%">
     <h1 class="h3 mb-3 font-weight-normal">Please sign up</h1>
+
+    <div class="form-group">
+      <label for="inputEmail" class="sr-only">Identity Number</label>
+      <input type="text" maxlength="16" name="ktp" class="form-control" placeholder="KTP Number" required="">
+    </div>
 
     <div class="form-group">
       <label for="inputEmail" class="sr-only">Jamaah Name</label>
