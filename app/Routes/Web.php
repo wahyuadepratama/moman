@@ -38,6 +38,7 @@ Route::web('qurban/detail', 'QurbanController', 'show');
 
 // __________________________________________ Jamaah __________________________________________
 Route::web('jamaah/dashboard', 'UserController', 'dashboardJamaah');
+Route::web('jamaah/dashboard/mosque/new', 'UserController', 'addNewMosque');
 
 Route::web('jamaah/avatar/store', 'UserController', 'storeAvatarJamaah');
 Route::web('jamaah/password/update', 'UserController', 'updatePasswordJamaah');
@@ -55,6 +56,7 @@ Route::web('stewardship/dashboard', 'UserController', 'dashboardStewardship');
 Route::web('stewardship/account/update', 'UserController', 'updateAccountStewardship');
 Route::web('stewardship/account/store', 'UserController', 'storeAccountStewardship');
 Route::web('stewardship/account/destroy', 'UserController', 'destroyAccountStewardship');
+Route::web('stewardship/dashboard/changeMosque', 'UserController', 'changeMosque');
 
 Route::web('stewardship/qurban', 'QurbanController', 'animalStewardship');
 Route::web('stewardship/qurban/store', 'QurbanController', 'storeAnimalStewardship');

@@ -15,6 +15,10 @@
   <?php $this->include('style/_profile') ?>
   <!-- end custome -->
 
+  <!-- Vuejs CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
 </head>
 <body onload="loading()">
   <div class="container-scroller">
@@ -56,9 +60,15 @@
                     <div class="col-md-12 table-responsive" style="margin-top: 3%">
                       <table class="table">
                         <tr>
-                          <td>Stewardship at</td>
+                          <td>Worship Place</td>
                           <td>:</td>
-                          <td><?= $_SESSION['user']->name ?></td>
+                          <td>
+                            <select class="form-control" name="" onchange="changeSessionMosque(this.value)">
+                              <?php foreach ($mosque as $key): ?>
+                                <option <?= $key->id == $_SESSION['user']->worship_place_id ? 'selected' : '' ?> value="<?= $key->id ?>"><?= $key->name ?></option>
+                              <?php endforeach; ?>
+                            </select>
+                          </td>
                         </tr>
                         <tr>
                           <td>Stewardship Period</td>
@@ -71,11 +81,6 @@
                           <td>Type of Work</td>
                           <td>:</td>
                           <td><?= $m->name ?></td>
-                        </tr>
-                        <tr>
-                          <td>WhatsApp</td>
-                          <td>:</td>
-                          <td><?= $m->whatsapp ?></td>
                         </tr>
                         <tr>
                           <td style="vertical-align: top">Account Bank</td>
@@ -103,15 +108,15 @@
                           <td>
                             <ul>
                               <?php
-                                $account = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship INNER JOIN jamaah ON
+                                $accounts = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship INNER JOIN jamaah ON
                                                                     jamaah.id=stewardship.jamaah_id
                                                                     WHERE jamaah.worship_place_id=:worship_id
                                                                     AND stewardship.account_status='true'");
-                                $account->execute(['worship_id' => $_SESSION['user']->worship_place_id]);
-                                $account = $account->fetchAll(PDO::FETCH_OBJ);
+                                $accounts->execute(['worship_id' => $worship_id]);
+                                $accounts = $accounts->fetchAll(PDO::FETCH_OBJ);
                               ?>
-                              <?php if ($account): ?>
-                                <?php foreach ($account as $a): ?>
+                              <?php if ($accounts): ?>
+                                <?php foreach ($accounts as $a): ?>
                                   <li><?= $a->name ?> (<?= $a->period ?>)</li>
                                 <?php endforeach; ?>
                               <?php else: ?>
@@ -140,8 +145,7 @@
                                       </button>
                                     </div>
                                     <div class="modal-body">
-                                      <label>Whatsapp Number</label>
-                                      <input type="text" class="form-control" name="whatsapp" value="<?= $m->whatsapp ?>"><br>
+                                      <label>Whatsapp Number</label>                                      
                                       <input type="hidden" name="period_hidden" value="<?= $m->period ?>">
                                       <label>Type of Work</label>
                                       <select class="form-control" name="type">
@@ -187,7 +191,6 @@
                                     </div>
                                     <div class="modal-body">
                                       <input type="text" name="bank" class="form-control" placeholder="Bank" required>
-                                      <input type="text" name="owner" class="form-control" placeholder="Owner" required>
                                       <input type="text" name="account_number" class="form-control" placeholder="No Rek " required>
                                       <div class="card" style="margin-top:2%;padding-top:2%;padding:5%">
                                         <?php if ($account): ?>
@@ -283,8 +286,10 @@
       // setTimeout(function(){ NProgress.done(); }, 1000);
     }
 
-    function changePeriod(val){
-      window.location = "<?= $this->url('stewardship/dashboard?period=') ?>" + val.value;
+    function changeSessionMosque(id) {
+      axios.post('/stewardship/dashboard/changeMosque?id='+id).then(response => {
+        location.reload();
+      })
     }
   </script>
 

@@ -54,8 +54,7 @@ class UserController extends Controller{
   public function indexJamaah()
   {
     $this->authAdmin();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.id, jamaah.username, jamaah.avatar, jamaah.phone, worship_place.name
-                                      FROM jamaah INNER JOIN worship_place ON worship_place.id=jamaah.worship_place_id");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM jamaah");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
 
@@ -67,7 +66,7 @@ class UserController extends Controller{
     $this->authAdmin();
     $stmt = $GLOBALS['pdo']->prepare("SELECT stewardship.*, jamaah.username, jamaah.phone, jamaah.avatar, worship_place.name
                                       FROM stewardship INNER JOIN jamaah ON stewardship.jamaah_id=jamaah.id
-                                      INNER JOIN worship_place ON worship_place.id=jamaah.worship_place_id");
+                                      INNER JOIN worship_place ON worship_place.id=stewardship.worship_place_id");
     $stmt->execute();
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
 
@@ -82,11 +81,11 @@ class UserController extends Controller{
       $data = $stmt->fetch(PDO::FETCH_OBJ);
 
       if (empty($data)){
-        $stmt = $GLOBALS['pdo']->prepare("INSERT INTO stewardship (jamaah_id, period, type_of_work_id, whatsapp, account_status)
-                                          VALUES(:jamaah_id, :period, :type, :whatsapp, 'true')");
-        $stmt->execute(['jamaah_id' => $_GET['id'], 'period' => $_POST['period'], 'type' => $_POST['type'], 'whatsapp' => $_POST['whatsapp']]);
+        $stmt = $GLOBALS['pdo']->prepare("INSERT INTO stewardship (jamaah_id, period, type_of_work_id, account_status, worship_place_id)
+                                          VALUES(:jamaah_id, :period, :type, 'true', :worship)");
+        $stmt->execute(['jamaah_id' => $_GET['id'], 'period' => $_POST['period'], 'type' => $_POST['type'], 'worship' => $_POST['worship']]);
 
-        $this->flash('Successfully Approved!');
+        $this->flash('Successfully Create Account!');
         return $this->redirect('admin/stewardship');
       }else{
         $this->flash('Approve Failed! Cause user has been registered for this period');
@@ -110,16 +109,16 @@ class UserController extends Controller{
     $this->check_csrf($_POST);
 
     // Check username and password from db
-    $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.*, jamaah.name as jamaah_name, worship_place.name, worship_place.address as worship_place_address
-                                      FROM jamaah INNER JOIN worship_place ON jamaah.worship_place_id=worship_place.id
-                                      WHERE username =:username AND password=:password");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.*, jamaah.name as jamaah_name
+                                      FROM jamaah WHERE username =:username AND password=:password");
     $stmt->execute(['username' => $_POST['username'], 'password' => md5($_POST['password']) ]);
     $data = $stmt->fetch(PDO::FETCH_OBJ);
     // End check username and password from db
 
     // Store data to session
     if( ! empty($data)){
-      $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship WHERE jamaah_id=:id AND account_status='true'");
+      $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship INNER JOIN worship_place ON stewardship.worship_place_id=worship_place.id
+                                        WHERE jamaah_id=:id AND account_status='true'");
       $stmt->execute(['id' => $data->id]);
       $s = $stmt->fetch(PDO::FETCH_OBJ);
 
@@ -127,7 +126,8 @@ class UserController extends Controller{
         $_SESSION['jamaah'] = true;
         $_SESSION['stewardship'] = true;
         $_SESSION['user'] = $data;
-        $_SESSION['userStewardship'] = $s;
+        $_SESSION['user']->worship_place_id = $s->worship_place_id;
+        $_SESSION['user']->worship_name = $s->name;
         $this->redirect('stewardship/dashboard');
       }else{
         $_SESSION['jamaah'] = true;
@@ -144,10 +144,7 @@ class UserController extends Controller{
   public function formRegister()
   {
     $this->passLoginJamaah();
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place");
-    $stmt->execute();
-    $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-    return $this->view('guest/register', ['w' => $r]);
+    return $this->view('guest/register');
   }
 
   public function register()
@@ -166,11 +163,9 @@ class UserController extends Controller{
     // End check username
 
     // Insert data to db
-    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO jamaah(worship_place_id, id, type, name, password, address, updated_at, phone, username)
-                                      VALUES(:worship_place_id, :id, :type, :name, :password, :address, now(), :phone, :username)");
-    $stmt->execute(['worship_place_id' => $_POST['mosque'],
-                    'id' => $_POST['ktp'],
-                    'type' => $_POST['type'],
+    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO jamaah(id, name, password, address, updated_at, phone, username)
+                                      VALUES(:id, :name, :password, :address, now(), :phone, :username)");
+    $stmt->execute(['id' => $_POST['ktp'],
                     'name' => $_POST['name'],
                     'password' => md5($_POST['password']),
                     'address' => $_POST['address'],
@@ -183,30 +178,16 @@ class UserController extends Controller{
       return $this->redirect('register');
     }
 
-    $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.*, jamaah.name as jamaah_name, worship_place.name, worship_place.address as worship_place_address
-                                      FROM jamaah INNER JOIN worship_place ON jamaah.worship_place_id=worship_place.id
-                                      WHERE jamaah.id=:id");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM jamaah");
     $stmt->execute(['id' => $_POST['ktp'] ]);
     $data = $stmt->fetch(PDO::FETCH_OBJ);
     // End insert data to db
 
     // Store data to session (check if insert data failed, return fail)
     if( ! empty($data)){
-      $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship WHERE jamaah_id=:id");
-      $stmt->execute(['id' => $data->id]);
-      $s = $stmt->fetch(PDO::FETCH_OBJ);
-
-      if(!empty($s)){
-        $_SESSION['jamaah'] = true;
-        $_SESSION['stewardship'] = true;
-        $_SESSION['user'] = $data;
-        $_SESSION['userStewardship'] = $s;
-        $this->redirect('stewardship/dashboard');
-      }else{
-        $_SESSION['jamaah'] = true;
-        $_SESSION['user'] = $data;
-        $this->redirect('jamaah/dashboard');
-      }
+      $_SESSION['jamaah'] = true;
+      $_SESSION['user'] = $data;
+      $this->redirect('jamaah/dashboard');
     }else{
       $this->flash('Something Wrong!');
       return $this->redirect('register');
@@ -225,10 +206,27 @@ class UserController extends Controller{
   public function dashboardJamaah()
   {
     $this->authJamaah();
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM jamaah_worship as jw INNER JOIN worship_place as wp
+                                      ON jw.worship_place_id=wp.id WHERE jw.jamaah_id=:id");
+    $stmt->execute(['id' => $_SESSION['user']->id]);
+    $r = $stmt->fetchAll(PDO::FETCH_OBJ);
+
     $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place");
     $stmt->execute();
-    $r = $stmt->fetchAll(PDO::FETCH_OBJ);
-    return $this->view('jamaah/dashboard', ['m' => $r]);
+    $all = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    return $this->view('jamaah/dashboard', ['mosque' => $r, 'allMosque' => $all]);
+  }
+
+  public function addNewMosque()
+  {
+    $this->authJamaah();
+    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO jamaah_worship(jamaah_id, worship_place_id, created_at)
+                                      VALUES(:jamaah_id, :worship_place_id, now())");
+    $stmt->execute(['jamaah_id' => $_SESSION['user']->id, 'worship_place_id' => $_POST['mosque']]);
+
+    $this->flash('Anda berhasil terdaftar sebagai jamaah masjid!');
+    return $this->redirect('jamaah/dashboard');
   }
 
   public function storeAvatarJamaah()
@@ -367,7 +365,14 @@ class UserController extends Controller{
     $stmt->execute(['id' => $_SESSION['user']->worship_place_id]);
     $gallery = $stmt->fetch(PDO::FETCH_OBJ);
 
-    return $this->view('stewardship/dashboard', ['m' => $data, 'gallery' => $gallery->image]);
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship as jw INNER JOIN worship_place as wp
+                                      ON jw.worship_place_id=wp.id WHERE jw.jamaah_id=:id");
+    $stmt->execute(['id' => $_SESSION['user']->id]);
+    $r = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    return $this->view('stewardship/dashboard', ['m' => $data, 'gallery' => $gallery->image,
+                                                 'worship_id' => $_SESSION['user']->worship_place_id,
+                                                 'mosque' => $r]);
   }
 
   public function updateAccountStewardship()
@@ -387,10 +392,9 @@ class UserController extends Controller{
   {
     $this->authStewardship();
     $this->check_csrf($_POST);
-    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO account(stewardship_id, stewardship_period, bank, owner, account_number)
-                                      VALUES(:stewardship_id, :period, :bank, :owner, :account_number)");
-    $stmt->execute(['stewardship_id'=> $_GET['stewardship'], 'period' => $_GET['period'], 'bank' => $_POST['bank'],
-                    'owner' => $_POST['owner'], 'account_number' => $_POST['account_number']]);
+    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO bank_account(worship_place_id, rekening_number, bank_code)
+                                      VALUES(:worship, :rek, :bank)");
+    $stmt->execute(['worship'=> $_SESSION['user']->worship_place_id, 'rek' => $_POST['account_number'], 'bank' => $_POST['bank']]);
 
     $this->flash('Add Account Success!');
     return $this->redirect('stewardship/dashboard?period='. $_GET['period']);
@@ -405,6 +409,17 @@ class UserController extends Controller{
 
     $this->flash('Destroy Account Success!');
     return $this->redirect('stewardship/dashboard');
+  }
+
+  public function changeMosque()
+  {
+    $this->authStewardship();
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM worship_place WHERE id=:id");
+    $stmt->execute(['id' => $_GET['id']]);
+    $data = $stmt->fetch(PDO::FETCH_OBJ);
+
+    $_SESSION['user']->worship_place_id = $_GET['id'];
+    $_SESSION['user']->worship_name = $data->name;
   }
 
   public function jamaahStewardship()

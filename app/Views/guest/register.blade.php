@@ -57,22 +57,7 @@
     <div class="form-group">
       <label for="inputPassword" class="sr-only">Phone</label>
       <input type="number" name="phone" class="form-control" placeholder="Phone number">
-    </div>
-
-    <div class="form-group">
-      <select class="js-example-basic-single form-control" name="mosque">
-        <?php foreach ($w as $value): ?>
-          <option value="<?= $value->id ?>"><?= $value->name ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <select class="js-example-basic-single form-control" name="type">
-        <option value="1">I live around this mosque area</option>
-        <option value="2">I don't live around this mosque area</option>
-      </select>
-    </div>
+    </div>    
 
     <script type="text/javascript">
       // In your Javascript (external .js resource or <script> tag)
@@ -90,7 +75,7 @@
       </div>
     <?php endif; ?>
 
-    <p class="mt-5 mb-3 text-muted">© 2018 - 2019</p>
+    <p class="mt-5 mb-3 text-muted">© 2019 - 2020</p>
   </form>
 </body>
 

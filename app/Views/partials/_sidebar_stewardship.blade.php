@@ -27,7 +27,7 @@ function active($currect_page){
     <li class="nav-item sidebar-actions">
       <span class="nav-link">
         <div class="border-bottom">
-          <h6 class="font-weight-normal mb-3"><b>Dashboard Stewardship</b></h6>
+          <h6 class="font-weight-normal mb-3"><b><?= $_SESSION['user']->worship_name ?></b></h6>
         </div>
 
         <li class="nav-item <?php $this->active('stewardship/dashboard');?>">

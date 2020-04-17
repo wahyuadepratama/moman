@@ -81,6 +81,8 @@
 
                       <a href="#" style="margin: 1%" class="btn btn-sm btn-gradient-danger" data-toggle="modal" data-target="#password">Change Password</a>
                       <a href="#" style="margin: 1%" class="btn btn-sm btn-gradient-info" data-toggle="modal" data-target="#profile">Update Profile</a>
+                      <button type="button" name="button" class="btn btn-sm btn-success"  data-toggle="modal"
+                      data-target="#new_mosque">Add Mosque</button>
                       <!-- Modal Avatar -->
                       <div class="modal fade" id="avatar" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
                         <div class="modal-dialog" role="document">
@@ -149,30 +151,7 @@
                                     <input type="text" name="name" value="<?= $_SESSION['user']->jamaah_name ?>" placeholder="Name" class="form-control">
                                     <input type="text" name="username" value="<?= $_SESSION['user']->username ?>" placeholder="Username" class="form-control">
                                     <input type="text" name="phone" value="<?= $_SESSION['user']->phone ?>" placeholder="Phone" class="form-control">
-                                    <input type="text" name="address" value="<?= $_SESSION['user']->address ?>" placeholder="Address" class="form-control"><br>
-                                    <select class="form-control" name="type" style="color:black">
-                                      <?php if ($_SESSION['user']->type == "1"): ?>
-                                        <option value="1">I live around this mosque area</option>
-                                        <option value="2">I don't live around this mosque area</option>
-                                      <?php else: ?>
-                                        <option value="2">I don't live around this mosque area</option>
-                                        <option value="1">I live around this mosque area</option>
-                                      <?php endif; ?>
-                                    </select><br>
-
-                                    <?php if (isset($_SESSION['stewardship'])): ?>
-                                      <?php if ($_SESSION['stewardship'] === true): ?>
-                                        <input type="text" value="Stewardship at <?= $_SESSION['user']->name ?>" disabled class="form-control">
-                                      <?php endif; ?>
-                                    <?php else: ?>
-                                      <select class="js-example-basic-single form-control" name="mosque" style="width:100%;">
-                                          <option value="<?= $_SESSION['user']->worship_place_id ?>"><?= $_SESSION['user']->name ?></option>
-                                        <?php foreach ($m as $value): ?>
-                                          <option value="<?= $value->id ?>"><?= $value->name ?></option>
-                                        <?php endforeach; ?>
-                                      </select>
-                                    <?php endif; ?>
-
+                                    <input type="text" name="address" value="<?= $_SESSION['user']->address ?>" placeholder="Address" class="form-control"><br>                                    
                                 </div>
                               </div>
                               <div class="modal-footer">
@@ -213,9 +192,46 @@
                           <td><?= $_SESSION['user']->address ?></td>
                         </tr>
                         <tr>
-                          <td>Jamaah at</td>
-                          <td>:</td>
-                          <td><?= $_SESSION['user']->name ?></td>
+                          <td style="vertical-align: top">Jamaah at</td>
+                          <td style="vertical-align: top">:</td>
+                          <td>
+                            <?php if (!$mosque): ?>
+                              <p>Belum terdaftar ditempat ibadah manapun!</p>
+                            <?php endif; ?>
+                            <!-- End Modal -->
+                            <?php foreach ($mosque as $m): ?>
+                              <li><?= $m->name ?></li>
+                            <?php endforeach; ?>
+                            <!-- Modal Mosque -->
+                            <div class="modal fade" id="new_mosque" tabindex="-1" role="dialog" aria-labelledby="new_mosque" aria-hidden="true">
+                              <div class="modal-dialog" role="document">
+                                <form action="<?php $this->url('jamaah/dashboard/mosque/new') ?>" method="post">
+                                  <?php $this->csrf_field() ?>
+
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="password">Add Mosque</h5>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <select class="js-example-basic-single form-control" name="mosque" style="width:100%;">
+                                        <?php foreach ($allMosque as $value): ?>
+                                          <option value="<?= $value->id ?>"><?= $value->name ?></option>
+                                        <?php endforeach; ?>
+                                      </select>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                      <button type="submit" class="btn btn-danger">Add</button>
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+
+                          </td>
                         </tr>
                       </table>
                     </div>

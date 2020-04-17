@@ -29,7 +29,7 @@ function activeNav($currect_page){
           <h5>Maps</h5>
         </a>
       </li>
-    </ul>    
+    </ul>
     <ul class="navbar-nav">
       <li class="nav-item d-none d-lg-block full-screen-link" <?php activeNav('qurban') ?>>
         <a class="nav-link" href="<?php $this->url('qurban') ?>">
@@ -86,14 +86,18 @@ function activeNav($currect_page){
             </a>
             <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
               <div class="dropdown-divider"></div>
-              <?php if (isset($_SESSION['stewardship'])): ?>
-                <?php if ($_SESSION['stewardship'] === true): ?>
+              <?php
+                $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship WHERE jamaah_id=:jamaah");
+                $stmt->execute(['jamaah' => $_SESSION['user']->id]);
+                $r = $stmt->fetch(PDO::FETCH_OBJ);
+              ?>
+                <?php if ($r): ?>
                   <a class="dropdown-item" href="<?php $this->url('stewardship/dashboard') ?>">
                     <i class="mdi mdi-view-dashboard mr-2 text-danger"></i>
                      Stewardship Area
                   </a>
                 <?php endif; ?>
-              <?php endif; ?>
+
               <?php if (isset($_SESSION['jamaah'])): ?>
                 <?php if ($_SESSION['jamaah'] === true): ?>
                   <a class="dropdown-item" href="<?php $this->url('jamaah/dashboard') ?>">

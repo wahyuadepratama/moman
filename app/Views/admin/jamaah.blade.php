@@ -57,7 +57,6 @@
                             <th>Name</th>
                             <th>Avatar</th>
                             <th>Phone</th>
-                            <th>Worship Place</th>
                             <th>Account</th>
                           </tr>
                         </thead>
@@ -69,9 +68,8 @@
                                 <td> <?= $value->username  ?> </td>
                                 <td> <img src="<?php $this->url('images/avatar/'. $value->avatar) ?>" width="100px"> </td>
                                 <td> <?= $value->phone ?> </td>
-                                <td> <?= $value->name ?> </td>
                                 <td>
-                                  <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#add_facility<?= $value->phone ?>">Upgrade</a>
+                                  <a href="#" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#add_facility<?= $value->phone ?>">Add Stewardship Account</a>
                                   <!-- Modal Avatar -->
                                   <div class="modal fade" id="add_facility<?= $value->phone ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
                                     <div class="modal-dialog" role="document">
@@ -91,13 +89,25 @@
                                                 $t = $GLOBALS['pdo']->prepare("SELECT * FROM type_of_work");
                                                 $t->execute();
                                                 $type = $t->fetchAll(PDO::FETCH_OBJ);
+
+                                                $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM jamaah_worship as jw INNER JOIN worship_place as wp
+                                                                                  ON jw.worship_place_id=wp.id WHERE jw.jamaah_id=:id");
+                                                $stmt->execute(['id' => $value->id]);
+                                                $listWorship = $stmt->fetchAll(PDO::FETCH_OBJ);
                                               ?>
                                               <select class="form-control" name="type">
                                                 <?php foreach ($type as $t): ?>
                                                   <option value="<?= $t->id ?>"><?= $t->name ?></option>
                                                 <?php endforeach; ?>
                                               </select>
-                                              <input type="text" name="whatsapp" class="form-control" placeholder="Whatsapp number">
+                                              <select class="form-control" name="worship">
+                                                <?php foreach ($listWorship as $l): ?>
+                                                  <option value="<?= $l->worship_place_id ?>"><?= $l->name ?></option>
+                                                <?php endforeach; ?>
+                                                <?php if (!$listWorship): ?>
+                                                  <option disabled selected>Belum Ada Masjid Terdaftar</option>
+                                                <?php endif; ?>
+                                              </select>
                                               <input type="text" name="period" class="form-control" placeholder="2019-2020" maxlength="9">
                                             </div>
                                             <div class="modal-footer">

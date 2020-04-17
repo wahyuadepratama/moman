@@ -199,6 +199,9 @@ class QurbanController extends Controller{
   {
     $this->authStewardship();
 
+    $stmt = $GLOBALS['pdo']->prepare('DELETE FROM qurban_group WHERE worship_place_id=:id AND year=:year');
+    $stmt->execute(['id'=> $_GET['worship'], 'year' => $_GET['year']]);
+
     $stmt = $GLOBALS['pdo']->prepare('DELETE FROM qurban WHERE worship_place_id=:id AND year=:year');
     $stmt->execute(['id'=> $_GET['worship'], 'year' => $_GET['year']]);
 
@@ -213,7 +216,8 @@ class QurbanController extends Controller{
     $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_order.*, jamaah.name as jamaah_name,
                                       worship_place.name, qurban.year, qurban.animal_price FROM qurban_order
                                       INNER JOIN jamaah ON jamaah.id=qurban_order.jamaah_id
-                                      INNER JOIN worship_place ON jamaah.worship_place_id=worship_place.id
+                                      INNER JOIN jamaah_worship ON jamaah.id=jamaah_worship.jamaah_id
+                                      INNER JOIN worship_place ON jamaah_worship.worship_place_id=worship_place.id
                                       INNER JOIN qurban ON qurban.worship_place_id=worship_place.id
                                       WHERE qurban_order.jamaah_id IN
                                       (SELECT jamaah_id FROM qurban_detail WHERE qurban_detail.worship_place_id = :id)");

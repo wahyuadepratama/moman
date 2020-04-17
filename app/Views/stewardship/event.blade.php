@@ -84,7 +84,6 @@
                             <th>No</th>
                             <th>Name</th>
                             <th>Description</th>
-                            <th>Last Edited</th>
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -94,8 +93,7 @@
                             <tr>
                               <td><?= $no++ ?></td>
                               <td><?= $p->name ?></td>
-                              <td><?= $p->description ?></td>
-                              <td><?= $p->last_editor ?></td>
+                              <td><?= $p->description ?></td>                              
                               <td>
                                 <a href="#" data-toggle="modal" data-target="#edit_event<?= $p->id ?>" class="btn btn-sm btn-success">Edit</a>
                                 <!-- Modal Avatar -->

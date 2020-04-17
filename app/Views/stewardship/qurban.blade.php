@@ -113,7 +113,7 @@
 
                                 <?php if (!$r): ?>
                                   <b class="float-right">
-                                    <a href="<?php $this->url('/stewardship/qurban/destroy?worship='.$p->worship_place_id.'&year='.$p->year) ?>"
+                                    <a onclick="confirm('<?php $this->url('/stewardship/qurban/destroy?worship='.$p->worship_place_id.'&year='.$p->year) ?>')" href="#"
                                       class="btn btn-sm btn-danger">Delete</a>
                                   </b>
                                 <?php else: ?>
