@@ -51,7 +51,6 @@
             <div class="col-md-3"></div>
               <div class="col-md-6">
                 <div class="row">
-
                 </div>
               </div>
               <div class="col-md-3"></div>
@@ -107,37 +106,6 @@
                                   </select>
                                 </div>
 
-                                <div class="form-group" id="account">
-                                  <label>Stewardship Account Bank</label>
-                                  <select class="form-control" name="account" style="color: black;">
-                                    <?php foreach ($account as $ac): ?>
-                                      <option value="<?= $ac->account_number ?>~<?= $ac->stewardship_id ?>~<?= $ac->stewardship_period ?>"><?= $ac->bank ?> a/n <?= $ac->owner ?> (<?= $ac->account_number ?>)</option>
-                                    <?php endforeach; ?>
-                                  </select>
-                                </div>
-
-                                <!-- checkbox particpant -->
-                                <!-- <div class="form-check">
-                                  <label class="form-check-label">
-                                    <input type="checkbox" class="form-check-input" onclick="openInputName()">
-                                    Use another name for qurban
-                                  </label>
-                                </div>
-                                <script type="text/javascript">
-                                  var input_name=1;
-                                  function openInputName() {
-                                    if (input_name == 1) {
-                                      $('#input_name').css("display", "block"); input_name++;
-                                    }else{
-                                      $('#input_name').css("display", "none"); input_name--;
-                                    }
-                                  }
-                                </script>
-                                <div class="form-group" style="display: none" id="input_name">
-                                  <input type="text" name="participant_name" class="form-control" placeholder="Participa name">
-                                </div> -->
-                                <!-- end checkbox participant -->
-
                                 <br><input type="submit" class="form-control btn btn-sm btn-success" value="Qurban">
 
                               </div>
@@ -158,9 +126,11 @@
 
                     <?php
                       $id = $this->decrypt($_GET['id']);
-                      $stmt = $GLOBALS['pdo']->prepare("SELECT name, serial_number FROM qurban_detail INNER JOIN qurban_order
+                      $stmt = $GLOBALS['pdo']->prepare("SELECT name, serial_number FROM qurban_detail
+                                                        INNER JOIN qurban_order
                                                         ON qurban_order.jamaah_id=qurban_detail.jamaah_id
-                                                        AND qurban_order.datetime=qurban_detail.datetime
+                                                        AND qurban_order.date=qurban_detail.date
+                                                        AND qurban_order.order_number=qurban_detail.order_number
                                                         INNER JOIN jamaah ON jamaah.id=qurban_order.jamaah_id
                                                         WHERE qurban_detail.worship_place_id=:id AND qurban_detail.year=:y
                                                         AND qurban_detail.group_name=:grup ORDER BY qurban_detail.serial_number ASC");

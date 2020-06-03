@@ -55,7 +55,7 @@
                         <thead style="text-align:center">
                           <tr>
                             <th>ID</th>
-                            <th>Datetime</th>
+                            <th>Date</th>
                             <th>Status</th>
                             <th>Detail</th>
                           </tr>
@@ -63,8 +63,8 @@
                         <tbody>
                           <?php foreach ($history as $h): ?>
                             <tr>
-                              <td><?php $date = new DateTime($h->datetime); ?>#<?= $h->jamaah_id . $date->format('jmYGis'); ?></td>
-                              <td><?php $date = new DateTime($h->datetime); echo $date->format('j F Y, g:i a'); ?></td>
+                              <td><?php $date = new DateTime($h->date); ?>#<?= $date->format('Ymd') . $h->order_number . $h->jamaah_id; ?></td>
+                              <td><?php $date = new DateTime($h->date); echo $date->format('j F Y'); ?></td>
                               <td>
                                 <?php if ($h->payment_completed == true): ?>
                                   <div class="text-success" name="button"> <b>Payment Completed</b> </div>
@@ -73,10 +73,10 @@
                                 <?php endif; ?>
                               </td>
                               <td>
-                                <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#invoice<?= $h->jamaah_id . $date->format('jmYGis'); ?>">Invoice</a>
-                                <button type="submit" onclick="printDiv('printableArea<?= $h->jamaah_id . $date->format('jmYGis'); ?>')" class="btn btn-sm btn-primary"> <i class="mdi mdi-printer"></i> </button>
+                                <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#invoice<?= $date->format('Ymd') . $h->order_number . $h->jamaah_id; ?>">Invoice</a>
+                                <button type="submit" onclick="printDiv('printableArea<?= $date->format('Ymd') . $h->order_number . $h->jamaah_id; ?>')" class="btn btn-sm btn-primary"> <i class="mdi mdi-printer"></i> </button>
                                 <!-- Modal Avatar -->
-                                <div class="modal fade" id="invoice<?= $h->jamaah_id . $date->format('jmYGis'); ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
+                                <div class="modal fade" id="invoice<?= $date->format('Ymd') . $h->order_number . $h->jamaah_id; ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
                                   <div class="modal-dialog" role="document">
                                       <div class="modal-content">
                                         <div class="modal-header">
@@ -85,7 +85,7 @@
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>
-                                        <div class="modal-body" id="printableArea<?= $h->jamaah_id . $date->format('jmYGis'); ?>">
+                                        <div class="modal-body" id="printableArea<?= $date->format('Ymd') . $h->order_number . $h->jamaah_id; ?>">
                                           <div class="invoice-box">
                                             <style media="all"> .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, .15); font-size: 16px; line-height: 24px; font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; color: #555; } .invoice-box table { width: 100%; line-height: inherit; text-align: left; } .invoice-box table td { padding: 5px; vertical-align: top; } .invoice-box table tr td:nth-child(2) { text-align: right; } .invoice-box table tr.top table td { padding-bottom: 20px; } .invoice-box table tr.top table td.title { font-size: 45px; line-height: 45px; color: #333; } .invoice-box table tr.information table td { padding-bottom: 40px; } .invoice-box table tr.heading td { background: #eee; border-bottom: 1px solid #ddd; font-weight: bold; } .invoice-box table tr.details td { padding-bottom: 20px; } .invoice-box table tr.item td{ border-bottom: 1px solid #eee; } .invoice-box table tr.item.last td { border-bottom: none; } .invoice-box table tr.total td:nth-child(2) { border-top: 2px solid #eee; font-weight: bold; } @media only screen and (max-width: 600px) { .invoice-box table tr.top table td { width: 100%; display: block; text-align: center; } .invoice-box table tr.information table td { width: 100%; display: block; text-align: center; } } /** RTL **/ .rtl { direction: rtl; font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; } .rtl table { text-align: right; } .rtl table tr td:nth-child(2) { text-align: left; } </style>
                                             <table cellpadding="0" cellspacing="0">
@@ -98,8 +98,8 @@
                                                                 </td>
 
                                                                 <td>
-                                                                    Invoice #<?= $h->jamaah_id . $date->format('jmYGis'); ?><br>
-                                                                    <?=  $date->format('j F Y g:i a') ?><br>
+                                                                    Invoice #<?= $date->format('Ymd') . $h->order_number . $h->jamaah_id; ?><br>
+                                                                    <?=  $date->format('j F Y') ?><br>
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -130,7 +130,16 @@
 
                                                 <tr>
                                                   <td>Total Order</td>
-                                                  <td><?= $h->total_slot ?></td>
+                                                  <td>
+                                                    <?php
+                                                    $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM qurban_detail
+                                                                                      WHERE jamaah_id=:jamaah_id AND date=:dates
+                                                                                      AND order_number=:order_number");
+                                                    $stmt->execute(['jamaah_id' => $h->jamaah_id, 'dates' => $date->format('Ymd'), 'order_number' => $h->order_number]);
+                                                    $data = $stmt->fetch(PDO::FETCH_OBJ);
+                                                    echo $data->count;
+                                                    ?>
+                                                  </td>
                                                 </tr>
 
                                                 <tr>
@@ -181,7 +190,7 @@
                                 </div>
                                 <!-- End Modal -->
 
-                                <a href="<?php $this->url('jamaah/qurban/checking?datetime=') ?><?= $this->encrypt($h->datetime) ?>" class="btn btn-sm btn-primary">Detail</a>
+                                <a href="<?php $this->url('jamaah/qurban/checking?date=') ?><?= $this->encrypt($h->date).'&jamaah_id='.$h->jamaah_id.'&order_number='.$h->order_number ?>" class="btn btn-sm btn-primary">Detail</a>
                               </td>
                             </tr>
                           <?php endforeach; ?>

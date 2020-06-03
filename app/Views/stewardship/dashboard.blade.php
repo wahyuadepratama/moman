@@ -88,13 +88,15 @@
                           <td>
                             <ul>
                               <?php
-                                $account = $GLOBALS['pdo']->prepare("SELECT * FROM account WHERE stewardship_id=:stewardship_id");
-                                $account->execute(['stewardship_id' => $_SESSION['user']->id]);
-                                $account = $account->fetchAll(PDO::FETCH_OBJ);
+                                $account = $GLOBALS['pdo']->prepare("SELECT * FROM bank_account
+                                                                     INNER JOIN bank ON bank_account.bank_code=bank.bank_code
+                                                                     WHERE bank_account.worship_place_id=:id");
+                                $account->execute(['id' => $_SESSION['user']->worship_place_id]);
+                                $accounts = $account->fetchAll(PDO::FETCH_OBJ);
                               ?>
-                              <?php if ($account): ?>
-                                <?php foreach ($account as $a): ?>
-                                  <li><?= $a->bank ?> (<?= $a->account_number ?>) a/n <?= $a->owner ?></li>
+                              <?php if ($accounts): ?>
+                                <?php foreach ($accounts as $a): ?>
+                                  <li><?= $a->bank_name ?> (<?= $a->rekening_number ?>)</li>
                                 <?php endforeach; ?>
                               <?php else: ?>
                                 <b>No Bank Account Yet!</b>
@@ -108,15 +110,15 @@
                           <td>
                             <ul>
                               <?php
-                                $accounts = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship INNER JOIN jamaah ON
+                                $stewards = $GLOBALS['pdo']->prepare("SELECT * FROM stewardship INNER JOIN jamaah ON
                                                                     jamaah.id=stewardship.jamaah_id
                                                                     WHERE jamaah.worship_place_id=:worship_id
                                                                     AND stewardship.account_status='true'");
-                                $accounts->execute(['worship_id' => $worship_id]);
-                                $accounts = $accounts->fetchAll(PDO::FETCH_OBJ);
+                                $stewards->execute(['worship_id' => $worship_id]);
+                                $stewards = $stewards->fetchAll(PDO::FETCH_OBJ);
                               ?>
-                              <?php if ($accounts): ?>
-                                <?php foreach ($accounts as $a): ?>
+                              <?php if ($stewards): ?>
+                                <?php foreach ($stewards as $a): ?>
                                   <li><?= $a->name ?> (<?= $a->period ?>)</li>
                                 <?php endforeach; ?>
                               <?php else: ?>
@@ -129,7 +131,7 @@
                           <td></td>
                           <td></td>
                           <td>
-                            <a href="#" data-toggle="modal" data-target="#edit" class="btn btn-sm btn-success">Edit</a>
+                            <a href="#" data-toggle="modal" data-target="#edit" class="form-control btn btn-sm btn-success">Edit</a>
                             <!-- Modal Avatar -->
                             <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
                               <div class="modal-dialog" role="document">
@@ -145,7 +147,6 @@
                                       </button>
                                     </div>
                                     <div class="modal-body">
-                                      <label>Whatsapp Number</label>                                      
                                       <input type="hidden" name="period_hidden" value="<?= $m->period ?>">
                                       <label>Type of Work</label>
                                       <select class="form-control" name="type">
@@ -174,7 +175,8 @@
                               </div>
                             </div>
                             <!-- End Modal -->
-                            <a href="#" data-toggle="modal" data-target="#add" class="btn btn-sm btn-danger">Add Bank Account</a>
+                            <a href="#" data-toggle="modal" data-target="#add"
+                            class="form-control btn btn-sm btn-danger" style="">Update Bank Account</a>
                             <!-- Modal Avatar -->
                             <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
                               <div class="modal-dialog" role="document">
@@ -184,24 +186,33 @@
 
                                   <div class="modal-content">
                                     <div class="modal-header">
-                                      <h5 class="modal-title" id="avatar">Edit Account</h5>
+                                      <h5 class="modal-title" id="avatar">Update Bank Account</h5>
                                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                       </button>
                                     </div>
                                     <div class="modal-body">
-                                      <input type="text" name="bank" class="form-control" placeholder="Bank" required>
+                                      <?php
+                                        $banks = $GLOBALS['pdo']->prepare("SELECT * FROM bank");
+                                        $banks->execute();
+                                        $banks = $banks->fetchAll(PDO::FETCH_OBJ);
+                                      ?>
+                                      <select class="form-control" name="bank">
+                                        <?php foreach ($banks as $bank): ?>
+                                          <option value="<?= $bank->bank_code ?>"><?= $bank->bank_name ?></option>
+                                        <?php endforeach; ?>
+                                      </select>
                                       <input type="text" name="account_number" class="form-control" placeholder="No Rek " required>
                                       <div class="card" style="margin-top:2%;padding-top:2%;padding:5%">
-                                        <?php if ($account): ?>
+                                        <?php if ($accounts): ?>
                                           <?php $no = 1; ?>
-                                          <?php foreach ($account as $a): ?>
+                                          <?php foreach ($accounts as $a): ?>
                                             <div class="row">
                                               <div class="col-md-10">
-                                                <?= $no.'. '. $a->bank ?> (<?= $a->account_number ?>) a/n <?= $a->owner ?>
+                                                <?= $no.'. '. $a->bank_name ?> (<?= $a->rekening_number ?>)
                                               </div>
                                               <div class="col-md-2">
-                                                <h6> <a onclick="confirm('<?php $this->url('stewardship/account/destroy?stewardship='. $a->stewardship_id.'&period='. $a->stewardship_period.'&account='. $a->account_number) ?>')" href="#" > <i class="mdi mdi-delete text-danger"></i> </a> </h6>
+                                                <h6> <a onclick="confirm('<?php $this->url('stewardship/account/destroy?rek='. $a->rekening_number) ?>')" href="#" > <i class="mdi mdi-delete text-danger"></i> </a> </h6>
                                               </div>
                                             </div>
                                             <?php $no++ ?>

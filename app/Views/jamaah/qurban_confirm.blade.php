@@ -36,9 +36,8 @@
                   <div class="row">
                     <div class="col-md-12">
                       <div class="container">
-                        <?php $date = new DateTime($qurban->datetime); ?>
-                        <h4 class="float-left">Qurban Transaction: #<?= $qurban->jamaah_id . $date->format('jmYGis'); ?></h4>
-
+                        <?php $date = new DateTime($qurban->date); ?>
+                        <h4 class="float-left">Qurban Transaction: #<?= $date->format('Ymd') . $qurban->order_number . $qurban->jamaah_id; ?></h4>
                       </div>
                     </div>
                     <div class="col-md-12" style="margin-top: 10px">
@@ -55,8 +54,9 @@
                             <td>Payment Information</td>
                             <td>:</td>
                             <td>
-                              Transfer Qurban Fund via <?= $account->mosque ?> Stewardship Bank Account<br><br>
-                              <b><?= $account->bank ?> a/n <?= $account->owner ?> (<?= $account->account_number ?>)</b>
+                              <?php foreach ($accounts as $key): ?>
+                                <labeli><?= $key->bank_name ?> (<?= $key->rekening_number ?>)</label>
+                              <?php endforeach; ?>
                             </td>
                           </tr>
                           <tr>
@@ -64,7 +64,9 @@
                             <td>:</td>
                             <td>
                               After making a payment, please confirm immediately following to:<br><br>
-                              <b><?= $account->whatsapp ?> (SMS or Whatsapp)</b>
+                              <?php foreach ($stewards as $key): ?>
+                                <b><?= $key->name ?> - <?= $key->phone ?> (SMS or Whatsapp)</b>
+                              <?php endforeach; ?>
                             </td>
                           </tr>
                           <tr>

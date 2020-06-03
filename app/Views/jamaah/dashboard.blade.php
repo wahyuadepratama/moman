@@ -148,10 +148,10 @@
                               </div>
                               <div class="modal-body">
                                 <div class="col-md-12">
-                                    <input type="text" name="name" value="<?= $_SESSION['user']->jamaah_name ?>" placeholder="Name" class="form-control">
+                                    <input type="text" name="name" value="<?= $_SESSION['user']->name ?>" placeholder="Name" class="form-control">
                                     <input type="text" name="username" value="<?= $_SESSION['user']->username ?>" placeholder="Username" class="form-control">
                                     <input type="text" name="phone" value="<?= $_SESSION['user']->phone ?>" placeholder="Phone" class="form-control">
-                                    <input type="text" name="address" value="<?= $_SESSION['user']->address ?>" placeholder="Address" class="form-control"><br>                                    
+                                    <input type="text" name="address" value="<?= $_SESSION['user']->address ?>" placeholder="Address" class="form-control"><br>
                                 </div>
                               </div>
                               <div class="modal-footer">
@@ -169,7 +169,7 @@
                         <tr>
                           <td>Jamaah Name</td>
                           <td>:</td>
-                          <td><?= $_SESSION['user']->jamaah_name ?></td>
+                          <td><?= $_SESSION['user']->name ?></td>
                         </tr>
                         <tr>
                           <td>KTP Number</td>

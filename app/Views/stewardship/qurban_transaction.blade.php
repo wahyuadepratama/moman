@@ -55,7 +55,7 @@
                         <thead style="text-align:center">
                           <tr>
                             <th>No Trx</th>
-                            <th>Datetime</th>
+                            <th>Date</th>
                             <th>Jamaah Name</th>
                             <th>Status</th>
                             <th>Detail</th>
@@ -65,14 +65,16 @@
                           <?php foreach ($trans as $h): ?>
 
                             <?php
-                              $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM qurban_detail WHERE jamaah_id=:j AND datetime=:dates");
-                              $stmt->execute(['j' => $h->jamaah_id, 'dates' => $h->datetime]);
+                              $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM qurban_detail
+                                                                WHERE jamaah_id=:j AND date=:dates
+                                                                AND order_number=:order");
+                              $stmt->execute(['j' => $h->jamaah_id, 'dates' => $h->date, 'order' => $h->order_number]);
                               $count = $stmt->fetch(PDO::FETCH_OBJ);
                             ?>
 
                             <tr>
-                              <td>#<?php $date = new DateTime($h->datetime); ?><?= $h->jamaah_id . $date->format('jmYGis'); ?></td>
-                              <td><?php $date = new DateTime($h->datetime); echo $date->format('j F Y, g:i a'); ?></td>
+                              <td>#<?php $date = new DateTime($h->date); ?><?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?></td>
+                              <td><?php $date = new DateTime($h->date); echo $date->format('j F Y'); ?></td>
                               <td><?= $h->jamaah_name ?></td>
                               <td>
                                 <?php if ($h->payment_completed == true): ?>
@@ -82,9 +84,9 @@
                                 <?php endif; ?>
                               </td>
                               <td>
-                                <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#invoice<?= $h->jamaah_id . $date->format('jmYGis'); ?>">More</a>
+                                <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#invoice<?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?>">More</a>
                                 <!-- Modal Avatar -->
-                                <div class="modal fade" id="invoice<?= $h->jamaah_id . $date->format('jmYGis'); ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
+                                <div class="modal fade" id="invoice<?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">
                                   <div class="modal-dialog" role="document">
                                     <form class="" action="<?php $this->url('/stewardship/qur/confirm') ?>" method="post">
                                       <?php $this->csrf_field() ?>
@@ -95,7 +97,7 @@
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>
-                                        <div class="modal-body" id="printableArea<?= $h->jamaah_id . $date->format('jmYGis'); ?>">
+                                        <div class="modal-body" id="printableArea<?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?>">
                                           <div class="invoice-box">
                                             <style media="all"> .invoice-box { max-width: 800px; margin: auto; padding: 30px; border: 1px solid #eee; box-shadow: 0 0 10px rgba(0, 0, 0, .15); font-size: 16px; line-height: 24px; font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; color: #555; } .invoice-box table { width: 100%; line-height: inherit; text-align: left; } .invoice-box table td { padding: 5px; vertical-align: top; } .invoice-box table tr td:nth-child(2) { text-align: right; } .invoice-box table tr.top table td { padding-bottom: 20px; } .invoice-box table tr.top table td.title { font-size: 45px; line-height: 45px; color: #333; } .invoice-box table tr.information table td { padding-bottom: 40px; } .invoice-box table tr.heading td { background: #eee; border-bottom: 1px solid #ddd; font-weight: bold; } .invoice-box table tr.details td { padding-bottom: 20px; } .invoice-box table tr.item td{ border-bottom: 1px solid #eee; } .invoice-box table tr.item.last td { border-bottom: none; } .invoice-box table tr.total td:nth-child(2) { border-top: 2px solid #eee; font-weight: bold; } @media only screen and (max-width: 600px) { .invoice-box table tr.top table td { width: 100%; display: block; text-align: center; } .invoice-box table tr.information table td { width: 100%; display: block; text-align: center; } } /** RTL **/ .rtl { direction: rtl; font-family: Tahoma, 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; } .rtl table { text-align: right; } .rtl table tr td:nth-child(2) { text-align: left; } </style>
                                             <table cellpadding="0" cellspacing="0">
@@ -150,23 +152,24 @@
                                                   <tr class="details">
                                                     <td style="vertical-align:top">Fund</td>
                                                     <td>
-                                                      <input type="text" name="fund" value="" class="form-control" required id="rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>">
+                                                      <input type="text" name="fund" value="" class="form-control" required id="rupiah<?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?>">
                                                       <script type="text/javascript">
 
-                                                        var rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?> = document.getElementById('rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>');
-                                                        rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>.addEventListener('keyup', function(e){
+                                                        var rupiah<?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?> = document.getElementById('rupiah<?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?>');
+                                                        rupiah<?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?>.addEventListener('keyup', function(e){
                                                           // tambahkan 'Rp.' pada saat form di ketik
                                                           // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
-                                                          rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>.value = formatRupiah(this.value, 'Rp. ');
+                                                          rupiah<?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?>.value = formatRupiah(this.value, 'Rp. ');
                                                         });
 
-                                                        rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>.addEventListener('keyup', function(e){
-                                                          rupiah<?= $h->jamaah_id . $date->format('jmYGis'); ?>.value = formatRupiah(this.value, 'Rp. ');
+                                                        rupiah<?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?>.addEventListener('keyup', function(e){
+                                                          rupiah<?= $date->format('Ymj').$h->order_number.$h->jamaah_id; ?>.value = formatRupiah(this.value, 'Rp. ');
                                                         });
                                                       </script>
                                                       <input type="hidden" name="jamaah" value="<?= $h->jamaah_id ?>">
-                                                      <input type="hidden" name="datetime" value="<?= $h->datetime ?>">
+                                                      <input type="hidden" name="date" value="<?= $h->date ?>">
                                                       <input type="hidden" name="uang_muka" value="<?= $h->uang_muka ?>">
+                                                      <input type="hidden" name="order_number" value="<?= $h->order_number ?>">
                                                       <input type="hidden" name="uang_pelunasan" value="<?= $h->uang_pelunasan ?>">
                                                       <input type="hidden" name="unpaid" value="<?= $h->animal_price*$count->count - ($h->uang_muka + $h->uang_pelunasan) ?>">
                                                     </td>
@@ -242,6 +245,7 @@
   <script type="text/javascript">
     $(document).ready(function() {
       $('#data').DataTable({
+        "order": [[ 0, "desc" ]],
         "pageLength" : "100",
         "dom": '<"clear"f><"clear">',
         "language": {

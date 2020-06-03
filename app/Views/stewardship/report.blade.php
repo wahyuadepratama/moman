@@ -112,7 +112,8 @@
                             <?php
                               $stmt = $GLOBALS['pdo']->prepare("SELECT name, serial_number FROM qurban_detail INNER JOIN qurban_order
                                                                 ON qurban_order.jamaah_id=qurban_detail.jamaah_id
-                                                                AND qurban_order.datetime=qurban_detail.datetime
+                                                                AND qurban_order.date=qurban_detail.date
+                                                                AND qurban_order.order_number=qurban_detail.order_number
                                                                 INNER JOIN jamaah ON jamaah.id=qurban_order.jamaah_id
                                                                 WHERE qurban_detail.worship_place_id=:id AND qurban_detail.year=:y
                                                                 AND qurban_detail.group_name=:grup ORDER BY qurban_detail.serial_number ASC");

@@ -54,8 +54,8 @@ Route::web('jamaah/about', 'WorshipPlaceController', 'about');
 //  __________________________________________ Stewardship __________________________________________
 Route::web('stewardship/dashboard', 'UserController', 'dashboardStewardship');
 Route::web('stewardship/account/update', 'UserController', 'updateAccountStewardship');
-Route::web('stewardship/account/store', 'UserController', 'storeAccountStewardship');
-Route::web('stewardship/account/destroy', 'UserController', 'destroyAccountStewardship');
+Route::web('stewardship/account/store', 'UserController', 'storeAccountBank');
+Route::web('stewardship/account/destroy', 'UserController', 'destroyAccountBank');
 Route::web('stewardship/dashboard/changeMosque', 'UserController', 'changeMosque');
 
 Route::web('stewardship/qurban', 'QurbanController', 'animalStewardship');

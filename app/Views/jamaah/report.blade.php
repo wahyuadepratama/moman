@@ -33,7 +33,7 @@
               <span class="page-title-icon bg-gradient-primary text-white mr-2">
                 <i class="mdi mdi-home"></i>
               </span>
-              <?= $_SESSION['user']->name ?> Report this Month
+              Report
             </h3>
           </div>
 
@@ -42,6 +42,16 @@
             <div class="col-md-12 grid-margin">
               <div class="card">
                 <div class="card-body">
+                  <div class="row">
+                    <div class="form-group float-right">
+                      <select class="form-control" onchange="redirect(this.value)">
+                        <?php foreach ($worships as $key): ?>
+                          <option <?= (isset($_GET['worship']) ? ( ($key->worship_place_id==$_GET['worship']) ? 'selected' : '' ) : '' ) ?>
+                            value="<?= $key->worship_place_id ?>"><?= $key->name ?></option>
+                        <?php endforeach; ?>
+                      </select>
+                    </div>
+                  </div>
                   <div class="row">
 
                     <ul class="nav nav-tabs">
@@ -180,9 +190,9 @@
                               <td><?= $cow ?> animals</td>
                             </tr>
                             <tr>
-                              <td>Participants</td>
+                              <td>Participant</td>
                               <td>:</td>
-                              <td><?= $participant ?> jamaah</td>
+                              <td><?= $participant ?></td>
                             </tr>
                           </table>
                         </div>
@@ -193,13 +203,20 @@
                         <?php foreach ($group as $key): ?>
 
                           <?php
-                            $stmt = $GLOBALS['pdo']->prepare("SELECT name, serial_number FROM qurban_detail INNER JOIN qurban_order
+                            if (isset($_GET['worship'])) {
+                              $id = $_GET['worship'];
+                            }else {
+                              $id = $worships[0]->id;
+                            }
+                            $stmt = $GLOBALS['pdo']->prepare("SELECT name, serial_number FROM qurban_detail
+                                                              INNER JOIN qurban_order
                                                               ON qurban_order.jamaah_id=qurban_detail.jamaah_id
-                                                              AND qurban_order.datetime=qurban_detail.datetime
+                                                              AND qurban_order.date=qurban_detail.date
+                                                              AND qurban_order.order_number=qurban_detail.order_number
                                                               INNER JOIN jamaah ON jamaah.id=qurban_order.jamaah_id
                                                               WHERE qurban_detail.worship_place_id=:id AND qurban_detail.year=:y
                                                               AND qurban_detail.group_name=:grup ORDER BY qurban_detail.serial_number ASC");
-                            $stmt->execute(['id'=> $_SESSION['user']->worship_place_id, 'y' => $_GET['year'], 'grup' => $key->group_name]);
+                            $stmt->execute(['id'=> $id, 'y' => $_GET['year'], 'grup' => $key->group_name]);
                             $group = $stmt->fetchAll(PDO::FETCH_OBJ);
                             // $this->die($group);
                           ?>
@@ -250,6 +267,11 @@
 
   <!-- Custom js for this page-->
   <script src="script/js/dashboard.js"></script>
+  <script type="text/javascript">
+    function redirect(val) {
+      window.location = '/jamaah/about?year='+<?= $_GET['year'] ?>+'&worship='+val
+    }
+  </script>
   <!-- End custom js for this page-->
 </body>
 

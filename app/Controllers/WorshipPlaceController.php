@@ -134,7 +134,20 @@ class WorshipPlaceController extends Controller{
   {
     $this->authJamaah();
 
-    $id = $_SESSION['user']->worship_place_id;
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM jamaah_worship INNER JOIN worship_place
+                                      ON worship_place.id=jamaah_worship.worship_place_id
+                                      WHERE jamaah_worship.jamaah_id=:id");
+    $stmt->execute(['id' => $_SESSION['user']->id]);
+    $worships =  $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    if (empty($worships))
+      return $this->redirect('jamaah/dashboard');
+
+    if (!isset($_GET['worship']))
+      $id = $worships[0]->worship_place_id;
+    else
+      $id = $_GET['worship'];
+
     $stmt = $GLOBALS['pdo']->prepare("SELECT a.id, a.name, a.address, a.capacity, a.park_area_size,
                                       ST_X(ST_Centroid(geom)) AS lang, ST_Y(ST_CENTROID(geom)) As lat
                                       FROM worship_place as a WHERE id=:id");
@@ -155,15 +168,11 @@ class WorshipPlaceController extends Controller{
     $stmt->execute(['id' => $id]);
     $f =  $stmt->fetchAll(PDO::FETCH_OBJ);
 
-    if (!isset($_GET['worship'])) {
-      $_GET['worship'] = $_SESSION['user']->worship_place_id;
-    }
-
     $stmt = $GLOBALS['pdo']->prepare("SELECT SUM(uang_muka) as uang_muka, SUM(uang_pelunasan) as pelunasan
                                       FROM qurban_order WHERE jamaah_id IN
                                       (SELECT jamaah_id FROM qurban_detail WHERE worship_place_id=:id
                                       AND year=:y)");
-    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year']]);
+    $stmt->execute(['id'=> $id, 'y' => $_GET['year']]);
     $fundRaised = $stmt->fetch(PDO::FETCH_OBJ);
     $fundRaised = $fundRaised->uang_muka + $fundRaised->pelunasan;
 
@@ -173,27 +182,27 @@ class WorshipPlaceController extends Controller{
                                       AND qurban_group.group_name=qurban_detail.group_name
                                       WHERE qurban_detail.worship_place_id=:id
                                       AND qurban_detail.year=:y AND qurban_group.animal=:animal");
-    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year'], 'animal' => 'Goat']);
+    $stmt->execute(['id'=> $id, 'y' => $_GET['year'], 'animal' => 'Goat']);
     $goat = $stmt->fetch(PDO::FETCH_OBJ);
 
     $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*) FROM qurban_group
                                       WHERE worship_place_id=:id AND year=:y AND animal=:animal");
-    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year'], 'animal' => 'Cow']);
+    $stmt->execute(['id'=> $id, 'y' => $_GET['year'], 'animal' => 'Cow']);
     $cow = $stmt->fetch(PDO::FETCH_OBJ);
 
     $stmt = $GLOBALS['pdo']->prepare("SELECT COUNT(*)
                                       FROM qurban_order WHERE jamaah_id IN
                                       (SELECT jamaah_id FROM qurban_detail WHERE worship_place_id=:id
                                       AND year=:y)");
-    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year']]);
+    $stmt->execute(['id'=> $id, 'y' => $_GET['year']]);
     $participant = $stmt->fetch(PDO::FETCH_OBJ);
 
     $stmt = $GLOBALS['pdo']->prepare("SELECT group_name, animal FROM qurban_group WHERE worship_place_id=:id AND year=:y ORDER BY group_name");
-    $stmt->execute(['id'=> $_GET['worship'], 'y' => $_GET['year']]);
+    $stmt->execute(['id'=> $id, 'y' => $_GET['year']]);
     $group = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     $stmt = $GLOBALS['pdo']->prepare("SELECT year FROM qurban WHERE worship_place_id=:id");
-    $stmt->execute(['id'=> $_GET['worship']]);
+    $stmt->execute(['id'=> $id]);
     $year = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     return $this->view('jamaah/report', ['group' => $group,
@@ -204,6 +213,7 @@ class WorshipPlaceController extends Controller{
                                           'participant' => $participant->count,
                                           'q' => $data,
                                           'event' => $e,
-                                          'facility' => $f]);
+                                          'facility' => $f,
+                                          'worships' => $worships]);
   }
 }
