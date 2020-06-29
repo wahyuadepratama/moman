@@ -2,9 +2,11 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBNnzxae2AewMUN0Tt_fC3gN38goeLVdVE"></script>
 <!-- <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script> -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 
 <script type="text/javascript">
 
+  var map;
   window.onload=init;
   var infoDua = [];
   var markers = [];
@@ -66,7 +68,6 @@
   function showKecamatan(){
 
     kecamatan = new google.maps.Data();
-    console.log(server+'kecamatan');
     kecamatan.loadGeoJson(server+'maps/kecamatan');
     kecamatan.setStyle(function(feature)
     {
@@ -75,14 +76,643 @@
         color = '#9a55ffc9'
         return({
           fillColor:color,
-          strokeWeight:2.0,
+          strokeWeight:3.0,
           strokeColor:'#9a55ff',
           fillOpacity:0.3,
-          clickable: false
+          clickable: true
+        });
+      }
+      if (gid == '02'){
+        color = '#187efc'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#187efc',
+          fillOpacity:0.3,
+          clickable: true
+        });
+      }
+      if (gid == '03'){
+        color = '#e91e63'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#e91e63',
+          fillOpacity:0.3,
+          clickable: true
+        });
+      }
+      if (gid == '04'){
+        color = '#9c27b0'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#9c27b0',
+          fillOpacity:0.3,
+          clickable: true
+        });
+      }
+      if (gid == '05'){
+        color = '#009688'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#009688',
+          fillOpacity:0.3,
+          clickable: true
+        });
+      }
+      if (gid == '06'){
+        color = '#4caf50'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#4caf50',
+          fillOpacity:0.3,
+          clickable: true
+        });
+      }
+      if (gid == '07'){
+        color = '#ffc107'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#ffc107',
+          fillOpacity:0.3,
+          clickable: true
+        });
+      }
+      if (gid == '08'){
+        color = '#ff5722'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#ff5722',
+          fillOpacity:0.3,
+          clickable: true
+        });
+      }
+      if (gid == '09'){
+        color = '#cddc39'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#cddc39',
+          fillOpacity:0.3,
+          clickable: true
+        });
+      }
+      if (gid == '10'){
+        color = '#9e9e9e'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#9e9e9e',
+          fillOpacity:0.3,
+          clickable: true
+        });
+      }
+      if (gid == '11'){
+        color = '#607d8b'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#607d8b',
+          fillOpacity:0.3,
+          clickable: true
+        });
+      }
+      if (gid == '12'){
+        color = '#795548'
+        return({
+          fillColor:color,
+          strokeWeight:3.0,
+          strokeColor:'#795548',
+          fillOpacity:0.3,
+          clickable: true
         });
       }
     });
     kecamatan.setMap(map);
+
+    onVillageListener(kecamatan);
+
+    map.controls[google.maps.ControlPosition.LEFT_TOP].push(legend);
+  }
+
+  function onVillageListener(kecamatan) {
+    var legend = document.getElementById('legend');
+    kecamatan.addListener('click', function(event) {
+      var gid = event.feature.getProperty('id');
+      legend.innerHTML = '';
+      legend.innerHTML = '<center><b>Information</b></center>';
+
+      if (gid == '01') {
+        var color = '#9a55ffc9';
+        var t = 3;
+      }
+      if (gid == '02') {
+        var color = '#187efc';
+        var t = 1;
+      }
+      if (gid == '03') {
+        var color = '#e91e63';
+        var t = 5;
+      }
+      if (gid == '04') {
+        var color = '#9c27b0';
+        var t = 1;
+      }
+      if (gid == '05') {
+        var color = '#009688';
+        var t = 5;
+      }
+      if (gid == '06') {
+        var color = '#4caf50';
+        var t = 1;
+      }
+      if (gid == '07') {
+        var color = '#ffc107';
+        var t = 3;
+      }
+      if (gid == '08') {
+        var color = '#ff5722';
+        var t = 5;
+      }
+      if (gid == '09') {
+        var color = '#cddc39';
+        var t = 9;
+      }
+      if (gid == '10') {
+        var color = '#9e9e9e';
+        var t = 6;
+      }
+      if (gid == '11') {
+        var color = '#607d8b';
+        var t = 1;
+      }
+      if (gid == '12') {
+        var color = '#795548';
+        var t = 1;
+      }
+
+      $.ajax({ url: server+'maps/village?id='+gid, data: "", dataType: 'json', success: function (row){
+        var p = document.createElement('p');
+        p.innerHTML = '<table style="font-size:80%;margin-top:10px">'
+        // +'<tr><td>Area</td><td>:</td><td><div style="background-color:'+color+';height:10px;width:50px"></div></td></tr>'
+        +'<tr><td>Village Name</td><td>:</td><td>'+ row.name +'</td></tr>'
+        +'<tr><td>Total Population</td><td>:</td><td>'+ numeral(row.total_male + row.total_female).format('0,0') +'</td></tr>'
+        +'<tr><td>Male</td><td>:</td><td>'+numeral(row.total_male).format('0,0')+'</td></tr>'
+        +'<tr><td>Female</td><td>:</td><td>'+numeral(row.total_female).format('0,0')+'</td></tr>'
+        +'<tr><td>Total Worship Place</td><td>:</td><td>'+ t +'</td></tr>'
+        +'<tr><td>Total Qurban</td><td>:</td><td>'+numeral(row.total_qurban_cow + row.total_qurban_goat).format('0,0')+'</td></tr>'
+        +'<tr><td>Qurban Cow</td><td>:</td><td>'+numeral(row.total_qurban_cow).format('0,0')+'</td></tr>'
+        +'<tr><td>Qurban Goat</td><td>:</td><td>'+numeral(row.total_qurban_goat).format('0,0')+'</td></tr></table>';
+        legend.appendChild(p);
+      }});
+    });
+  }
+
+  function showDistribution(){
+    var legend = document.getElementById('legend');
+    legend.innerHTML = '';
+    legend.innerHTML = '<center><b>Information</b></center>';
+
+    var option = $('#distribution').val();
+    if (option == 'worship_place') {
+        legend.innerHTML = '<center><b>Worship Place Distribution</b></center>';
+        var p = document.createElement('p');
+        p.innerHTML = '<table style="font-size:80%;margin-top:10px">'
+        +'<tr><td><div style="background-color:'+'#ffeb3b'+';height:10px;width:50px"></div></td><td>:</td><td>Sedikit (0-3)</td></tr>'
+        +'<tr><td><div style="background-color:'+'#f2a606'+';height:10px;width:50px"></div></td><td>:</td><td>Sedang (4-7)</td></tr>'
+        +'<tr><td><div style="background-color:'+'#f23906'+';height:10px;width:50px"></div></td><td>:</td><td>Banyak (> 7)</td></tr>'
+        +'</table>';
+        legend.appendChild(p);
+
+        kecamatan = new google.maps.Data();
+        kecamatan.loadGeoJson(server+'maps/kecamatan');
+        kecamatan.setStyle(function(feature){
+          var gid = feature.getProperty('id');
+          if (gid == '01') {var t = 3;}
+          if (gid == '02') {var t = 1;}
+          if (gid == '03') {var t = 5;}
+          if (gid == '04') {var t = 1;}
+          if (gid == '05') {var t = 5;}
+          if (gid == '06') {var t = 1;}
+          if (gid == '07') {var t = 3;}
+          if (gid == '08') {var t = 5;}
+          if (gid == '09') {var t = 9;}
+          if (gid == '10') {var t = 6;}
+          if (gid == '11') {var t = 1;}
+          if (gid == '12') {var t = 1;}
+
+          if (t <= 3) {
+            color = '#ffeb3b';
+            return({
+              fillColor:color,
+              strokeWeight:3.0,
+              strokeColor:color,
+              fillOpacity:0.9,
+              clickable: true
+            });
+          }
+
+          if (t > 3 && t <= 7) {
+            color = '#f2a606';
+            return({
+              fillColor:color,
+              strokeWeight:3.0,
+              strokeColor:color,
+              fillOpacity:0.9,
+              clickable: true
+            });
+          }
+
+          if (t > 7) {
+            color = '#f23906';
+            return({
+              fillColor:color,
+              strokeWeight:3.0,
+              strokeColor:color,
+              fillOpacity:0.9,
+              clickable: true
+            });
+          }
+
+        });
+        onVillageListener(kecamatan);
+        kecamatan.setMap(map)
+      }
+
+    if (option == 'all_population') {
+      legend.innerHTML = '<center><b>Citizen Population Distribution</b></center>';
+      var p = document.createElement('p');
+      p.innerHTML = '<table style="font-size:80%;margin-top:10px">'
+      +'<tr><td><div style="background-color:'+'#f3e994'+';height:10px;width:20px"></div></td><td> Sangat Sedikit </td><td>(0-2000)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffeb3b'+';height:10px;width:20px"></div></td><td> Sedikit </td><td>(2001-5000)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffb518'+';height:10px;width:20px"></div></td><td> Sedang </td><td>(5001-9000)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ff5b00'+';height:10px;width:20px"></div></td><td> Banyak </td><td>(9001-14.000)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#f20606'+';height:10px;width:20px"></div></td><td> Sangat Banyak </td><td>(> 14.000)</td></tr>'
+      +'</table>';
+      legend.appendChild(p);
+
+      kecamatan = new google.maps.Data();
+      kecamatan.loadGeoJson(server+'maps/kecamatan');
+      kecamatan.setStyle(function(feature){
+        var male = feature.getProperty('total_male');
+        var female = feature.getProperty('total_female');
+        var t = male + female;
+
+        if (t <= 2000) {
+          color = '#f3e994';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 2000 && t <= 5000) {
+          color = '#ffeb3b';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 5000 && t <= 9000) {
+          color = '#ffb518';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 9000 && t <= 14000) {
+          color = '#ff5b00';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 14000) {
+          color = '#f20606';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+      });
+      onVillageListener(kecamatan);
+      kecamatan.setMap(map)
+    }
+
+    if (option == 'male_population') {
+      legend.innerHTML = '<center><b>Male Population Distribution</b></center>';
+      var p = document.createElement('p');
+      p.innerHTML = '<table style="font-size:80%;margin-top:10px">'
+      +'<tr><td><div style="background-color:'+'#f3e994'+';height:10px;width:20px"></div></td><td> Sangat Sedikit </td><td>(0-1000)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffeb3b'+';height:10px;width:20px"></div></td><td> Sedikit </td><td>(1001-3000)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffb518'+';height:10px;width:20px"></div></td><td> Sedang </td><td>(3001-6000)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ff5b00'+';height:10px;width:20px"></div></td><td> Banyak </td><td>(> 6000)</td></tr>'
+      +'</table>';
+      legend.appendChild(p);
+
+      kecamatan = new google.maps.Data();
+      kecamatan.loadGeoJson(server+'maps/kecamatan');
+      kecamatan.setStyle(function(feature){
+        var t = feature.getProperty('total_male');
+
+        if (t <= 1000) {
+          color = '#f3e994';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 1000 && t <= 3000) {
+          color = '#ffeb3b';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 3001 && t <= 6000) {
+          color = '#ffb518';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 6000) {
+          color = '#ff5b00';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+      });
+      onVillageListener(kecamatan);
+      kecamatan.setMap(map)
+    }
+
+    if (option == 'female_population') {
+      legend.innerHTML = '<center><b>Female Population Distribution</b></center>';
+      var p = document.createElement('p');
+      p.innerHTML = '<table style="font-size:80%;margin-top:10px">'
+      +'<tr><td><div style="background-color:'+'#f3e994'+';height:10px;width:20px"></div></td><td> Sangat Sedikit </td><td>(0-1000)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffeb3b'+';height:10px;width:20px"></div></td><td> Sedikit </td><td>(1001-3000)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffb518'+';height:10px;width:20px"></div></td><td> Sedang </td><td>(3001-6000)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ff5b00'+';height:10px;width:20px"></div></td><td> Banyak </td><td>(> 6000)</td></tr>'
+      +'</table>';
+      legend.appendChild(p);
+
+      kecamatan = new google.maps.Data();
+      kecamatan.loadGeoJson(server+'maps/kecamatan');
+      kecamatan.setStyle(function(feature){
+        var t = feature.getProperty('total_female');
+
+        if (t <= 1000) {
+          color = '#f3e994';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 1000 && t <= 3000) {
+          color = '#ffeb3b';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 3001 && t <= 6000) {
+          color = '#ffb518';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 6000) {
+          color = '#ff5b00';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+      });
+      onVillageListener(kecamatan);
+      kecamatan.setMap(map)
+    }
+
+    if (option == 'all_qurban') {
+      legend.innerHTML = '<center><b>Qurban Animal Distribution</b></center>';
+      var p = document.createElement('p');
+      p.innerHTML = '<table style="font-size:80%;margin-top:10px">'
+      +'<tr><td><div style="background-color:'+'#f3e994'+';height:10px;width:20px"></div></td><td> Sedikit </td><td>(0-50)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffeb3b'+';height:10px;width:20px"></div></td><td> Sedang </td><td>(51 - 100)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffb518'+';height:10px;width:20px"></div></td><td> Banyak </td><td>(> 100)</td></tr>'
+      +'</table>';
+      legend.appendChild(p);
+
+      kecamatan = new google.maps.Data();
+      kecamatan.loadGeoJson(server+'maps/kecamatan');
+      kecamatan.setStyle(function(feature){
+        var cow = feature.getProperty('total_qurban_cow');
+        var goat = feature.getProperty('total_qurban_goat');
+        var t = cow + goat;
+
+        if (t <= 50) {
+          color = '#f3e994';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 50 && t <= 100) {
+          color = '#ffeb3b';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 100) {
+          color = '#ffb518';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+      });
+      onVillageListener(kecamatan);
+      kecamatan.setMap(map)
+    }
+
+    if (option == 'qurban_cow') {
+      legend.innerHTML = '<center><b>Qurban Cow Distribution</b></center>';
+      var p = document.createElement('p');
+      p.innerHTML = '<table style="font-size:80%;margin-top:10px">'
+      +'<tr><td><div style="background-color:'+'#f3e994'+';height:10px;width:20px"></div></td><td> Sedikit </td><td>(0-25)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffeb3b'+';height:10px;width:20px"></div></td><td> Sedang </td><td>(26 - 50)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffb518'+';height:10px;width:20px"></div></td><td> Banyak </td><td>(> 50)</td></tr>'
+      +'</table>';
+      legend.appendChild(p);
+
+      kecamatan = new google.maps.Data();
+      kecamatan.loadGeoJson(server+'maps/kecamatan');
+      kecamatan.setStyle(function(feature){
+        var t = feature.getProperty('total_qurban_cow');
+
+        if (t <= 25) {
+          color = '#f3e994';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 25 && t <= 50) {
+          color = '#ffeb3b';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 50) {
+          color = '#ffb518';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+      });
+      onVillageListener(kecamatan);
+      kecamatan.setMap(map)
+    }
+
+    if (option == 'qurban_goat') {
+      legend.innerHTML = '<center><b>Qurban Goat Distribution</b></center>';
+      var p = document.createElement('p');
+      p.innerHTML = '<table style="font-size:80%;margin-top:10px">'
+      +'<tr><td><div style="background-color:'+'#f3e994'+';height:10px;width:20px"></div></td><td> Sedikit </td><td>(0-10)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffeb3b'+';height:10px;width:20px"></div></td><td> Sedang </td><td>(11 - 20)</td></tr>'
+      +'<tr><td><div style="background-color:'+'#ffb518'+';height:10px;width:20px"></div></td><td> Banyak </td><td>(> 20)</td></tr>'
+      +'</table>';
+      legend.appendChild(p);
+
+      kecamatan = new google.maps.Data();
+      kecamatan.loadGeoJson(server+'maps/kecamatan');
+      kecamatan.setStyle(function(feature){
+        var t = feature.getProperty('total_qurban_goat');
+
+        if (t <= 10) {
+          color = '#f3e994';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 10 && t <= 20) {
+          color = '#ffeb3b';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+        if (t > 20) {
+          color = '#ffb518';
+          return({
+            fillColor:color,
+            strokeWeight:3.0,
+            strokeColor:color,
+            fillOpacity:0.9,
+            clickable: true
+          });
+        }
+
+      });
+      onVillageListener(kecamatan);
+      kecamatan.setMap(map)
+    }
   }
 
   // ___________________________________ Menampilkan data masjid ___________________________________

@@ -135,6 +135,33 @@
           </a>
         </li>
 
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="collapse" href="#spatial" aria-expanded="false" aria-controls="ui-basic">
+            <span class="menu-title">Data Distribution</span>
+            <i class="menu-arrow"></i>
+          </a>
+            <div class="collapse" id="spatial">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item" style="margin: 3%">
+                  <select class="form-control" style=" color:grey" id="distribution">
+                    <option value="worship_place">Worship Place</option>
+                    <option value="all_population">All Population</option>
+                    <option value="male_population">Male Population</option>
+                    <option value="female_population">Female Population</option>
+                    <option value="all_qurban">Qurban Animal</option>
+                    <option value="qurban_cow">Qurban Cow</option>
+                    <option value="qurban_goat">Qurban Goat</option>
+                  </select>
+                </li>
+                <li class="nav-item" style="margin: 3%">
+                  <button type="submit" class="form-control btn btn-gradient-primary btn-sm"
+                  onclick="showDistribution()">Show on Map</button>
+                </li>
+
+              </ul>
+            </div>
+        </li>
+
       </span>
     </li>
 

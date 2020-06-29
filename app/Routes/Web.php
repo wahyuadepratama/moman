@@ -19,6 +19,7 @@ Route::web('admin/login', 'UserController', 'checkLoginAdmin');
 
 Route::web('maps', 'MapsController', 'maps');
 Route::web('maps/kecamatan', 'MapsController', 'showKecamatan');
+Route::web('maps/village', 'MapsController', 'showDataVillage');
 
 Route::web('maps/mosque', 'MapsController', 'showMosque');
 Route::web('maps/mosque/marker', 'MapsController', 'indexMosqueMarker');

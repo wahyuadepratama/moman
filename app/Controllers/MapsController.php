@@ -15,18 +15,37 @@ class MapsController extends Controller{
 
   public function showKecamatan()
   {
+    // $stmt = $GLOBALS['pdo']->prepare(
+    //   "SELECT row_to_json(fc)
+		// 	FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features
+		// 	FROM (SELECT 'Feature' As type , ST_AsGeoJSON(district.geom)::json As geometry , row_to_json((SELECT l
+		// 	FROM (SELECT district.id, district.name,ST_X(ST_Centroid(district.geom)) AS lon, ST_Y(ST_CENTROID(district.geom)) As lat) As l )) As properties
+		// 	FROM district As district
+		// 	) As f ) As fc"
+    // );
+
     $stmt = $GLOBALS['pdo']->prepare(
       "SELECT row_to_json(fc)
 			FROM ( SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features
 			FROM (SELECT 'Feature' As type , ST_AsGeoJSON(district.geom)::json As geometry , row_to_json((SELECT l
-			FROM (SELECT district.id, district.name,ST_X(ST_Centroid(district.geom)) AS lon, ST_Y(ST_CENTROID(district.geom)) As lat) As l )) As properties
-			FROM district As district
+			FROM (SELECT district.id, district.name, district.total_male, district.total_female, district.total_qurban_cow, district.total_qurban_goat,
+      ST_X(ST_Centroid(district.geom)) AS lon, ST_Y(ST_CENTROID(district.geom)) As lat) As l )) As properties
+			FROM village As district
 			) As f ) As fc"
     );
 
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo $data[0]['row_to_json'];
+  }
+
+  public function showDataVillage()
+  {
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM village WHERE id=:id");
+
+    $stmt->execute(['id' => $_GET['id']]);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    echo json_encode($data);
   }
 
   public function showMosque()

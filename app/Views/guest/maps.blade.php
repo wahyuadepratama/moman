@@ -15,6 +15,14 @@
   <?php $this->include('style/_global'); ?>
   <!-- end custome -->
 
+  <style media="screen">
+    #legend {
+      background: #ffffffd1;
+      padding: 15px;
+      margin: 10px;
+    }
+  </style>
+
 </head>
 <body onload="init(); loading()">
   <div class="container-scroller">
@@ -52,6 +60,70 @@
 
             <div class="col-md-8 grid-margin">
                 <div id="map" class="form-control" style="height: 30em;positon:absolute"></div>
+                <div id="legend">
+                  <table>
+                    <tr>
+                      <td><div style="background-color:#9a55ffc9;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Air Manis</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#187efc;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Bukit Gado-gado</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#e91e63;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Batang Arau</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#9c27b0;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Seberang Palinggam</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#009688;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Pasa Gadang</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#4caf50;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Belakang Pondok</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#ffc107;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Alang Laweh</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#ff5722;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Teluk Bayur</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#cddc39;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Rawang</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#9e9e9e;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Mato Air</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#607d8b;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Mato Air</td>
+                    </tr>
+                    <tr>
+                      <td><div style="background-color:#795548;height:10px;width:50px"></div></td>
+                      <td>:</td>
+                      <td>Ranah Parak Rumbio</td>
+                    </tr>
+                  </table>
+                </div>
             </div>
 
             <div class="col-md-4">
