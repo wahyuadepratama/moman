@@ -42,14 +42,14 @@
           </div>
 
           <div class="row">
-
-            <?php if (!empty($this->flash())): ?>
-              <br><div class="alert alert-success form-control">
-                <?php $this->flash('print') ?>
-              </div>
-            <?php endif; ?>
-
             <div class="col-md-12 grid-margin">
+
+              <?php if (!empty($this->flash())): ?>
+                <br><div class="alert alert-success form-control">
+                  <?php $this->flash('print') ?>
+                </div>
+              <?php endif; ?>
+              
               <div class="card">
                 <div class="card-body">
                   <div class="row">
@@ -203,7 +203,7 @@
                               <li><?= $m->name ?></li>
                             <?php endforeach; ?>
                             <!-- Modal Mosque -->
-                            <div class="modal fade" id="new_mosque" tabindex="-1" role="dialog" aria-labelledby="new_mosque" aria-hidden="true">
+                            <div class="modal fade" id="new_mosque" role="dialog" aria-labelledby="new_mosque" aria-hidden="true">
                               <div class="modal-dialog" role="document">
                                 <form action="<?php $this->url('jamaah/dashboard/mosque/new') ?>" method="post">
                                   <?php $this->csrf_field() ?>

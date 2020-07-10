@@ -5,8 +5,10 @@ class QurbanController extends Controller{
   // __________________________________________ GUEST __________________________________________
   public function index()
   {
-    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM qurban INNER JOIN worship_place ON worship_place.id=qurban.worship_place_id");
-    $stmt->execute();
+    $stmt = $GLOBALS['pdo']->prepare("SELECT * FROM qurban INNER JOIN worship_place
+                                      ON worship_place.id=qurban.worship_place_id
+                                      WHERE :d < deadline_payment");
+    $stmt->execute(['d' => date('Y-m-d')]);
     $r = $stmt->fetchAll(PDO::FETCH_OBJ);
 
     return $this->view('guest/qurban', ['qurban' => $r]);

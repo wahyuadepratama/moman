@@ -20,10 +20,9 @@ class EventController extends Controller{
     $this->authStewardship();
     $this->check_csrf($_POST);
 
-    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO event(name, description, last_editor)
-                                      VALUES(:name, :description, :last)");
-    $stmt->execute(['name'=> $_POST['name'], 'description' => $_POST['description'],
-                    "last" => "Edited by ". $_SESSION['user']->username." at ".date('Y-m-d H:i:s')]);
+    $stmt = $GLOBALS['pdo']->prepare("INSERT INTO event(name, description)
+                                      VALUES(:name, :description)");
+    $stmt->execute(['name'=> $_POST['name'], 'description' => $_POST['description']]);
 
     $this->flash('Add Event Data Successfully!');
     return $this->redirect('stewardship/mosque/event');
@@ -40,6 +39,22 @@ class EventController extends Controller{
                       "last" => "Edited by ". $_SESSION['user']->username." at ".date('Y-m-d H:i:s')]);
 
       $this->flash('Edit Event Data Successfully!');
+      return $this->redirect('stewardship/mosque/event');
+    }else{
+      return $this->redirect('stewardship/mosque/event');
+    }
+  }
+
+  public function delete()
+  {
+    if (isset($_GET['id'])) {
+      $this->authStewardship();
+      $this->check_csrf($_POST);
+
+      $stmt = $GLOBALS['pdo']->prepare("DELETE FROM event WHERE id=:id");
+      $stmt->execute(['id' => $_GET['id']]);
+
+      $this->flash('Event Data Removed!');
       return $this->redirect('stewardship/mosque/event');
     }else{
       return $this->redirect('stewardship/mosque/event');

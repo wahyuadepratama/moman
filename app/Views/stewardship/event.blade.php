@@ -93,8 +93,9 @@
                             <tr>
                               <td><?= $no++ ?></td>
                               <td><?= $p->name ?></td>
-                              <td><?= $p->description ?></td>                              
+                              <td><?= $p->description ?></td>
                               <td>
+                                <a href="/stewardship/mosque/event/delete?id=<?= $p->id ?>" onclick="return confirm('Are you sure?')" class="btn btn-danger btn-sm"> <i class="fa fa-trash"></i> </a>
                                 <a href="#" data-toggle="modal" data-target="#edit_event<?= $p->id ?>" class="btn btn-sm btn-success">Edit</a>
                                 <!-- Modal Avatar -->
                                 <div class="modal fade" id="edit_event<?= $p->id ?>" tabindex="-1" role="dialog" aria-labelledby="avatar" aria-hidden="true">

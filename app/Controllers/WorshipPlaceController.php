@@ -112,6 +112,15 @@ class WorshipPlaceController extends Controller{
     $this->authAdmin();
     if(isset($_GET['id'])){
 
+      $stmt = $GLOBALS['pdo']->prepare('SELECT * FROM jamaah_worship WHERE worship_place_id=:id');
+      $stmt->execute(['id' => $_GET['id']]);
+      $stmt = $stmt->fetch();
+
+      if (isset($stmt)) {
+        $this->flash('Masih ada jamaah yang terdaftar di masjid ini!');
+        return $this->redirect('admin/mosque');
+      }
+
       $stmt = $GLOBALS['pdo']->prepare('SELECT * FROM gallery WHERE worship_place_id=:id');
       $stmt->execute(['id' => $_GET['id']]);
 

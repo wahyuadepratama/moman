@@ -87,7 +87,6 @@
                             <th>Name</th>
                             <th>Address</th>
                             <th>Phone</th>
-                            <th>Last Edited</th>
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -98,8 +97,7 @@
                               <td><?= $no++ ?></td>
                               <td><?= $p->name ?></td>
                               <td><?= $p->address ?></td>
-                              <td><?= $p->phone ?></td>
-                              <td><?= $p->last_editor ?></td>
+                              <td><?= $p->phone ?></td>                              
                               <td>
                                 <a href="#" data-toggle="modal" data-target="#edit_ustad<?= $p->id ?>" class="btn btn-sm btn-success">Edit</a>
                                 <!-- Modal Avatar -->

@@ -73,6 +73,7 @@ Route::web('stewardship/qurb/animal/change', 'QurbanController', 'changeAnimalSt
 Route::web('stewardship/mosque/event', 'EventController', 'index');
 Route::web('stewardship/mosque/event/store', 'EventController', 'store');
 Route::web('stewardship/mosque/event/update', 'EventController', 'update');
+Route::web('stewardship/mosque/event/delete', 'EventController', 'delete');
 
 Route::web('stewardship/mosque/schedule', 'EventController', 'indexSchedule');
 Route::web('stewardship/mosque/schedule/store', 'EventController', 'storeSchedule');
@@ -117,29 +118,14 @@ Route::web('api/_users', 'ApiUserController', 'getDataLogin');
 
 Route::web('api/facility', 'ApiFacilityController', 'index');
 
-Route::web('api/donation', 'ApiDonationController', 'index');
-Route::web('api/donation/detail', 'ApiDonationController', 'show');
-Route::web('api/donation/store', 'ApiDonationController', 'store');
-
 Route::web('api/qurban', 'ApiQurbanController', 'index');
 Route::web('api/qurban/detail', 'ApiQurbanController', 'show');
+Route::web('api/qurban/store', 'ApiQurbanController', 'store');
+Route::web('api/qurban/history', 'ApiQurbanController', 'history');
+Route::web('api/qurban/invoice', 'ApiQurbanController', 'invoice');
+
+Route::web('api/qurban/transaction', 'ApiQurbanController', 'transaction');
+Route::web('api/qurban/confirmation', 'ApiQurbanController', 'confirm');
 
 Route::web('api/getfacility', 'ApiMapsController', 'data');
 Route::web('api/maps', 'ApiMapsController', 'index');
-
-Route::web('api/mosque', 'ApiDonationController', 'listMosque');
-Route::web('api/mosque/detail', 'ApiDonationController', 'detailMosqueForDonation');
-Route::web('api/mosque/donation/store', 'ApiDonationController', 'storeDonation');
-Route::web('api/mosque/orphan/store', 'ApiDonationController', 'storeOrphan');
-Route::web('api/mosque/poor/store', 'ApiDonationController', 'storePoor');
-Route::web('api/mosque/tpa/store', 'ApiDonationController', 'storeTpa');
-
-Route::web('api/history', 'ApiDonationController', 'history');
-Route::web('api/history/detail', 'ApiDonationController', 'historyDetail');
-
-Route::web('api/donation/confirmation', 'ApiDonationController', 'confirmationDonation');
-Route::web('api/donation/confirmation/store', 'ApiDonationController', 'storeConfirmationDonation');
-
-Route::web('api/qurban/confirmation', 'ApiQurbanController', 'confirmationQurban');
-Route::web('api/qurban/confirmation/detail', 'ApiQurbanController', 'detailConfirmationQurban');
-Route::web('api/qurban/confirmation/store', 'ApiQurbanController', 'storeConfirmationQurban');

@@ -310,20 +310,18 @@ class UserController extends Controller{
     // End check if user is stewardship
 
     // Update data to db
-    $stmt = $GLOBALS['pdo']->prepare("UPDATE jamaah SET name=:name, username=:username, phone=:phone, address=:address, worship_place_id=:mosque, type=:type where id=:id");
+    $stmt = $GLOBALS['pdo']->prepare("UPDATE jamaah SET name=:name, username=:username,
+                                      phone=:phone, address=:address where id=:id");
     $stmt->execute(['name' => $_POST['name'],
                     'username' => $_POST['username'],
                     'phone' => $_POST['phone'],
                     'address' => $_POST['address'],
-                    'mosque' => $_POST['mosque'],
-                    'type' => $_POST['type'],
                     'id' => $_SESSION['user']->id]);
     // End update
 
     // Refresh data on dashboard after updated
-    $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.*, jamaah.name as jamaah_name, worship_place.name, worship_place.address as worship_place_address
-                                      FROM jamaah INNER JOIN worship_place ON jamaah.worship_place_id=worship_place.id
-                                      WHERE jamaah.id=:jamaah_id");
+    $stmt = $GLOBALS['pdo']->prepare("SELECT jamaah.*, jamaah.name as jamaah_name
+                                      FROM jamaah WHERE jamaah.id=:jamaah_id");
     $stmt->execute(['jamaah_id' => $_SESSION['user']->id]);
     $j = $stmt->fetch(PDO::FETCH_OBJ);
 
@@ -341,17 +339,20 @@ class UserController extends Controller{
     $this->authJamaah();
     // qurban_order.*, jamaah.name as jamaah_name,
     //                                   worship_place.name, qurban.year, qurban.animal_price
-    $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_order.*, jamaah.name as jamaah_name,
+    $stmt = $GLOBALS['pdo']->prepare("SELECT DISTINCT qurban_order.*, jamaah.name as jamaah_name,
                                       worship_place.name, qurban.year, qurban.animal_price
                                       FROM qurban_order
                                       INNER JOIN jamaah ON jamaah.id=qurban_order.jamaah_id
                                       INNER JOIN jamaah_worship ON jamaah_worship.jamaah_id = jamaah.id
-                                      INNER JOIN worship_place ON jamaah_worship.worship_place_id=worship_place.id
+                                      INNER JOIN qurban_detail ON qurban_order.jamaah_id=qurban_detail.jamaah_id
+                                      AND qurban_order.order_number=qurban_detail.order_number
+                                      AND qurban_order.date=qurban_detail.date
+                                      INNER JOIN worship_place ON qurban_detail.worship_place_id=worship_place.id
                                       INNER JOIN qurban ON qurban.worship_place_id=worship_place.id
-                                      WHERE qurban_order.jamaah_id=:jamaah_id");
+                                      WHERE qurban_order.jamaah_id=:jamaah_id ORDER BY qurban_order.date DESC");
     $stmt->execute(['jamaah_id' => $_SESSION['user']->id]);
     $data = $stmt->fetchAll(PDO::FETCH_OBJ);
-
+// return $this->die($data);
     return $this->view('jamaah/qurban_history', ['history' => $data]);
   }
 
@@ -394,6 +395,7 @@ class UserController extends Controller{
     $this->flash('Update Data Success!');
     return $this->redirect('stewardship/dashboard?period='. $_POST['period_hidden']);
   }
+
   public function storeAccountBank()
   {
     $this->authStewardship();

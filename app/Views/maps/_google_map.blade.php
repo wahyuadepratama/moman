@@ -245,7 +245,7 @@
       }
       if (gid == '10') {
         var color = '#9e9e9e';
-        var t = 6;
+        var t = 7;
       }
       if (gid == '11') {
         var color = '#607d8b';
@@ -1285,7 +1285,6 @@
         pushData(rows);
       }});
     }
-
   }
 
   function filterEventMasjid(){

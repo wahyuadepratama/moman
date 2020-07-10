@@ -155,7 +155,7 @@
                                                 <tr>
                                                   <td>Unpaid</td>
                                                   <td>
-                                                    Rp <?= number_format(($h->animal_price - ($h->uang_muka + $h->uang_pelunasan)),0,',','.') ?>
+                                                    Rp <?= number_format((($h->animal_price * $data->count) - ($h->uang_muka + $h->uang_pelunasan)),0,',','.') ?>
                                                   </td>
                                                 </tr>
 

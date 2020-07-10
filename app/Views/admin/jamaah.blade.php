@@ -55,6 +55,7 @@
                           <tr>
                             <th>ID</th>
                             <th>Name</th>
+                            <th>Username</th>
                             <th>Avatar</th>
                             <th>Phone</th>
                             <th>Account</th>
@@ -65,6 +66,7 @@
                             <?php foreach ($j as $value): ?>
                               <tr>
                                 <td> #<?= $value->id ?></td>
+                                <td> <?= $value->name  ?> </td>
                                 <td> <?= $value->username  ?> </td>
                                 <td> <img src="<?php $this->url('images/avatar/'. $value->avatar) ?>" width="100px"> </td>
                                 <td> <?= $value->phone ?> </td>
