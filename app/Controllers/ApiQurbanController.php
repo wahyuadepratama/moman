@@ -254,16 +254,27 @@ class ApiQurbanController extends Controller
   {
     $stmt = $GLOBALS['pdo']->prepare("SELECT qurban_order.*, jamaah.name as jamaah_name,
                                       worship_place.name, qurban.year, qurban.animal_price FROM qurban_order
+                                      INNER JOIN qurban_detail ON qurban_order.jamaah_id=qurban_detail.jamaah_id
+                                      AND qurban_order.order_number=qurban_detail.order_number
+                                      AND qurban_order.date=qurban_detail.date
                                       INNER JOIN jamaah ON jamaah.id=qurban_order.jamaah_id
-                                      INNER JOIN jamaah_worship ON jamaah.id=jamaah_worship.jamaah_id
-                                      INNER JOIN worship_place ON jamaah_worship.worship_place_id=worship_place.id
+                                      INNER JOIN worship_place ON qurban_detail.worship_place_id=worship_place.id
                                       INNER JOIN qurban ON qurban.worship_place_id=worship_place.id
-                                      WHERE qurban_order.jamaah_id IN
-                                      (SELECT jamaah_id FROM qurban_detail WHERE qurban_detail.worship_place_id IN
-                                      (SELECT worship_place_id FROM jamaah_worship WHERE jamaah_worship.jamaah_id = :id))
+                                      WHERE qurban_detail.worship_place_id IN
+                                      (SELECT worship_place_id FROM jamaah_worship WHERE jamaah_worship.jamaah_id = :id)
                                       ORDER BY qurban_order.date DESC");
     $stmt->execute(['id' => $_GET['id']]);
     $data = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    foreach ($data as $index => $key) {
+      foreach ($data as $index2 => $value) {
+        if ($index != $index2) {
+          if ($key->jamaah_id == $value->jamaah_id && $key->date == $value->date && $key->order_number == $value->order_number) {
+            unset($data[$index]);
+          }
+        }
+      }
+    }
 
     foreach ($data as $key) {
       $date = new DateTime($key->date);
@@ -277,7 +288,7 @@ class ApiQurbanController extends Controller
       }
     }
 
-    echo json_encode($data);
+    echo json_encode(array_values($data));
   }
 
   public function confirm()
